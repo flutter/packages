@@ -1,3 +1,7 @@
+## 0.7.7
+
+* Supports separate `photoResolutionPreset` and `videoResolutionPreset` from `MediaSettings`.
+
 ## 0.7.6+2
 
 * Reduces `takePicture` latency by not setting the `ImageCapture` flash mode

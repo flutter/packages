@@ -15,6 +15,8 @@ class MediaSettings {
   /// Creates a [MediaSettings].
   const MediaSettings({
     this.resolutionPreset,
+    this.photoResolutionPreset,
+    this.videoResolutionPreset,
     this.fps,
     this.videoBitrate,
     this.audioBitrate,
@@ -29,8 +31,27 @@ class MediaSettings {
          'audioBitrate must be null or greater than zero',
        );
 
-  /// [ResolutionPreset] affect the quality of video recording and image capture.
+  /// [ResolutionPreset] affects the quality of video recording and image capture.
+  ///
+  /// Acts as the default fallback preset if [photoResolutionPreset] or
+  /// [videoResolutionPreset] are not set.
   final ResolutionPreset? resolutionPreset;
+
+  /// [ResolutionPreset] specifically targeting still photo capture (`takePicture`).
+  ///
+  /// When null, platforms fall back to [resolutionPreset].
+  ///
+  /// Note: On platforms with a single underlying capture session (such as iOS
+  /// AVFoundation), photo capture dimensions correspond to the active capture
+  /// session format (governed by [videoResolutionPreset]) unless
+  /// [photoResolutionPreset] is set to [ResolutionPreset.max], which enables
+  /// maximum high-resolution photo dimensions.
+  final ResolutionPreset? photoResolutionPreset;
+
+  /// [ResolutionPreset] specifically targeting video recording and camera preview.
+  ///
+  /// When null, platforms fall back to [resolutionPreset].
+  final ResolutionPreset? videoResolutionPreset;
 
   /// Rate at which frames should be captured by the camera in frames per second.
   final int? fps;
@@ -54,6 +75,8 @@ class MediaSettings {
     }
     return other is MediaSettings &&
         resolutionPreset == other.resolutionPreset &&
+        photoResolutionPreset == other.photoResolutionPreset &&
+        videoResolutionPreset == other.videoResolutionPreset &&
         fps == other.fps &&
         videoBitrate == other.videoBitrate &&
         audioBitrate == other.audioBitrate &&
@@ -61,12 +84,22 @@ class MediaSettings {
   }
 
   @override
-  int get hashCode => Object.hash(resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio);
+  int get hashCode => Object.hash(
+    resolutionPreset,
+    photoResolutionPreset,
+    videoResolutionPreset,
+    fps,
+    videoBitrate,
+    audioBitrate,
+    enableAudio,
+  );
 
   @override
   String toString() {
     return 'MediaSettings{'
         'resolutionPreset: $resolutionPreset, '
+        'photoResolutionPreset: $photoResolutionPreset, '
+        'videoResolutionPreset: $videoResolutionPreset, '
         'fps: $fps, '
         'videoBitrate: $videoBitrate, '
         'audioBitrate: $audioBitrate, '

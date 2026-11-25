@@ -20,6 +20,8 @@ enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 class PlatformMediaSettings {
   PlatformMediaSettings({
     required this.resolutionPreset,
+    this.photoResolutionPreset,
+    this.videoResolutionPreset,
     required this.framesPerSecond,
     required this.videoBitrate,
     required this.audioBitrate,
@@ -27,6 +29,8 @@ class PlatformMediaSettings {
   });
 
   final PlatformResolutionPreset resolutionPreset;
+  final PlatformResolutionPreset? photoResolutionPreset;
+  final PlatformResolutionPreset? videoResolutionPreset;
   final int? framesPerSecond;
   final int? videoBitrate;
   final int? audioBitrate;

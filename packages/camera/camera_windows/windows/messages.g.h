@@ -82,11 +82,21 @@ class PlatformMediaSettings {
   // Constructs an object setting all fields.
   explicit PlatformMediaSettings(
       const PlatformResolutionPreset& resolution_preset,
+      const PlatformResolutionPreset* photo_resolution_preset,
+      const PlatformResolutionPreset* video_resolution_preset,
       const int64_t* frames_per_second, const int64_t* video_bitrate,
       const int64_t* audio_bitrate, bool enable_audio);
 
   const PlatformResolutionPreset& resolution_preset() const;
   void set_resolution_preset(const PlatformResolutionPreset& value_arg);
+
+  const PlatformResolutionPreset* photo_resolution_preset() const;
+  void set_photo_resolution_preset(const PlatformResolutionPreset* value_arg);
+  void set_photo_resolution_preset(const PlatformResolutionPreset& value_arg);
+
+  const PlatformResolutionPreset* video_resolution_preset() const;
+  void set_video_resolution_preset(const PlatformResolutionPreset* value_arg);
+  void set_video_resolution_preset(const PlatformResolutionPreset& value_arg);
 
   const int64_t* frames_per_second() const;
   void set_frames_per_second(const int64_t* value_arg);
@@ -120,6 +130,8 @@ class PlatformMediaSettings {
   friend class CameraEventApi;
   friend class PigeonInternalCodecSerializer;
   PlatformResolutionPreset resolution_preset_;
+  std::optional<PlatformResolutionPreset> photo_resolution_preset_;
+  std::optional<PlatformResolutionPreset> video_resolution_preset_;
   std::optional<int64_t> frames_per_second_;
   std::optional<int64_t> video_bitrate_;
   std::optional<int64_t> audio_bitrate_;

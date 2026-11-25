@@ -120,6 +120,22 @@ void MockAvailableMediaTypes(MockCaptureEngine* engine,
         (*media_type)->AddRef();
         return S_OK;
       });
+
+  EXPECT_CALL(
+      *capture_source,
+      GetAvailableDeviceMediaType(
+          Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO), _, _))
+      .WillRepeatedly([mock_preview_width, mock_preview_height](
+                          DWORD stream_index, DWORD media_type_index,
+                          IMFMediaType** media_type) {
+        // We give only one media type to loop through
+        if (media_type_index != 0) return MF_E_NO_MORE_TYPES;
+        *media_type =
+            new FakeMediaType(MFMediaType_Video, MFVideoFormat_RGB32,
+                              mock_preview_width, mock_preview_height);
+        (*media_type)->AddRef();
+        return S_OK;
+      });
 }
 
 void MockStartPreview(CaptureControllerImpl* capture_controller,
@@ -189,8 +205,9 @@ void MockStartPreview(CaptureControllerImpl* capture_controller,
                                mock_source_buffer_size);
 }
 
-void MockPhotoSink(MockCaptureEngine* engine,
-                   MockCapturePhotoSink* photo_sink) {
+void MockPhotoSink(MockCaptureEngine* engine, MockCapturePhotoSink* photo_sink,
+                   DWORD expected_source_stream_index = (DWORD)
+                       MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO) {
   EXPECT_CALL(*engine, GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_PHOTO, _))
       .Times(1)
       .WillOnce([src_sink = photo_sink](MF_CAPTURE_ENGINE_SINK_TYPE sink_type,
@@ -200,7 +217,9 @@ void MockPhotoSink(MockCaptureEngine* engine,
         return S_OK;
       });
   EXPECT_CALL(*photo_sink, RemoveAllStreams).Times(1).WillOnce(Return(S_OK));
-  EXPECT_CALL(*photo_sink, AddStream).Times(1).WillOnce(Return(S_OK));
+  EXPECT_CALL(*photo_sink, AddStream(Eq(expected_source_stream_index), _, _, _))
+      .Times(1)
+      .WillOnce(Return(S_OK));
   EXPECT_CALL(*photo_sink, SetOutputFileName).Times(1).WillOnce(Return(S_OK));
 }
 
@@ -1568,6 +1587,100 @@ TEST(CaptureController, TakePictureSuccess) {
   photo_sink = nullptr;
 }
 
+TEST(CaptureController,
+     TakePictureFallsBackToVideoRecordStreamWhenPhotoStreamUnavailable) {
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+
+  int64_t mock_texture_id = 1234;
+
+  // Initialize capture controller to be able to take picture
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), mock_texture_id);
+
+  ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
+
+  EXPECT_CALL(*engine.Get(), GetSource)
+      .Times(1)
+      .WillOnce(
+          [src_source = capture_source](IMFCaptureSource** target_source) {
+            *target_source = src_source.Get();
+            src_source->AddRef();
+            return S_OK;
+          });
+
+  uint32_t mock_preview_width = 1;
+  uint32_t mock_preview_height = 1;
+
+  EXPECT_CALL(
+      *capture_source.Get(),
+      GetAvailableDeviceMediaType(
+          Eq((DWORD)
+                 MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW),
+          _, _))
+      .WillRepeatedly([mock_preview_width, mock_preview_height](
+                          DWORD stream_index, DWORD media_type_index,
+                          IMFMediaType** media_type) {
+        if (media_type_index != 0) return MF_E_NO_MORE_TYPES;
+        *media_type =
+            new FakeMediaType(MFMediaType_Video, MFVideoFormat_RGB32,
+                              mock_preview_width, mock_preview_height);
+        (*media_type)->AddRef();
+        return S_OK;
+      });
+
+  EXPECT_CALL(
+      *capture_source.Get(),
+      GetAvailableDeviceMediaType(
+          Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD),
+          _, _))
+      .WillRepeatedly([mock_preview_width, mock_preview_height](
+                          DWORD stream_index, DWORD media_type_index,
+                          IMFMediaType** media_type) {
+        if (media_type_index != 0) return MF_E_NO_MORE_TYPES;
+        *media_type =
+            new FakeMediaType(MFMediaType_Video, MFVideoFormat_RGB32,
+                              mock_preview_width, mock_preview_height);
+        (*media_type)->AddRef();
+        return S_OK;
+      });
+
+  // Photo stream is not available, so it should fall back to record stream.
+  EXPECT_CALL(
+      *capture_source.Get(),
+      GetAvailableDeviceMediaType(
+          Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO), _, _))
+      .WillRepeatedly(Return(MF_E_INVALIDSTREAMNUMBER));
+
+  ComPtr<MockCapturePhotoSink> photo_sink = new MockCapturePhotoSink();
+
+  // Initialize photo sink expecting the fallback stream index
+  MockPhotoSink(
+      engine.Get(), photo_sink.Get(),
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD);
+
+  // Request photo
+  std::string mock_path_to_photo = "mock_path_to_photo";
+  EXPECT_CALL(*(engine.Get()), TakePhoto()).Times(1).WillOnce(Return(S_OK));
+  capture_controller->TakePicture(mock_path_to_photo);
+
+  // OnTakePictureSucceeded should be called with mocked file path
+  EXPECT_CALL(*camera, OnTakePictureSucceeded(Eq(mock_path_to_photo))).Times(1);
+  EXPECT_CALL(*camera, OnTakePictureFailed).Times(0);
+  engine->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_PHOTO_TAKEN);
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+  photo_sink = nullptr;
+}
+
 TEST(CaptureController, ReportsTakePictureError) {
   ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
   std::unique_ptr<MockCamera> camera =
@@ -1828,6 +1941,58 @@ TEST(CaptureController, ResumePreviewFailsIfPreviewNotStarted) {
       .Times(1);
 
   capture_controller->ResumePreview();
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+}
+
+TEST(CaptureController,
+     GetMaxPreviewHeightUsesResolutionPresetWhenVideoPresetNotSet) {
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+
+  PlatformMediaSettings settings(PlatformResolutionPreset::kMedium, true);
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), 1234, settings);
+
+  EXPECT_EQ(capture_controller->GetMaxPreviewHeight(), 480u);
+  EXPECT_EQ(capture_controller->GetMaxVideoHeight(), 480u);
+  EXPECT_EQ(capture_controller->GetMaxPhotoHeight(), 480u);
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+}
+
+TEST(CaptureController, GetMaxPreviewHeightUsesVideoResolutionPresetWhenSet) {
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+
+  PlatformResolutionPreset photo_preset = PlatformResolutionPreset::kUltraHigh;
+  PlatformResolutionPreset video_preset = PlatformResolutionPreset::kHigh;
+  PlatformMediaSettings settings(PlatformResolutionPreset::kLow, &photo_preset,
+                                 &video_preset, nullptr, nullptr, nullptr,
+                                 true);
+
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), 1234, settings);
+
+  EXPECT_EQ(capture_controller->GetMaxPreviewHeight(), 720u);
+  EXPECT_EQ(capture_controller->GetMaxVideoHeight(), 720u);
+  EXPECT_EQ(capture_controller->GetMaxPhotoHeight(), 2160u);
 
   capture_controller = nullptr;
   texture_registrar = nullptr;
