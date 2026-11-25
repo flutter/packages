@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Fixes the default clip behavior shown by SVG widget diagnostics.
+
 ## 2.5.0
 
 * Adds `SvgLoader.provideSvgInIsolate`, which controls whether `provideSvg` runs
