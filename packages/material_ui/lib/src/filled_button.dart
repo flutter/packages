@@ -417,6 +417,7 @@ class FilledButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
+  // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
   /// When [ThemeData.useMaterial3] is true and [FilledButtonThemeData.variant]
   /// isn't [StyleVariant.material3Expressive], the following defaults will be
   /// used:
