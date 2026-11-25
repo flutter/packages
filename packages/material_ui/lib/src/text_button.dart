@@ -379,9 +379,9 @@ class TextButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// With the Material 3 style, that is, when [ThemeData.useMaterial3] is true
-  /// and [TextButtonThemeData.variant] isn't
-  /// [StyleVariant.material3Expressive], the following defaults will be used:
+  /// When [ThemeData.useMaterial3] is true and [TextButtonThemeData.variant]
+  /// isn't [StyleVariant.material3Expressive], the following defaults will be
+  /// used:
   ///
   /// {@template material_ui.text_button.material3_defaults}
   /// * `textStyle` - Theme.textTheme.labelLarge
@@ -421,8 +421,7 @@ class TextButton extends ButtonStyleButton {
   /// ## Material 3 Expressive defaults
   ///
   // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
-  /// With the Material 3 Expressive style, that is, when
-  /// [ThemeData.useMaterial3] is true and [TextButtonThemeData.variant] is
+  /// When [ThemeData.useMaterial3] is true and [TextButtonThemeData.variant] is
   /// [StyleVariant.material3Expressive], the following defaults will be used.
   /// Values listed per size are for [ButtonSizeVariant.xSmall],
   /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
