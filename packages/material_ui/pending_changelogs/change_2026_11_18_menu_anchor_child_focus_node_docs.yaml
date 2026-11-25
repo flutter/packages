@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes outdated `MenuAnchor.childFocusNode` documentation that said the arrow keys move focus from the menu back to the anchor.
+version: patch
