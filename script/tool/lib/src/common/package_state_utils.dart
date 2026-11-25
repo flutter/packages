@@ -46,13 +46,13 @@ class PackageChangeState {
 /// they are arguments mainly to allow for caching the changed paths for an
 /// entire command run.
 ///
-/// If [git] is provided, [changedPaths] must be repository-relative
-/// paths, and change type detection can use file diffs in addition to paths.
+/// [changedPaths] must be repository-relative paths, since change type
+/// detection uses file diffs from [git] in addition to paths.
 Future<PackageChangeState> checkPackageChangeState(
   RepositoryPackage package, {
   required List<String> changedPaths,
   required String relativePackagePath,
-  GitVersionFinder? git,
+  required GitVersionFinder git,
 }) async {
   final packagePrefix = relativePackagePath.endsWith('/')
       ? relativePackagePath
@@ -189,8 +189,8 @@ bool _isUnpublishedExampleChange(List<String> pathComponents, RepositoryPackage 
 // True if the change is only relevant to people working on the package.
 Future<bool> _isDevChange(
   List<String> pathComponents, {
-  GitVersionFinder? git,
-  String? repoPath,
+  required GitVersionFinder git,
+  required String repoPath,
 }) async {
   return _isTestChange(pathComponents) ||
       // Agent directories (.agents/) are for developer-only utility tools (skills, scripts).
@@ -250,12 +250,9 @@ bool _isExampleBuildFile(List<String> pathComponents) {
 
 Future<bool> _isGradleTestDependencyChange(
   List<String> pathComponents, {
-  GitVersionFinder? git,
-  String? repoPath,
+  required GitVersionFinder git,
+  required String repoPath,
 }) async {
-  if (git == null) {
-    return false;
-  }
   if (pathComponents.last != 'build.gradle' && pathComponents.last != 'build.gradle.kts') {
     return false;
   }
@@ -281,12 +278,9 @@ Future<bool> _isGradleTestDependencyChange(
 // implementation comments (i.e., not doc comments).
 Future<bool> _isDartImplementationCommentChange(
   List<String> pathComponents, {
-  GitVersionFinder? git,
-  String? repoPath,
+  required GitVersionFinder git,
+  required String repoPath,
 }) async {
-  if (git == null) {
-    return false;
-  }
   if (!pathComponents.last.endsWith('.dart')) {
     return false;
   }

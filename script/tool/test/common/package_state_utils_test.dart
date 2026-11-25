@@ -26,6 +26,9 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_package',
+        git: FakeGitVersionFinder(<String, List<String>>{
+          'packages/a_package/lib/plugin.dart': <String>['+void foo() {}'],
+        }),
       );
 
       expect(state.hasChanges, true);
@@ -42,6 +45,9 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_package/',
+        git: FakeGitVersionFinder(<String, List<String>>{
+          'packages/a_package/lib/plugin.dart': <String>['+void foo() {}'],
+        }),
       );
 
       expect(state.hasChanges, true);
@@ -94,6 +100,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -114,6 +121,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -130,6 +138,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -146,6 +155,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -162,6 +172,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -178,6 +189,9 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{
+          'packages/a_plugin/lib/foo/tool/tool_thing.dart': <String>['+void foo() {}'],
+        }),
       );
 
       expect(state.hasChanges, true);
@@ -198,6 +212,9 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{
+          'packages/a_plugin/example/lib/main.dart': <String>['+void foo() {}'],
+        }),
       );
 
       expect(state.hasChanges, true);
@@ -218,6 +235,9 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{
+          'packages/a_plugin/example/main.dart': <String>['+void foo() {}'],
+        }),
       );
 
       expect(state.hasChanges, true);
@@ -234,6 +254,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -254,6 +275,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -279,6 +301,10 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{
+          'packages/a_plugin/example/lib/main.dart': <String>['+void foo() {}'],
+          'packages/a_plugin/example/main.dart': <String>['+void foo() {}'],
+        }),
       );
 
       expect(state.hasChanges, true);
@@ -300,6 +326,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -321,6 +348,7 @@ void main() {
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_plugin/a_plugin_android',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
@@ -575,23 +603,6 @@ void main() {
     });
 
     test('requires changelog or version change if build.gradle diffs cannot '
-        'be checked', () async {
-      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
-
-      const changedFiles = <String>['packages/a_plugin/android/build.gradle'];
-
-      final PackageChangeState state = await checkPackageChangeState(
-        package,
-        changedPaths: changedFiles,
-        relativePackagePath: 'packages/a_plugin/',
-      );
-
-      expect(state.hasChanges, true);
-      expect(state.needsVersionChange, true);
-      expect(state.needsChangelogChange, true);
-    });
-
-    test('requires changelog or version change if build.gradle diffs cannot '
         'be determined', () async {
       final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
 
@@ -626,6 +637,7 @@ release:
         package,
         changedPaths: changedFiles,
         relativePackagePath: 'packages/a_package/',
+        git: FakeGitVersionFinder(<String, List<String>>{}),
       );
 
       expect(state.hasChanges, true);
