@@ -234,7 +234,11 @@ extension XCTestCase {
     // Dialog may have option "Allow" (iOS 27) or "Allow Full Access" (iOS 26) depending on iOS version.
     let predicate = NSPredicate(format: "label BEGINSWITH 'Allow'")
     let allowButton = springboardApp.alerts.buttons.matching(predicate).firstMatch
-    if allowButton.waitForExistence(timeout: timeout) {
+    // Wait until both exists and hittable. If tapped while transitioning in, the tap may fail to dismiss.
+    let hittableExpectation = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "exists == true AND isHittable == true"),
+      object: allowButton)
+    if XCTWaiter.wait(for: [hittableExpectation], timeout: timeout) == .completed {
       allowButton.tap()
     }
 
