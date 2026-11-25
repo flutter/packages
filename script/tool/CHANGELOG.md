@@ -2,6 +2,7 @@
 
 * Exempts `test_apps/` from requiring version and changelog changes.
 * Applies the `build.gradle` version and changelog exemptions to `build.gradle.kts`.
+* Applies the diff-based version exemptions in `update-release-info --version=minimal`.
 * Fixes `dart-test --package-tags` not matching any packages when the
   repository is checked out into a directory named `packages`, as it is in CI.
 * Runs `chromedriver` for `drive-examples --run-chromedriver` on an
