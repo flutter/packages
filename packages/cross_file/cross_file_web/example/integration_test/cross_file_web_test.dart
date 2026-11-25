@@ -82,6 +82,25 @@ void main() {
 
         expect(await file.readAsString(), testFileStringContents);
       });
+
+      group('dispose', () {
+        testWidgets('dispose does not revoke url', (_) async {
+          final fileFromBlob = PlatformScopedStorageXFile(
+            WebScopedStorageXFileCreationParams.fromBlob(testFile),
+          );
+          addTearDown(() => fileFromBlob.dispose());
+
+          final fileFromUri = PlatformScopedStorageXFile(
+            WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: fileFromBlob.params.uri),
+          );
+          await fileFromUri.dispose();
+
+          final fileFromUri2 = PlatformScopedStorageXFile(
+            WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: fileFromBlob.params.uri),
+          );
+          expect(await fileFromUri2.readAsBytes(), testFileBytes);
+        });
+      });
     });
 
     group('Create with File', () {
@@ -150,6 +169,23 @@ void main() {
         );
 
         expect(await file.name(), testFile.name);
+      });
+
+      group('dispose', () {
+        testWidgets('dispose revokes url', (_) async {
+          final file = PlatformScopedStorageXFile(
+            WebScopedStorageXFileCreationParams.fromBlob(testFile),
+          );
+
+          expect(await file.readAsBytes(), testFileBytes);
+
+          await file.dispose();
+
+          final file2 = PlatformScopedStorageXFile(
+            WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: file.params.uri),
+          );
+          await expectLater(() => file2.readAsBytes(), throwsException);
+        });
       });
     });
 

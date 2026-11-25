@@ -75,16 +75,29 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
     with SecurityScopedDarwinScopedStorageXFileExtension {
   /// Constructs a [SecurityScopedDarwinScopedStorageXFile].
   SecurityScopedDarwinScopedStorageXFile(super.params) : super._() {
-    _finalizer.attach(this, params.uri);
+    finalizer.attach(this, params.uri, detach: this);
   }
 
-  static final Finalizer<String> _finalizer = Finalizer((String uri) {
+  /// Handles revoking access to the resource pointed to by a security-scoped
+  /// URL.
+  ///
+  /// Only visible for testing purposes.
+  @visibleForTesting
+  static Finalizer<String> finalizer = defaultFinalizer;
+
+  /// Default [Finalizer] instance for [finalizer].
+  ///
+  /// Only visible for testing purposes.
+  @visibleForTesting
+  static final Finalizer<String> defaultFinalizer = Finalizer((String uri) {
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
       final NSURL? url = NSURL.URLWithString(uri.toNSString());
       url?.stopAccessingSecurityScopedResource();
     }
   });
+
+  bool _isDisposed = false;
 
   late final _file = File.fromUri(Uri.parse(params.uri));
 
@@ -153,7 +166,13 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   }
 
   @override
-  Future<void> dispose() => stopAccessingSecurityScopedResource();
+  Future<void> dispose() async {
+    if (!_isDisposed) {
+      _isDisposed = true;
+      finalizer.detach(this);
+      await stopAccessingSecurityScopedResource();
+    }
+  }
 }
 
 /// Implementation of [DarwinScopedStorageXFile] as a representation of a

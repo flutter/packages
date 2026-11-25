@@ -1,5 +1,9 @@
-## NEXT
+## 1.1.1
 
+* Detaches the Finalizer callback when a blob-backed `PlatformScopedStorageXFile` (created via
+  `WebScopedStorageXFileCreationParams.fromBlob` or `WebScopedStorageXFileCreationParams.fromBytes`)
+  is disposed manually, `preventing URL.revokeObjectURL` from being called again upon garbage
+  collection.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.1.0
