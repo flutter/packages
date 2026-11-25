@@ -123,12 +123,56 @@ void main() {
         ),
         WKWebView.pigeon_detached(),
         WKNavigationResponse.pigeon_detached(
+          response: HTTPURLResponse.pigeon_detached(
+            statusCode: 401,
+            url: 'https://www.google.com/missing',
+          ),
+          isForMainFrame: true,
+        ),
+      );
+
+      expect(callbackError.response?.statusCode, 401);
+      expect(callbackError.response?.uri, Uri.parse('https://www.google.com/missing'));
+      expect(callbackError.request?.uri, Uri.parse('https://www.google.com/missing'));
+    });
+
+    test('setOnHttpError reports no request when the response has no URL', () async {
+      PigeonOverrides.wKNavigationDelegate_new = CapturingNavigationDelegate.new;
+      final webKitDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(),
+      );
+
+      late final HttpResponseError callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      await webKitDelegate.setOnHttpError(onHttpError);
+
+      await CapturingNavigationDelegate.lastCreatedDelegate.decidePolicyForNavigationResponse(
+        WKNavigationDelegate.pigeon_detached(
+          decidePolicyForNavigationAction: (_, _, _) async {
+            return NavigationActionPolicy.cancel;
+          },
+          decidePolicyForNavigationResponse: (_, _, _) async {
+            return NavigationResponsePolicy.cancel;
+          },
+          didReceiveAuthenticationChallenge: (_, _, _) async {
+            return AuthenticationChallengeResponse.pigeon_detached(
+              disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
+            );
+          },
+        ),
+        WKWebView.pigeon_detached(),
+        WKNavigationResponse.pigeon_detached(
           response: HTTPURLResponse.pigeon_detached(statusCode: 401),
           isForMainFrame: true,
         ),
       );
 
       expect(callbackError.response?.statusCode, 401);
+      expect(callbackError.response?.uri, isNull);
+      expect(callbackError.request, isNull);
     });
 
     test('setOnHttpError is not called for error codes < 400', () async {

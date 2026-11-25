@@ -1122,9 +1122,12 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         if (weakThis.target?._onHttpError != null &&
             urlResponse is HTTPURLResponse &&
             urlResponse.statusCode >= 400) {
+          final String? url = urlResponse.url;
+          final Uri? uri = url == null ? null : Uri.tryParse(url);
           weakThis.target!._onHttpError!(
             HttpResponseError(
-              response: WebResourceResponse(uri: null, statusCode: urlResponse.statusCode),
+              request: uri == null ? null : WebResourceRequest(uri: uri),
+              response: WebResourceResponse(uri: uri, statusCode: urlResponse.statusCode),
             ),
           );
         }

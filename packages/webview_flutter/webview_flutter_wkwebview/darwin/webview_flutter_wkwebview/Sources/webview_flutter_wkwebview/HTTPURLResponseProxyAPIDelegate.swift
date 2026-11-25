@@ -14,4 +14,8 @@ class HTTPURLResponseProxyAPIDelegate: PigeonApiDelegateHTTPURLResponse {
   {
     return Int64(pigeonInstance.statusCode)
   }
+
+  func url(pigeonApi: PigeonApiHTTPURLResponse, pigeonInstance: HTTPURLResponse) throws -> String? {
+    return pigeonInstance.url?.absoluteString
+  }
 }
