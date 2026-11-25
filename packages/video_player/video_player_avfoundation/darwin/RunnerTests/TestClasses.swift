@@ -4,7 +4,6 @@
 
 import AVFoundation
 import Testing
-import video_player_avfoundation_objc
 
 @testable import video_player_avfoundation
 
@@ -120,23 +119,21 @@ final class TestTextureRegistry: NSObject, FlutterTextureRegistry {
   }
 }
 
-final class StubViewProvider: NSObject, FVPViewProvider {
+final class StubViewProvider: ViewProvider {
   #if os(iOS)
     var viewController: UIViewController?
     init(viewController: UIViewController? = nil) {
       self.viewController = viewController
-      super.init()
     }
   #else
     var view: NSView?
     init(view: NSView? = nil) {
       self.view = view
-      super.init()
     }
   #endif
 }
 
-final class StubAssetProvider: NSObject, FVPAssetProvider {
+final class StubAssetProvider: AssetProvider {
   func lookupKey(forAsset asset: String) -> String? {
     return asset
   }
@@ -193,7 +190,7 @@ final class TestPixelBufferSource: PixelBufferSource {
   }
 #endif
 
-final class StubAVFactory: NSObject, WrappedAVObjectFactory {
+final class StubAVFactory: WrappedAVObjectFactory {
   let player: AVPlayer
   let playerItem: WrappedAVPlayerItem
   let pixelBufferSource: PixelBufferSource?
@@ -217,7 +214,6 @@ final class StubAVFactory: NSObject, WrappedAVObjectFactory {
     #if os(iOS)
       self.audioSession = TestAudioSession()
     #endif
-    super.init()
   }
 
   func urlAsset(with url: URL, options: [String: Any]?) -> WrappedAVAsset {
@@ -244,34 +240,33 @@ final class StubAVFactory: NSObject, WrappedAVObjectFactory {
   #endif
 }
 
-final class StubFVPDisplayLink: NSObject, FVPDisplayLink {
+final class StubDisplayLink: DisplayLink {
   var running: Bool = false
   var duration: CFTimeInterval {
     return 1.0 / 60.0
   }
 }
 
-final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
-  let displayLink = StubFVPDisplayLink()
+final class StubDisplayLinkFactory: DisplayLinkFactory {
+  let displayLink = StubDisplayLink()
   var fireDisplayLink: (() -> Void)?
 
   func displayLink(
-    with viewProvider: FVPViewProvider,
+    with viewProvider: ViewProvider,
     callback: @escaping () -> Void
-  ) -> FVPDisplayLink {
+  ) -> DisplayLink {
     fireDisplayLink = callback
     return displayLink
   }
 }
 
-final class StubEventListener: NSObject, FVPVideoEventListener {
+@MainActor final class StubEventListener: VideoEventListener {
   var onInitialized: (() -> Void)?
   private(set) var initializationDuration: Int64 = 0
   private(set) var initializationSize: CGSize = .zero
 
   init(onInitialized: (() -> Void)? = nil) {
     self.onInitialized = onInitialized
-    super.init()
   }
 
   func videoPlayerDidComplete() {}
@@ -284,7 +279,7 @@ final class StubEventListener: NSObject, FVPVideoEventListener {
   }
   func videoPlayerDidSetPlaying(_ playing: Bool) {}
   func videoPlayerDidStartBuffering() {}
-  func videoPlayerDidUpdateBufferRegions(_ regions: [[NSNumber]]) {}
+  func videoPlayerDidUpdateBufferRegions(_ regions: [PlatformDurationRange]) {}
   func videoPlayerWasDisposed() {}
 }
 

@@ -106,6 +106,44 @@ class NativeVideoTrackData {
   List<MediaSelectionVideoTrackData>? mediaSelectionTracks;
 }
 
+sealed class PlatformVideoEvent {}
+
+/// Sent when the video is initialized and ready to play.
+class InitializationEvent extends PlatformVideoEvent {
+  /// The video duration in milliseconds.
+  late final int durationMilliseconds;
+
+  /// The width of the video in pixels.
+  late final double width;
+
+  /// The height of the video in pixels.
+  late final double height;
+}
+
+/// Sent when the video starts buffering.
+class BufferingStartEvent extends PlatformVideoEvent {}
+
+/// Sent when the video ends buffering.
+class BufferingEndEvent extends PlatformVideoEvent {}
+
+class PlatformDurationRange {
+  late final int startMilliseconds;
+  late final int durationMilliseconds;
+}
+
+/// Sent when the video buffering position updates.
+class BufferingUpdateEvent extends PlatformVideoEvent {
+  late final List<PlatformDurationRange> bufferedRanges;
+}
+
+/// Sent when playback completes.
+class PlaybackCompleteEvent extends PlatformVideoEvent {}
+
+/// Sent when the video starts or stops playing.
+class IsPlayingStateEvent extends PlatformVideoEvent {
+  late final bool isPlaying;
+}
+
 @HostApi()
 abstract class AVFoundationVideoPlayerApi {
   void initialize();
@@ -156,4 +194,9 @@ abstract class VideoPlayerInstanceApi {
 
   @SwiftFunction('setPreventsDisplaySleepDuringVideoPlayback(_:)')
   void setPreventsDisplaySleepDuringVideoPlayback(bool preventsDisplaySleepDuringVideoPlayback);
+}
+
+@EventChannelApi()
+abstract class VideoEventChannel {
+  PlatformVideoEvent videoEvents();
 }

@@ -1,3 +1,8 @@
+## 1.3.7
+
+* Fixes the initial `stroke-width` not being scaled by transforms.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 1.3.6
 
 * Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).

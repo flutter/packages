@@ -22,6 +22,65 @@ const CupertinoDynamicColor _kSystemFill = CupertinoDynamicColor(
 );
 
 void main() {
+  final Finder sliderRenderWidget = find.descendant(
+    of: find.byType(CupertinoSlider),
+    matching: find.byWidgetPredicate((Widget widget) => widget is LeafRenderObjectWidget),
+  );
+
+  for (final Brightness brightness in Brightness.values) {
+    testWidgets('Disabled slider dims and restores its appearance in $brightness', (
+      WidgetTester tester,
+    ) async {
+      var enabled = true;
+      var value = 0.5;
+      late StateSetter updateState;
+      await tester.pumpWidget(
+        CupertinoApp(
+          theme: CupertinoThemeData(brightness: brightness),
+          home: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              updateState = setState;
+              return Center(
+                child: CupertinoSlider(
+                  value: value,
+                  activeColor: CupertinoColors.systemPurple,
+                  thumbColor: CupertinoColors.systemOrange,
+                  onChanged: enabled ? (double newValue) => value = newValue : null,
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      final Finder opacity = find.descendant(
+        of: find.byType(CupertinoSlider),
+        matching: find.byType(Opacity),
+      );
+      expect(tester.widget<Opacity>(opacity).opacity, 1.0);
+      final Size enabledSize = tester.getSize(find.byType(CupertinoSlider));
+      final RenderObject sliderRenderObject = tester.renderObject(sliderRenderWidget);
+
+      updateState(() => enabled = false);
+      await tester.pump();
+      expect(tester.widget<Opacity>(opacity).opacity, 0.5);
+      expect(tester.renderObject(sliderRenderWidget), same(sliderRenderObject));
+      expect(tester.getSize(find.byType(CupertinoSlider)), enabledSize);
+      final CupertinoSlider slider = tester.widget<CupertinoSlider>(find.byType(CupertinoSlider));
+      expect(slider.activeColor, CupertinoColors.systemPurple);
+      expect(slider.thumbColor, CupertinoColors.systemOrange);
+      await tester.dragFrom(tester.getCenter(find.byType(CupertinoSlider)), const Offset(50, 0));
+      expect(value, 0.5);
+
+      updateState(() => enabled = true);
+      await tester.pump();
+      expect(tester.widget<Opacity>(opacity).opacity, 1.0);
+      expect(tester.renderObject(sliderRenderWidget), same(sliderRenderObject));
+      await tester.dragFrom(tester.getCenter(find.byType(CupertinoSlider)), const Offset(50, 0));
+      expect(value, greaterThan(0.5));
+    });
+  }
+
   Future<void> dragSlider(WidgetTester tester, Key sliderKey) {
     final Offset topLeft = tester.getTopLeft(find.byKey(sliderKey));
     const double unit = CupertinoThumbPainter.radius;
@@ -439,7 +498,7 @@ void main() {
     );
 
     expect(
-      tester.getSemantics(find.byType(CupertinoSlider)),
+      tester.getSemantics(sliderRenderWidget),
       matchesSemantics(
         isSlider: true,
         hasIncreaseAction: true,
@@ -462,7 +521,7 @@ void main() {
       ),
     );
 
-    expect(tester.getSemantics(find.byType(CupertinoSlider)), matchesSemantics(isSlider: true));
+    expect(tester.getSemantics(sliderRenderWidget), matchesSemantics(isSlider: true));
 
     handle.dispose();
   });
@@ -480,7 +539,7 @@ void main() {
     );
 
     expect(
-      tester.getSemantics(find.byType(CupertinoSlider)),
+      tester.getSemantics(sliderRenderWidget),
       matchesSemantics(
         isSlider: true,
         hasIncreaseAction: true,
@@ -503,7 +562,7 @@ void main() {
     );
 
     expect(
-      tester.getSemantics(find.byType(CupertinoSlider)),
+      tester.getSemantics(sliderRenderWidget),
       matchesSemantics(
         isSlider: true,
         hasIncreaseAction: true,
