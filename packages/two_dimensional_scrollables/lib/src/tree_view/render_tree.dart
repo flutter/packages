@@ -36,7 +36,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.verticalAxisDirection,
     required TreeRowDelegateMixin super.delegate,
     required super.childManager,
-    super.cacheExtent,
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    double? cacheExtent,
+    ScrollCacheExtent? scrollCacheExtent,
     super.clipBehavior,
     this._alignment = Alignment.topLeft,
     this._textDirection,
@@ -47,7 +52,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
              horizontalAxisDirection == AxisDirection.right,
        ),
        // This is fixed as there is currently only one traversal pattern, https://github.com/flutter/flutter/issues/148357
-       super(mainAxis: Axis.vertical);
+       super(
+         mainAxis: Axis.vertical,
+         scrollCacheExtent:
+             scrollCacheExtent ??
+             (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null),
+       );
 
   @override
   TreeRowDelegateMixin get delegate => super.delegate as TreeRowDelegateMixin;
@@ -131,9 +141,27 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   int? _firstRow;
   int? _lastRow;
   double _furthestHorizontalExtent = 0.0;
+
+  // The cache extent in pixels along the vertical axis, clamped to be
+  // non-negative (and treating NaN, such as infinity * 0 on a zero-sized
+  // viewport, as 0) so invalid values cannot invert the leading and trailing
+  // layout bounds.
+  double get _cacheExtent {
+    final double raw = switch (scrollCacheExtent.style) {
+      CacheExtentStyle.pixel => scrollCacheExtent.value,
+      CacheExtentStyle.viewport => scrollCacheExtent.value * viewportDimension.height,
+    };
+    return raw > 0.0 ? raw : 0.0;
+  }
+
+  // Where row layout begins, potentially outside of the visible area.
+  double get _targetLeadingRowPixel {
+    return clampDouble(verticalOffset.pixels - _cacheExtent, 0.0, double.infinity);
+  }
+
   // How far rows should be laid out in a given frame.
-  double get _targetRowPixel {
-    return cacheExtent + verticalOffset.pixels + viewportDimension.height;
+  double get _targetTrailingRowPixel {
+    return _cacheExtent + verticalOffset.pixels + viewportDimension.height;
   }
 
   // Whether or not there is visual overflow in the viewport.
@@ -225,7 +253,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     var totalAnimatingOffset = 0.0;
     // We animate only a portion of children that would be visible/in the cache
     // extent, unless all animating children would fit on the screen.
-    while (currentIndex <= lastIndex && currentPosition < _targetRowPixel) {
+    while (currentIndex <= lastIndex && currentPosition < _targetTrailingRowPixel) {
       _Span? span = _rowMetrics.remove(currentIndex);
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
@@ -287,10 +315,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         animationOffset: totalAnimationOffset,
       );
       newRowMetrics[row] = span;
-      if (span.trailingOffset >= verticalOffset.pixels && _firstRow == null) {
+      if (span.trailingOffset >= _targetLeadingRowPixel && _firstRow == null) {
         _firstRow = row;
       }
-      if (span.trailingOffset - totalAnimationOffset >= _targetRowPixel && _lastRow == null) {
+      if (span.trailingOffset - totalAnimationOffset >= _targetTrailingRowPixel &&
+          _lastRow == null) {
         _lastRow = row;
       }
       startOfRow = span.trailingOffset;
@@ -310,10 +339,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     _lastRow = null;
     for (var row = 0; row < _rowMetrics.length; row++) {
       final double endOfRow = _rowMetrics[row]!.trailingOffset;
-      if (endOfRow >= verticalOffset.pixels && _firstRow == null) {
+      if (endOfRow >= _targetLeadingRowPixel && _firstRow == null) {
         _firstRow = row;
       }
-      if (endOfRow >= _targetRowPixel && _lastRow == null) {
+      if (endOfRow >= _targetTrailingRowPixel && _lastRow == null) {
         _lastRow = row;
         break;
       }

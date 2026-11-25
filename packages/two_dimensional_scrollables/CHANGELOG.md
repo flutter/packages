@@ -1,5 +1,8 @@
-## NEXT
+## 0.5.7
 
+* Deprecates `cacheExtent` in favor of `scrollCacheExtent` on `TableView`, `TreeView`,
+  and their viewports (with `dart fix` support and `ScrollCacheExtent` re-exported).
+* Fixes missing leading cache extent in `TreeView`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.5.6

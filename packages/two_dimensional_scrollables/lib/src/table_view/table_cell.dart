@@ -106,9 +106,9 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
 /// same [child], [columnMergeStart] as 1, and [columnMergeSpan] as 3 for all
 /// three [TableVicinity]s (column 1, 2, and 3). If the merge information is
 /// only provided for the first vicinity (column 1), and that vicinity is
-/// scrolled out of the viewport and [cacheExtent], the table will not know the
-/// following vicinities (column 2 and 3) are part of a merge and will "unmerge"
-/// them.
+/// scrolled out of the viewport and [TableView.scrollCacheExtent], the table
+/// will not know the following vicinities (column 2 and 3) are part of a merge
+/// and will "unmerge" them.
 class TableViewCell extends StatelessWidget {
   /// Creates a widget that controls how a child of a [TableView] spans across
   /// multiple rows or columns.
