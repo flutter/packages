@@ -297,6 +297,64 @@ struct ImagePickerPluginTests {
     #expect(error == nil)
   }
 
+  /// Waits for an operation on the main queue without blocking the main queue.
+  private func waitUntilFinished(_ operation: Operation) async throws {
+    for _ in 0..<500 where !operation.isFinished {
+      try await Task.sleep(nanoseconds: 10_000_000)
+    }
+    #expect(operation.isFinished)
+  }
+
+  @Test func copyFinishingAfterSecondPickDoesNotAnswerSecondPick() async throws {
+    let pngURL = try #require(
+      ImagePickerTestImages.bundle.url(forResource: "pngImage", withExtension: "png"))
+    func makePNGItem() -> FakePickerItem {
+      FakePickerItem(itemProvider: NSItemProvider(contentsOf: pngURL)!, assetIdentifier: nil)
+    }
+    let picker = PHPickerViewController(configuration: PHPickerConfiguration())
+    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+
+    var firstErrors: [PigeonError?] = []
+    plugin.callContext = ImagePickerMethodCallContext { _, error in
+      firstErrors.append(error)
+    }
+    // The first picker closes and starts copying. The copy sends its result on
+    // the main queue, so it cannot finish before this test yields the main queue.
+    let firstCopy = try #require(
+      plugin.processPickerResults([makePNGItem()], from: picker))
+
+    // A second pick call arrives while the first copy is still running.
+    var secondResults: [Result<[String], Error>] = []
+    plugin.pickMultiImage(
+      maxSize: MaxSize(), imageQuality: nil, requestFullMetadata: false, limit: nil
+    ) { result in
+      secondResults.append(result)
+    }
+    let secondContext = try #require(plugin.callContext)
+
+    try await waitUntilFinished(firstCopy)
+
+    // The first call was cancelled once, and its files did not reach the second call.
+    #expect(firstErrors.count == 1)
+    #expect(firstErrors.first??.code == "multiple_request")
+    #expect(secondResults.isEmpty)
+    #expect(plugin.callContext === secondContext)
+
+    // The second picker's own selection still answers the second call.
+    let secondCopy = try #require(
+      plugin.processPickerResults([makePNGItem(), makePNGItem()], from: picker))
+    try await waitUntilFinished(secondCopy)
+
+    #expect(secondResults.count == 1)
+    if case .success(let paths) = secondResults.first {
+      #expect(paths.count == 2)
+    } else {
+      Issue.record(
+        "Expected the second pick's files, got \(String(describing: secondResults.first))")
+    }
+    #expect(firstErrors.count == 1)
+  }
+
   @Test func pickImageDoesntRequestAuthorization() {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
     let photo = FakePhotoLibraryPermissionChecker()

@@ -475,12 +475,18 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
   }
 
   /// Processes picker results. Exposed for tests that cannot construct PHPickerResult.
+  ///
+  /// Returns the main-queue operation that sends the result, or nil if the result
+  /// was sent synchronously, so tests can wait for it to finish.
   @available(iOS 14, *)
-  func processPickerResults(_ results: [PickerItem], from picker: PHPickerViewController) {
+  @discardableResult
+  func processPickerResults(
+    _ results: [PickerItem], from picker: PHPickerViewController
+  ) -> Operation? {
     picker.dismiss(animated: true, completion: nil)
     if results.isEmpty {
       sendCallResult(withSavedPathList: nil)
-      return
+      return nil
     }
     var saveQueue: OperationQueue? = OperationQueue()
     saveQueue?.name = "Flutter Save Image Queue"
@@ -499,6 +505,14 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     let lock = NSLock()
 
     let sendListOperation = BlockOperation {
+      // The picker is dismissed before the copy finishes, so the app can make
+      // another pick call while it runs. That call answers this one with
+      // `multiple_request` and replaces `callContext`. These files belong to
+      // this call, not that one, so they must not be sent to it.
+      guard let currentCallContext, self.callContext === currentCallContext else {
+        saveQueue = nil
+        return
+      }
       lock.lock()
       let finishedError = saveError
       let finishedPaths = pathList
@@ -536,6 +550,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     }
 
     OperationQueue.main.addOperation(sendListOperation)
+    return sendListOperation
   }
 
   public func imagePickerController(

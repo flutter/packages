@@ -1,3 +1,7 @@
+## 0.8.13+17
+
+* Fixes a pick call made while a previous pick's files are still being copied receiving that previous pick's files.
+
 ## 0.8.13+16
 
 * Returns an `invalid_image` error instead of an empty or missing file when a picked image cannot be saved.
