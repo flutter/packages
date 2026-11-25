@@ -193,14 +193,16 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    `android screen capture --device=<serial> -o <file>.png`, saved to a scratch
    directory outside the repository. A screenshot can show that the preview is
    visible (not black), that it is rotated by 90° or 180°, or that a control or
-   error appeared. To tell whether the preview is live or frozen, take two
+   error appeared. To tell whether the preview is live or frozen, take several
    screenshots of the front camera a few seconds apart (its test pattern changes
-   over time) and compare only the preview area, by viewing both or by diffing
-   that region. Do not compare whole files or hashes: the status bar clock
-   changes between screenshots. A screenshot cannot show aspect ratio,
-   mirroring, cropping, exposure, color, or frame rate: assert those in a test,
-   or report them as not verified. To check short-lived effects (e.g., a flash
-   when pausing), record the screen with
+   over time) and compare only the preview area, by viewing them or by diffing
+   that region. The pattern moves in steps and can sit still for a few seconds,
+   so before treating matching screenshots as frozen, confirm that the live
+   preview changes over the same interval. Do not compare whole files or hashes:
+   the status bar clock changes between screenshots. A screenshot cannot show
+   aspect ratio, mirroring, cropping, exposure, color, or frame rate: assert
+   those in a test, or report them as not verified. To check short-lived effects
+   (e.g., a flash when pausing), record the screen with
    `adb -s <serial> shell screenrecord --time-limit <sec> /sdcard/<name>.mp4`,
    pull it with `adb -s <serial> pull`, and inspect its frames (e.g., with
    `ffmpeg`, if it is installed).
