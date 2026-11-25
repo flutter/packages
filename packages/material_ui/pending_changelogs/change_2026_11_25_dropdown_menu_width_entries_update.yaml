@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `DropdownMenu` keeping the width computed from its first `dropdownMenuEntries` when the entries change.
+version: patch

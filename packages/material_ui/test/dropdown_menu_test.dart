@@ -791,6 +791,82 @@ void main() {
     );
   });
 
+  testWidgets('The width is updated when the menu entries change', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/197047.
+    Widget buildDropdownMenu(List<double> entryLabelWidths) {
+      return MaterialApp(
+        home: Scaffold(
+          body: DropdownMenu<int>(
+            dropdownMenuEntries: <DropdownMenuEntry<int>>[
+              for (final (int index, double labelWidth) in entryLabelWidths.indexed)
+                DropdownMenuEntry<int>(
+                  value: index,
+                  label: 'Entry $index',
+                  labelWidget: SizedBox(width: labelWidth),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    const menuEntryPadding = 24.0; // See _kDefaultHorizontalPadding.
+    const decorationStartGap = 4.0; // See _kInputStartGap.
+    const leadingWidth = 16.0;
+    const trailingWidth = 56.0;
+    const double extraWidth = leadingWidth + trailingWidth + menuEntryPadding + decorationStartGap;
+
+    double dropdownMenuWidth() => tester.getSize(find.byType(DropdownMenu<int>)).width;
+
+    await tester.pumpWidget(buildDropdownMenu(<double>[100, 200]));
+    expect(dropdownMenuWidth(), 200 + extraWidth);
+
+    // The widest entry is removed.
+    await tester.pumpWidget(buildDropdownMenu(<double>[100]));
+    expect(dropdownMenuWidth(), 100 + extraWidth);
+
+    // A wider entry is added.
+    await tester.pumpWidget(buildDropdownMenu(<double>[100, 300]));
+    expect(dropdownMenuWidth(), 300 + extraWidth);
+  });
+
+  testWidgets('The width is updated when the menu entries are provided after the first build', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/197047.
+    const double entryLabelWidth = 300;
+
+    Widget buildDropdownMenu(List<DropdownMenuEntry<int>> entries) {
+      return MaterialApp(
+        home: Scaffold(body: DropdownMenu<int>(dropdownMenuEntries: entries)),
+      );
+    }
+
+    await tester.pumpWidget(buildDropdownMenu(const <DropdownMenuEntry<int>>[]));
+    final double emptyWidth = tester.getSize(find.byType(DropdownMenu<int>)).width;
+    expect(emptyWidth, lessThan(entryLabelWidth));
+
+    await tester.pumpWidget(
+      buildDropdownMenu(const <DropdownMenuEntry<int>>[
+        DropdownMenuEntry<int>(
+          value: 0,
+          label: 'Flutter',
+          labelWidget: SizedBox(width: entryLabelWidth),
+        ),
+      ]),
+    );
+
+    const menuEntryPadding = 24.0; // See _kDefaultHorizontalPadding.
+    const decorationStartGap = 4.0; // See _kInputStartGap.
+    const leadingWidth = 16.0;
+    const trailingWidth = 56.0;
+
+    expect(
+      tester.getSize(find.byType(DropdownMenu<int>)).width,
+      entryLabelWidth + leadingWidth + trailingWidth + menuEntryPadding + decorationStartGap,
+    );
+  });
+
   testWidgets('The width is determined by the label when it is longer than menu entries', (
     WidgetTester tester,
   ) async {
