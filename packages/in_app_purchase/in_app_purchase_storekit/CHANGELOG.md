@@ -1,5 +1,6 @@
-## NEXT
+## 0.4.18
 
+* Adds `revocationDate` and `revocationReason` to `SK2Transaction`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.4.17

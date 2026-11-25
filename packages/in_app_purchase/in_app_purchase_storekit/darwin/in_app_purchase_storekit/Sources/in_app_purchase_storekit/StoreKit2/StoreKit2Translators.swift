@@ -197,6 +197,16 @@ extension Product.PurchaseResult {
 }
 
 @available(iOS 15.0, macOS 12.0, *)
+extension Transaction.RevocationReason {
+  func convertToPigeon() -> SK2RevocationReasonMessage {
+    return switch self {
+    case .developerIssue: .developerIssue
+    default: .other
+    }
+  }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
 extension Transaction {
   func convertToPigeon(receipt: String?, status: SK2PurchaseStatusMessage) -> SK2TransactionMessage
   {
@@ -206,6 +216,8 @@ extension Transaction {
       productId: productID,
       purchaseDate: purchaseDate.timeIntervalSince1970,
       expirationDate: expirationDate.map { $0.timeIntervalSince1970 },
+      revocationDate: revocationDate.map { $0.timeIntervalSince1970 },
+      revocationReason: revocationReason?.convertToPigeon(),
       purchasedQuantity: Int64(purchasedQuantity),
       appAccountToken: appAccountToken?.uuidString,
       receiptData: receipt,

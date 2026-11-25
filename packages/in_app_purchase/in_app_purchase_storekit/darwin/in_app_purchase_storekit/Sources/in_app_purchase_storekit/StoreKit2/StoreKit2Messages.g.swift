@@ -222,6 +222,16 @@ enum SK2SubscriptionPeriodUnitMessage: Int, CaseIterable {
   case year = 3
 }
 
+/// The reason that the App Store refunded a transaction or revoked it from
+/// Family Sharing.
+enum SK2RevocationReasonMessage: Int, CaseIterable {
+  /// The customer canceled the transaction due to an actual or perceived issue
+  /// within the app.
+  case developerIssue = 0
+  /// The customer canceled the transaction for other reasons.
+  case other = 1
+}
+
 enum SK2ProductPurchaseResultMessage: Int, CaseIterable {
   case success = 0
   case unverified = 1
@@ -709,6 +719,8 @@ struct SK2TransactionMessage: Hashable, CustomStringConvertible {
   var productId: String
   var purchaseDate: Double? = nil
   var expirationDate: Double? = nil
+  var revocationDate: Double? = nil
+  var revocationReason: SK2RevocationReasonMessage? = nil
   var purchasedQuantity: Int64
   var appAccountToken: String? = nil
   var receiptData: String? = nil
@@ -725,12 +737,14 @@ struct SK2TransactionMessage: Hashable, CustomStringConvertible {
     let productId = pigeonVar_list[2] as! String
     let purchaseDate: Double? = nilOrValue(pigeonVar_list[3])
     let expirationDate: Double? = nilOrValue(pigeonVar_list[4])
-    let purchasedQuantity = pigeonVar_list[5] as! Int64
-    let appAccountToken: String? = nilOrValue(pigeonVar_list[6])
-    let receiptData: String? = nilOrValue(pigeonVar_list[7])
-    let error: SK2ErrorMessage? = nilOrValue(pigeonVar_list[8])
-    let jsonRepresentation: String? = nilOrValue(pigeonVar_list[9])
-    let status = pigeonVar_list[10] as! SK2PurchaseStatusMessage
+    let revocationDate: Double? = nilOrValue(pigeonVar_list[5])
+    let revocationReason: SK2RevocationReasonMessage? = nilOrValue(pigeonVar_list[6])
+    let purchasedQuantity = pigeonVar_list[7] as! Int64
+    let appAccountToken: String? = nilOrValue(pigeonVar_list[8])
+    let receiptData: String? = nilOrValue(pigeonVar_list[9])
+    let error: SK2ErrorMessage? = nilOrValue(pigeonVar_list[10])
+    let jsonRepresentation: String? = nilOrValue(pigeonVar_list[11])
+    let status = pigeonVar_list[12] as! SK2PurchaseStatusMessage
 
     return SK2TransactionMessage(
       id: id,
@@ -738,6 +752,8 @@ struct SK2TransactionMessage: Hashable, CustomStringConvertible {
       productId: productId,
       purchaseDate: purchaseDate,
       expirationDate: expirationDate,
+      revocationDate: revocationDate,
+      revocationReason: revocationReason,
       purchasedQuantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       receiptData: receiptData,
@@ -753,6 +769,8 @@ struct SK2TransactionMessage: Hashable, CustomStringConvertible {
       productId,
       purchaseDate,
       expirationDate,
+      revocationDate,
+      revocationReason,
       purchasedQuantity,
       appAccountToken,
       receiptData,
@@ -770,6 +788,8 @@ struct SK2TransactionMessage: Hashable, CustomStringConvertible {
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.productId, rhs.productId)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.purchaseDate, rhs.purchaseDate)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.expirationDate, rhs.expirationDate)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.revocationDate, rhs.revocationDate)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.revocationReason, rhs.revocationReason)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.purchasedQuantity, rhs.purchasedQuantity)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.appAccountToken, rhs.appAccountToken)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.receiptData, rhs.receiptData)
@@ -785,6 +805,8 @@ struct SK2TransactionMessage: Hashable, CustomStringConvertible {
     StoreKit2MessagesPigeonInternal.deepHash(value: productId, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: purchaseDate, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: expirationDate, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: revocationDate, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: revocationReason, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: purchasedQuantity, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: appAccountToken, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: receiptData, hasher: &hasher)
@@ -795,7 +817,7 @@ struct SK2TransactionMessage: Hashable, CustomStringConvertible {
 
   public var description: String {
     return
-      "SK2TransactionMessage(id: \(String(describing: id)), originalId: \(String(describing: originalId)), productId: \(String(describing: productId)), purchaseDate: \(String(describing: purchaseDate)), expirationDate: \(String(describing: expirationDate)), purchasedQuantity: \(String(describing: purchasedQuantity)), appAccountToken: \(String(describing: appAccountToken)), receiptData: \(String(describing: receiptData)), error: \(String(describing: error)), jsonRepresentation: \(String(describing: jsonRepresentation)), status: \(String(describing: status)))"
+      "SK2TransactionMessage(id: \(String(describing: id)), originalId: \(String(describing: originalId)), productId: \(String(describing: productId)), purchaseDate: \(String(describing: purchaseDate)), expirationDate: \(String(describing: expirationDate)), revocationDate: \(String(describing: revocationDate)), revocationReason: \(String(describing: revocationReason)), purchasedQuantity: \(String(describing: purchasedQuantity)), appAccountToken: \(String(describing: appAccountToken)), receiptData: \(String(describing: receiptData)), error: \(String(describing: error)), jsonRepresentation: \(String(describing: jsonRepresentation)), status: \(String(describing: status)))"
   }
 }
 
@@ -876,34 +898,40 @@ private class StoreKit2MessagesPigeonCodecReader: FlutterStandardReader {
     case 133:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return SK2ProductPurchaseResultMessage(rawValue: enumResultAsInt)
+        return SK2RevocationReasonMessage(rawValue: enumResultAsInt)
       }
       return nil
     case 134:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return SK2PurchaseStatusMessage(rawValue: enumResultAsInt)
+        return SK2ProductPurchaseResultMessage(rawValue: enumResultAsInt)
       }
       return nil
     case 135:
-      return SK2SubscriptionOfferMessage.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return SK2PurchaseStatusMessage(rawValue: enumResultAsInt)
+      }
+      return nil
     case 136:
-      return SK2SubscriptionPeriodMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferMessage.fromList(self.readValue() as! [Any?])
     case 137:
-      return SK2SubscriptionInfoMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionPeriodMessage.fromList(self.readValue() as! [Any?])
     case 138:
-      return SK2ProductMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionInfoMessage.fromList(self.readValue() as! [Any?])
     case 139:
-      return SK2PriceLocaleMessage.fromList(self.readValue() as! [Any?])
+      return SK2ProductMessage.fromList(self.readValue() as! [Any?])
     case 140:
-      return SK2SubscriptionOfferSignatureMessage.fromList(self.readValue() as! [Any?])
+      return SK2PriceLocaleMessage.fromList(self.readValue() as! [Any?])
     case 141:
-      return SK2SubscriptionOfferPurchaseMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferSignatureMessage.fromList(self.readValue() as! [Any?])
     case 142:
-      return SK2ProductPurchaseOptionsMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferPurchaseMessage.fromList(self.readValue() as! [Any?])
     case 143:
-      return SK2TransactionMessage.fromList(self.readValue() as! [Any?])
+      return SK2ProductPurchaseOptionsMessage.fromList(self.readValue() as! [Any?])
     case 144:
+      return SK2TransactionMessage.fromList(self.readValue() as! [Any?])
+    case 145:
       return SK2ErrorMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -925,41 +953,44 @@ private class StoreKit2MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? SK2SubscriptionPeriodUnitMessage {
       super.writeByte(132)
       super.writeValue(value.rawValue)
-    } else if let value = value as? SK2ProductPurchaseResultMessage {
+    } else if let value = value as? SK2RevocationReasonMessage {
       super.writeByte(133)
       super.writeValue(value.rawValue)
-    } else if let value = value as? SK2PurchaseStatusMessage {
+    } else if let value = value as? SK2ProductPurchaseResultMessage {
       super.writeByte(134)
       super.writeValue(value.rawValue)
-    } else if let value = value as? SK2SubscriptionOfferMessage {
+    } else if let value = value as? SK2PurchaseStatusMessage {
       super.writeByte(135)
-      super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionPeriodMessage {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? SK2SubscriptionOfferMessage {
       super.writeByte(136)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionInfoMessage {
+    } else if let value = value as? SK2SubscriptionPeriodMessage {
       super.writeByte(137)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ProductMessage {
+    } else if let value = value as? SK2SubscriptionInfoMessage {
       super.writeByte(138)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2PriceLocaleMessage {
+    } else if let value = value as? SK2ProductMessage {
       super.writeByte(139)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionOfferSignatureMessage {
+    } else if let value = value as? SK2PriceLocaleMessage {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionOfferPurchaseMessage {
+    } else if let value = value as? SK2SubscriptionOfferSignatureMessage {
       super.writeByte(141)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ProductPurchaseOptionsMessage {
+    } else if let value = value as? SK2SubscriptionOfferPurchaseMessage {
       super.writeByte(142)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2TransactionMessage {
+    } else if let value = value as? SK2ProductPurchaseOptionsMessage {
       super.writeByte(143)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ErrorMessage {
+    } else if let value = value as? SK2TransactionMessage {
       super.writeByte(144)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2ErrorMessage {
+      super.writeByte(145)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -997,8 +1028,7 @@ protocol InAppPurchase2API {
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func unfinishedTransactions(
     completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
-  func currentEntitlements(
-    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
+  func currentEntitlements(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func startListeningToTransactions() throws
   func stopListeningToTransactions() throws

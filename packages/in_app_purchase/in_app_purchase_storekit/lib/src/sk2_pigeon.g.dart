@@ -128,6 +128,17 @@ enum SK2SubscriptionOfferPaymentModeMessage { payAsYouGo, payUpFront, freeTrial 
 
 enum SK2SubscriptionPeriodUnitMessage { day, week, month, year }
 
+/// The reason that the App Store refunded a transaction or revoked it from
+/// Family Sharing.
+enum SK2RevocationReasonMessage {
+  /// The customer canceled the transaction due to an actual or perceived issue
+  /// within the app.
+  developerIssue,
+
+  /// The customer canceled the transaction for other reasons.
+  other,
+}
+
 enum SK2ProductPurchaseResultMessage { success, unverified, userCancelled, pending }
 
 /// The status of a purchase transaction.
@@ -658,6 +669,8 @@ class SK2TransactionMessage {
     required this.productId,
     this.purchaseDate,
     this.expirationDate,
+    this.revocationDate,
+    this.revocationReason,
     this.purchasedQuantity = 1,
     this.appAccountToken,
     this.receiptData,
@@ -675,6 +688,10 @@ class SK2TransactionMessage {
   double? purchaseDate;
 
   double? expirationDate;
+
+  double? revocationDate;
+
+  SK2RevocationReasonMessage? revocationReason;
 
   int purchasedQuantity;
 
@@ -697,6 +714,8 @@ class SK2TransactionMessage {
       productId,
       purchaseDate,
       expirationDate,
+      revocationDate,
+      revocationReason,
       purchasedQuantity,
       appAccountToken,
       receiptData,
@@ -718,12 +737,14 @@ class SK2TransactionMessage {
       productId: result[2]! as String,
       purchaseDate: result[3] as double?,
       expirationDate: result[4] as double?,
-      purchasedQuantity: result[5]! as int,
-      appAccountToken: result[6] as String?,
-      receiptData: result[7] as String?,
-      error: result[8] as SK2ErrorMessage?,
-      jsonRepresentation: result[9] as String?,
-      status: result[10]! as SK2PurchaseStatusMessage,
+      revocationDate: result[5] as double?,
+      revocationReason: result[6] as SK2RevocationReasonMessage?,
+      purchasedQuantity: result[7]! as int,
+      appAccountToken: result[8] as String?,
+      receiptData: result[9] as String?,
+      error: result[10] as SK2ErrorMessage?,
+      jsonRepresentation: result[11] as String?,
+      status: result[12]! as SK2PurchaseStatusMessage,
     );
   }
 
@@ -741,6 +762,8 @@ class SK2TransactionMessage {
         _deepEquals(productId, other.productId) &&
         _deepEquals(purchaseDate, other.purchaseDate) &&
         _deepEquals(expirationDate, other.expirationDate) &&
+        _deepEquals(revocationDate, other.revocationDate) &&
+        _deepEquals(revocationReason, other.revocationReason) &&
         _deepEquals(purchasedQuantity, other.purchasedQuantity) &&
         _deepEquals(appAccountToken, other.appAccountToken) &&
         _deepEquals(receiptData, other.receiptData) &&
@@ -755,7 +778,7 @@ class SK2TransactionMessage {
 
   @override
   String toString() {
-    return 'SK2TransactionMessage(id: $id, originalId: $originalId, productId: $productId, purchaseDate: $purchaseDate, expirationDate: $expirationDate, purchasedQuantity: $purchasedQuantity, appAccountToken: $appAccountToken, receiptData: $receiptData, error: $error, jsonRepresentation: $jsonRepresentation, status: $status)';
+    return 'SK2TransactionMessage(id: $id, originalId: $originalId, productId: $productId, purchaseDate: $purchaseDate, expirationDate: $expirationDate, revocationDate: $revocationDate, revocationReason: $revocationReason, purchasedQuantity: $purchasedQuantity, appAccountToken: $appAccountToken, receiptData: $receiptData, error: $error, jsonRepresentation: $jsonRepresentation, status: $status)';
   }
 }
 
@@ -828,41 +851,44 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is SK2SubscriptionPeriodUnitMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is SK2ProductPurchaseResultMessage) {
+    } else if (value is SK2RevocationReasonMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is SK2PurchaseStatusMessage) {
+    } else if (value is SK2ProductPurchaseResultMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferMessage) {
+    } else if (value is SK2PurchaseStatusMessage) {
       buffer.putUint8(135);
-      writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionPeriodMessage) {
+      writeValue(buffer, value.index);
+    } else if (value is SK2SubscriptionOfferMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionInfoMessage) {
+    } else if (value is SK2SubscriptionPeriodMessage) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ProductMessage) {
+    } else if (value is SK2SubscriptionInfoMessage) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is SK2PriceLocaleMessage) {
+    } else if (value is SK2ProductMessage) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionOfferSignatureMessage) {
+    } else if (value is SK2PriceLocaleMessage) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionOfferPurchaseMessage) {
+    } else if (value is SK2SubscriptionOfferSignatureMessage) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ProductPurchaseOptionsMessage) {
+    } else if (value is SK2SubscriptionOfferPurchaseMessage) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is SK2TransactionMessage) {
+    } else if (value is SK2ProductPurchaseOptionsMessage) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ErrorMessage) {
+    } else if (value is SK2TransactionMessage) {
       buffer.putUint8(144);
+      writeValue(buffer, value.encode());
+    } else if (value is SK2ErrorMessage) {
+      buffer.putUint8(145);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -886,29 +912,32 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : SK2SubscriptionPeriodUnitMessage.values[value];
       case 133:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
+        return value == null ? null : SK2RevocationReasonMessage.values[value];
       case 134:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2PurchaseStatusMessage.values[value];
+        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
       case 135:
-        return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : SK2PurchaseStatusMessage.values[value];
       case 136:
-        return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
       case 137:
-        return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
       case 138:
-        return SK2ProductMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
       case 139:
-        return SK2PriceLocaleMessage.decode(readValue(buffer)!);
+        return SK2ProductMessage.decode(readValue(buffer)!);
       case 140:
-        return SK2SubscriptionOfferSignatureMessage.decode(readValue(buffer)!);
+        return SK2PriceLocaleMessage.decode(readValue(buffer)!);
       case 141:
-        return SK2SubscriptionOfferPurchaseMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionOfferSignatureMessage.decode(readValue(buffer)!);
       case 142:
-        return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionOfferPurchaseMessage.decode(readValue(buffer)!);
       case 143:
-        return SK2TransactionMessage.decode(readValue(buffer)!);
+        return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
       case 144:
+        return SK2TransactionMessage.decode(readValue(buffer)!);
+      case 145:
         return SK2ErrorMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

@@ -156,6 +156,66 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [transactionExpectation], timeout: purchaseTimeout)
   }
 
+  func testGetTransactionsReportsRevocation() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let purchaseUpdateExpectation = self.expectation(
+      description: "Purchase transaction update should be received")
+    let transactionExpectation = self.expectation(
+      description: "Getting transactions should succeed")
+
+    callback.onUpdateExpectation = purchaseUpdateExpectation
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+        purchaseExpectation.fulfill()
+        purchaseUpdateExpectation.fulfill()
+      }
+    }
+
+    await fulfillment(
+      of: [purchaseExpectation, purchaseUpdateExpectation], timeout: purchaseTimeout)
+
+    var transactionId: Int64?
+    plugin.transactions {
+      result in
+      switch result {
+      case .success(let transactions):
+        XCTAssertEqual(transactions.count, 1)
+        XCTAssertNil(transactions.first?.revocationDate)
+        XCTAssertNil(transactions.first?.revocationReason)
+        transactionId = transactions.first?.id
+        transactionExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Getting transactions should NOT fail. Failed with \(error)")
+        transactionExpectation.fulfill()
+      }
+    }
+    await fulfillment(of: [transactionExpectation], timeout: purchaseTimeout)
+
+    try session.refundTransaction(identifier: UInt(try XCTUnwrap(transactionId)))
+
+    // StoreKit applies the refund asynchronously, so wait until it is reported.
+    var revokedTransaction: SK2TransactionMessage?
+    let deadline = Date().addingTimeInterval(purchaseTimeout)
+    while revokedTransaction == nil && Date() < deadline {
+      let transactions = try await withCheckedThrowingContinuation {
+        (continuation: CheckedContinuation<[SK2TransactionMessage], Error>) in
+        plugin.transactions { result in continuation.resume(with: result) }
+      }
+      revokedTransaction = transactions.first { $0.revocationDate != nil }
+      if revokedTransaction == nil {
+        try await Task.sleep(nanoseconds: 100_000_000)
+      }
+    }
+
+    XCTAssertEqual(revokedTransaction?.id, transactionId)
+    XCTAssertNotNil(revokedTransaction?.revocationDate)
+    XCTAssertNotNil(revokedTransaction?.revocationReason)
+  }
+
   func testGetCurrentEntitlements() async throws {
     let subscriptionExpectation = self.expectation(
       description: "Subscription purchase should succeed")
