@@ -49,7 +49,7 @@ reproduce a bug, try it on the emulator before deciding.
 
 Do these steps in order. If a step says to stop, stop and tell the user what is
 required. Ask the user before installing or updating tools or creating AVDs,
-even though the [android-cli](../android-cli/SKILL.md) skill lists commands
+even though the `android-cli` skill lists commands
 for these: they change the user's machine and can download gigabytes. If a
 step fails, report it instead of working around it with other tools, so the
 user learns about the broken setup.
@@ -169,7 +169,7 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    Confirm it is still running with
    `adb -s <serial> shell pidof io.flutter.plugins.cameraxexample`. If that
    prints nothing, the app crashed; read `adb -s <serial> logcat -d -b crash`.
-2. **Interact with it** using the [android-cli](../android-cli/SKILL.md) skill
+2. **Interact with it** using the `android-cli` skill
    (`android layout`, `android input`). Flutter widgets appear in
    `android layout` through their accessibility semantics, so a widget only has
    text or a description if it sets one (e.g., a tooltip). The example app's
