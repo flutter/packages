@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
+import android.os.Build;
 import android.util.Range;
 import android.view.Surface;
 import androidx.annotation.NonNull;
@@ -57,7 +58,7 @@ class PreviewProxyApi extends PigeonApiPreview {
     // mirror mode of the Preview can only be set before it is built and depends on it.
     final TextureRegistry.SurfaceProducer surfaceProducer =
         getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
-    if (!surfaceProducer.handlesCropAndRotation()) {
+    if (shouldDisableMirroring(surfaceProducer)) {
       // An ImageReader backed SurfaceProducer ignores the camera transform, so buffers from the
       // camera are never mirrored. Turning off mirroring makes CameraX not mirror the buffers it
       // copies for stream sharing either, so both look the same while CameraX switches between
@@ -126,6 +127,17 @@ class PreviewProxyApi extends PigeonApiPreview {
             + " the camera preview has not yet been initialized.");
   }
 
+  @Override
+  public boolean isMirroringDisabled(@NonNull Preview pigeonInstance) {
+    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeonInstance);
+    if (surfaceProducer != null) {
+      return shouldDisableMirroring(surfaceProducer);
+    }
+    throw new IllegalStateException(
+        "isMirroringDisabled() cannot be called if the flutterSurfaceProducer for the camera"
+            + " preview has not yet been initialized.");
+  }
+
   @Nullable
   @Override
   public ResolutionInfo getResolutionInfo(Preview pigeonInstance) {
@@ -135,6 +147,13 @@ class PreviewProxyApi extends PigeonApiPreview {
   @Override
   public void setTargetRotation(Preview pigeonInstance, long rotation) {
     pigeonInstance.setTargetRotation((int) rotation);
+  }
+
+  // Preview.Builder.setMirrorMode has no effect below API 33, where CameraX keeps mirroring front
+  // camera previews.
+  private boolean shouldDisableMirroring(@NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
+    return !surfaceProducer.handlesCropAndRotation()
+        && getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.TIRAMISU);
   }
 
   @NonNull

@@ -3505,6 +3505,13 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
       pigeon_instance: androidx.camera.core.Preview
   ): Boolean
 
+  /**
+   * Returns whether or not CameraX mirroring is turned off for this `Preview`, in which case
+   * CameraX does not mirror the preview buffers it copies (like for stream sharing), even for front
+   * cameras.
+   */
+  abstract fun isMirroringDisabled(pigeon_instance: androidx.camera.core.Preview): Boolean
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiPreview?) {
@@ -3650,6 +3657,28 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
             val wrapped: List<Any?> =
                 try {
                   listOf(api.surfaceProducerHandlesCropAndRotation(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.Preview.isMirroringDisabled",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.Preview
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isMirroringDisabled(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)
                 }

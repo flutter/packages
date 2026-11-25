@@ -3,6 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'dart:async' as _i5;
 import 'dart:typed_data' as _i7;
 
@@ -1635,6 +1636,15 @@ class MockPreview extends _i1.Mock implements _i2.Preview {
   _i5.Future<bool> surfaceProducerHandlesCropAndRotation() =>
       (super.noSuchMethod(
             Invocation.method(#surfaceProducerHandlesCropAndRotation, []),
+            returnValue: _i5.Future<bool>.value(false),
+            returnValueForMissingStub: _i5.Future<bool>.value(false),
+          )
+          as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> isMirroringDisabled() =>
+      (super.noSuchMethod(
+            Invocation.method(#isMirroringDisabled, []),
             returnValue: _i5.Future<bool>.value(false),
             returnValueForMissingStub: _i5.Future<bool>.value(false),
           )

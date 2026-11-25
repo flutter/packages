@@ -33,12 +33,14 @@ void main() {
   });
 
   /// Creates a [RotatedPreview] of a back camera with a sensor orientation of
-  /// 90 degrees whose surface is backed by an `ImageReader`, with a target
+  /// 90 degrees whose surface is backed by an `ImageReader` with CameraX
+  /// mirroring turned off, with a target
   /// rotation of 0 degrees, created in portrait with a display rotation of 0
   /// degrees.
   Widget createRotatedPreview({TransformationInfo? initialTransformationInfo}) {
     return RotatedPreview(
       handlesCropAndRotation: false,
+      previewMirroringDisabled: true,
       initialDeviceOrientation: DeviceOrientation.portraitUp,
       initialDefaultDisplayRotation: Surface.rotation0,
       deviceOrientationStream: deviceOrientationStreamController.stream,

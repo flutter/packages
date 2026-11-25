@@ -31,6 +31,7 @@ final class RotatedPreview extends StatefulWidget {
   const RotatedPreview({
     super.key,
     required this.handlesCropAndRotation,
+    required this.previewMirroringDisabled,
     required this.initialDeviceOrientation,
     required this.initialDefaultDisplayRotation,
     required this.deviceOrientationStream,
@@ -49,6 +50,12 @@ final class RotatedPreview extends StatefulWidget {
   ///
   /// This is determined when the camera is created and does not change.
   final bool handlesCropAndRotation;
+
+  /// Whether or not CameraX mirroring is turned off for the `Preview` of the
+  /// camera preview (see `PreviewProxyApi.java`).
+  ///
+  /// This is determined when the camera is created and does not change.
+  final bool previewMirroringDisabled;
 
   /// The initial orientation of the device when the camera is created.
   final DeviceOrientation initialDeviceOrientation;
@@ -188,9 +195,7 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
       sensorOrientationDegrees: widget.sensorOrientationDegrees.toInt(),
       displayRotation: defaultDisplayRotation,
       previewTargetRotation: widget.previewTargetRotation,
-      // The Preview of an ImageReader backed surface is created with CameraX
-      // mirroring turned off (see PreviewProxyApi.java).
-      previewMirroringDisabled: !widget.handlesCropAndRotation,
+      previewMirroringDisabled: widget.previewMirroringDisabled,
       deviceOrientation: _deviceOrientation,
     );
   }

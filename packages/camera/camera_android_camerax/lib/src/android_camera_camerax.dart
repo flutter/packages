@@ -297,6 +297,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// correcting the rotation of camera previews for the device this plugin runs on.
   late bool _handlesCropAndRotation;
 
+  /// Whether or not CameraX mirroring is turned off for the [preview], in which
+  /// case the front camera preview is mirrored by [RotatedPreview] instead.
+  late bool _previewMirroringDisabled;
+
   /// The initial orientation of the device when the camera is created.
   late DeviceOrientation _initialDeviceOrientation;
 
@@ -476,6 +480,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
     _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
+    _previewMirroringDisabled = await preview!.isMirroringDisabled();
 
     // Pin the Preview target rotation so that buffers CameraX copies for stream
     // sharing look the same as buffers from the camera directly.
@@ -1105,6 +1110,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     return RotatedPreview(
       key: ValueKey<int>(cameraId),
       handlesCropAndRotation: _handlesCropAndRotation,
+      previewMirroringDisabled: _previewMirroringDisabled,
       initialDeviceOrientation: _initialDeviceOrientation,
       initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
       deviceOrientationStream: deviceOrientationStream,

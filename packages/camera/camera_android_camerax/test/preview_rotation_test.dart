@@ -83,12 +83,16 @@ void main() {
   /// a DeviceORientationManager specified.
   ///
   /// Useful for tests that need a reference to a DeviceOrientationManager.
+  ///
+  /// [previewMirroringDisabled] defaults to whether CameraX mirroring is
+  /// turned off for the `Preview` on API 33+, where it can be.
   void setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
     DeviceOrientationManager deviceOrientationManager, {
     required MockProcessCameraProvider mockProcessCameraProvider,
     required CameraSelector Function({LensFacing? requireLensFacing, dynamic cameraInfoForFilter})
     createCameraSelector,
     required bool handlesCropAndRotation,
+    bool? previewMirroringDisabled,
   }) {
     PigeonOverrides.processCameraProvider_getInstance = () async => mockProcessCameraProvider;
     PigeonOverrides.cameraSelector_new = createCameraSelector;
@@ -102,6 +106,9 @@ void main() {
           when(
             preview.surfaceProducerHandlesCropAndRotation(),
           ).thenAnswer((_) async => handlesCropAndRotation);
+          when(
+            preview.isMirroringDisabled(),
+          ).thenAnswer((_) async => previewMirroringDisabled ?? !handlesCropAndRotation);
           when(
             preview.getResolutionInfo(),
           ).thenAnswer((_) async => ResolutionInfo.pigeon_detached(resolution: MockCameraSize()));
@@ -2034,6 +2041,7 @@ void main() {
       required bool isCameraFrontFacing,
       required int sensorRotationDegrees,
       required MockDeviceOrientationManager mockDeviceOrientationManager,
+      bool? previewMirroringDisabled,
     }) async {
       final camera = AndroidCameraCameraX();
       final mockCameraSelector = MockCameraSelector();
@@ -2050,6 +2058,7 @@ void main() {
             ? createCameraSelectorForFrontCamera(mockCameraSelector)
             : createCameraSelectorForBackCamera(mockCameraSelector),
         handlesCropAndRotation: handlesCropAndRotation,
+        previewMirroringDisabled: previewMirroringDisabled,
       );
 
       final List<CameraDescription> availableCameras = await camera.availableCameras();
@@ -2280,6 +2289,38 @@ void main() {
         rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
         expect(rotatedBox.quarterTurns, _270DegreesClockwise);
         expect(rotatedBox.child, isA<Transform>());
+      });
+
+      testWidgets('front camera previews copied by CameraX follow TransformationInfo.isMirroring '
+          'if CameraX mirroring could not be disabled', (WidgetTester tester) async {
+        // CameraX mirroring cannot be turned off below API 33.
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 50,
+          handlesCropAndRotation: false,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+          previewMirroringDisabled: false,
+        );
+
+        // Before any TransformationInfo is received: 270 + 0 = 270 degrees, mirrored.
+        RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+
+        // CameraX mirrors the buffer it copies and reports that it does not need
+        // mirroring, so it is rotated the opposite way and not mirrored again:
+        // 0 - (0 - 90) = 90 degrees.
+        sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _90DegreesClockwise);
+        expect(rotatedBox.child, isA<Texture>());
       });
     });
 

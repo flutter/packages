@@ -3462,6 +3462,30 @@ class Preview extends UseCase {
     return pigeonVar_replyValue! as bool;
   }
 
+  /// Returns whether or not CameraX mirroring is turned off for this
+  /// `Preview`, in which case CameraX does not mirror the preview buffers it
+  /// copies (like for stream sharing), even for front cameras.
+  Future<bool> isMirroringDisabled() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecPreview;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.Preview.isMirroringDisabled';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
   @override
   Preview pigeon_copy() {
     return Preview.pigeon_detached(

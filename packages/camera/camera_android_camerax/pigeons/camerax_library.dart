@@ -457,6 +457,11 @@ abstract class Preview extends UseCase {
   /// Returns whether or not the preview's surface producer handles correctly
   /// rotating the camera preview automatically.
   bool surfaceProducerHandlesCropAndRotation();
+
+  /// Returns whether or not CameraX mirroring is turned off for this
+  /// `Preview`, in which case CameraX does not mirror the preview buffers it
+  /// copies (like for stream sharing), even for front cameras.
+  bool isMirroringDisabled();
 }
 
 /// Transformation associated with the preview output.
