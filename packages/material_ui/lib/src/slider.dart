@@ -1021,6 +1021,8 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
       child: _SliderRenderObjectWidget(
         key: _renderObjectKey,
         value: _convert(widget.value),
+        min: widget.min,
+        max: widget.max,
         secondaryTrackValue: (widget.secondaryTrackValue != null)
             ? _convert(widget.secondaryTrackValue!)
             : null,
@@ -1110,6 +1112,8 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
   const _SliderRenderObjectWidget({
     super.key,
     required this.value,
+    required this.min,
+    required this.max,
     required this.secondaryTrackValue,
     required this.divisions,
     required this.label,
@@ -1128,6 +1132,8 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
   });
 
   final double value;
+  final double min;
+  final double max;
   final double? secondaryTrackValue;
   final int? divisions;
   final String? label;
@@ -1148,6 +1154,8 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
   _RenderSlider createRenderObject(BuildContext context) {
     return _RenderSlider(
       value: value,
+      min: min,
+      max: max,
       secondaryTrackValue: secondaryTrackValue,
       divisions: divisions,
       label: label,
@@ -1176,6 +1184,8 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
       // setter dependent on the `divisions`.
       ..divisions = divisions
       ..value = value
+      ..min = min
+      ..max = max
       ..secondaryTrackValue = secondaryTrackValue
       ..label = label
       ..sliderTheme = sliderTheme
@@ -1200,6 +1210,8 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
 class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
   _RenderSlider({
     required this._value,
+    required this._min,
+    required this._max,
     required this._secondaryTrackValue,
     required this._divisions,
     required this._label,
@@ -1338,6 +1350,26 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     } else {
       _state.positionController.value = convertedValue;
     }
+    markNeedsSemanticsUpdate();
+  }
+
+  double get min => _min;
+  double _min;
+  set min(double value) {
+    if (_min == value) {
+      return;
+    }
+    _min = value;
+    markNeedsSemanticsUpdate();
+  }
+
+  double get max => _max;
+  double _max;
+  set max(double value) {
+    if (_max == value) {
+      return;
+    }
+    _max = value;
     markNeedsSemanticsUpdate();
   }
 
@@ -2026,6 +2058,8 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       config.label = label!;
     }
     config.isSlider = true;
+    config.minValue = min.toString();
+    config.maxValue = max.toString();
     config.isFocusable = isInteractive;
     config.isFocused = hasFocus;
 
@@ -2053,6 +2087,16 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
           '${(clampDouble(value + _semanticActionUnit, 0.0, 1.0) * 100).round()}%';
       config.decreasedValue =
           '${(clampDouble(value - _semanticActionUnit, 0.0, 1.0) * 100).round()}%';
+    }
+
+    final double? numericValue = double.tryParse(config.value.replaceAll('%', ''));
+    final bool isValidValue =
+        numericValue != null &&
+        (config.value.contains('%')
+            ? (numericValue >= 0.0 && numericValue <= 100.0)
+            : (numericValue >= min && numericValue <= max));
+    if (min < max && isValidValue) {
+      config.role = SemanticsRole.slider;
     }
   }
 
