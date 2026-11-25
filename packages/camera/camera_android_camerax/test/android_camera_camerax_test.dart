@@ -1770,14 +1770,14 @@ void main() {
     when(mockPreview.setSurfaceProvider(any)).thenAnswer((_) async => testSurfaceTextureId);
     camera.processCameraProvider = mockProcessCameraProvider;
 
-    const List<ImageFormatGroup> imageFormatGroups = <ImageFormatGroup>[
+    const imageFormatGroups = <ImageFormatGroup>[
       ImageFormatGroup.unknown,
       ImageFormatGroup.yuv420,
       ImageFormatGroup.bgra8888,
       ImageFormatGroup.jpeg,
       ImageFormatGroup.nv21,
     ];
-    for (final ImageFormatGroup imageFormatGroup in imageFormatGroups) {
+    for (final imageFormatGroup in imageFormatGroups) {
       // Get CameraX image format constant for imageFormatGroup.
       final int? cameraXImageFormat = switch (imageFormatGroup) {
         ImageFormatGroup.yuv420 => AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
