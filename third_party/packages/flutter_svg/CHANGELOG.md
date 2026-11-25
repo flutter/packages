@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, and `feMerge`).
+
 ## 2.5.0
 
 * Adds `SvgLoader.provideSvgInIsolate`, which controls whether `provideSvg` runs
