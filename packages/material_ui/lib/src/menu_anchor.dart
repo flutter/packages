@@ -429,34 +429,10 @@ class MenuAnchor extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example shows how to use the [onAnimationStatusChanged] callback to
   /// create a [MenuAnchor] that will toggle between opening and closing.
   ///
-  /// ```dart
-  /// MenuAnchor(
-  ///   animated: true,
-  ///   onAnimationStatusChanged: (AnimationStatus status) {
-  ///     // Typically, animationStatus would be stored in a State object.
-  ///     animationStatus = status;
-  ///   },
-  ///   menuChildren: <Widget>[MenuItemButton(onPressed: () {}, child: const Text('Menu Item'))],
-  ///   builder: (BuildContext context, MenuController controller, Widget? child) {
-  ///     return IconButton(
-  ///       onPressed: () {
-  ///         if (animationStatus.isForwardOrCompleted) {
-  ///           controller.close();
-  ///         } else {
-  ///           controller.open();
-  ///         }
-  ///       },
-  ///       icon: const Icon(Icons.more_vert),
-  ///     );
-  ///   },
-  /// );
-  /// ```
+  /// {@example /example/lib/menu_anchor/menu_anchor.on_animation_status_changed.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
