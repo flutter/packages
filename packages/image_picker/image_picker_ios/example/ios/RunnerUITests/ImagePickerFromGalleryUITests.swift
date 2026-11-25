@@ -231,7 +231,9 @@ extension XCTestCase {
     // shows on the first request, which should be gated by the UserDefaults check above.
     // Just in case, make this check non-fatal.
     let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let allowButton = springboardApp.buttons["Allow"].firstMatch
+    // Dialog may have option "Allow" (iOS 27) or "Allow Full Access" (iOS 26) depending on iOS version.
+    let predicate = NSPredicate(format: "label BEGINSWITH 'Allow'")
+    let allowButton = springboardApp.alerts.buttons.matching(predicate).firstMatch
     if allowButton.waitForExistence(timeout: timeout) {
       allowButton.tap()
     }
