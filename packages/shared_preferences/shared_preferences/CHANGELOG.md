@@ -1,5 +1,6 @@
-## NEXT
+## 2.5.7
 
+* Clarifies key prefix behavior when migrating from `SharedPreferences`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.5.6
