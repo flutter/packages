@@ -35,3 +35,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/hello.txt
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  cross_file: {path: ../../../../packages/cross_file/cross_file}
+  cross_file_android: {path: ../../../../packages/cross_file/cross_file_android}
+  cross_file_darwin: {path: ../../../../packages/cross_file/cross_file_darwin}
+  cross_file_io: {path: ../../../../packages/cross_file/cross_file_io}
+  cross_file_platform_interface: {path: ../../../../packages/cross_file/cross_file_platform_interface}
+  cross_file_web: {path: ../../../../packages/cross_file/cross_file_web}

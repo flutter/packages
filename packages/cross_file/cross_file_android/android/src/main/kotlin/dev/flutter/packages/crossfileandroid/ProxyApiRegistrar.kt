@@ -9,9 +9,11 @@ import dev.flutter.packages.crossfileandroid.proxies.AndroidLibraryPigeonProxyAp
 import dev.flutter.packages.crossfileandroid.proxies.ContentResolverProxyApi
 import dev.flutter.packages.crossfileandroid.proxies.DocumentFileProxyApi
 import dev.flutter.packages.crossfileandroid.proxies.InputStreamProxyApi
+import dev.flutter.packages.crossfileandroid.proxies.OutputStreamProxyApi
 import dev.flutter.packages.crossfileandroid.proxies.PigeonApiContentResolver
 import dev.flutter.packages.crossfileandroid.proxies.PigeonApiDocumentFile
 import dev.flutter.packages.crossfileandroid.proxies.PigeonApiInputStream
+import dev.flutter.packages.crossfileandroid.proxies.PigeonApiOutputStream
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
@@ -31,5 +33,9 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
 
   override fun getPigeonApiInputStream(): PigeonApiInputStream {
     return InputStreamProxyApi(this)
+  }
+
+  override fun getPigeonApiOutputStream(): PigeonApiOutputStream {
+    return OutputStreamProxyApi(this)
   }
 }

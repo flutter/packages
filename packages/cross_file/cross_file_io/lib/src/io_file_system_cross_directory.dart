@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:path/path.dart' as path;
 
 import 'io_file_system_cross_file.dart';
 
@@ -64,6 +65,25 @@ base class IOFileSystemXDirectory extends PlatformFileSystemXDirectory
       }
     }
   }
+
+  @override
+  Future<PlatformXFile> createFile(PlatformCreateParams params) async {
+    var newFile = File(path.join(directory.path, params.name));
+    newFile = await newFile.create();
+
+    return IOFileSystemXFile(IOFileSystemXFileCreationParams.fromFile(newFile));
+  }
+
+  @override
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) async {
+    var newDirectory = Directory(path.join(directory.path, params.name));
+    newDirectory = await newDirectory.create();
+
+    return IOFileSystemXDirectory(IOFileSystemXDirectoryCreationParams.fromDirectory(newDirectory));
+  }
+
+  @override
+  Future<void> delete(PlatformDirectoryDeleteParams params) => directory.delete();
 }
 
 /// Provides platform-specific features for [IOFileSystemXDirectory].

@@ -39,5 +39,53 @@ void main() {
         ),
       );
     });
+
+    test('createFile', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      addTearDown(() => tempDir.deleteSync(recursive: true));
+
+      final directory = PlatformFileSystemXDirectory(
+        PlatformFileSystemXDirectoryCreationParams(tempDir.path),
+      );
+      final PlatformXFile file = await directory.createFile(
+        const PlatformCreateParams('new_file.txt'),
+      );
+
+      expect(await file.exists(), true);
+      expect(await file.name(), 'new_file.txt');
+    });
+
+    test('createDirectory', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      addTearDown(() => tempDir.deleteSync(recursive: true));
+
+      final directory = PlatformFileSystemXDirectory(
+        PlatformFileSystemXDirectoryCreationParams(tempDir.path),
+      );
+      final PlatformXDirectory subDir = await directory.createDirectory(
+        const PlatformCreateParams('new_dir'),
+      );
+
+      expect(await subDir.exists(), true);
+      final Directory ioDir = (subDir.extension! as IOFileSystemXDirectoryExtension).directory;
+      expect(path.basename(ioDir.path), 'new_dir');
+    });
+
+    test('delete', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      addTearDown(() {
+        if (tempDir.existsSync()) {
+          tempDir.deleteSync(recursive: true);
+        }
+      });
+
+      final directory = PlatformFileSystemXDirectory(
+        PlatformFileSystemXDirectoryCreationParams(tempDir.path),
+      );
+      expect(await directory.exists(), true);
+
+      await directory.delete(const PlatformDirectoryDeleteParams());
+      expect(await directory.exists(), false);
+    });
   });
 }

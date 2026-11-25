@@ -52,8 +52,12 @@ debugPrint('- URI: ${file.uri}');
 debugPrint('- Name: ${await file.name()}');
 
 if (await file.exists()) {
-  final String fileContent = await file.readAsString();
-  debugPrint('Content of the file: $fileContent');
+  try {
+    final String fileContent = await file.readAsString();
+    debugPrint('Content of the file: $fileContent');
+  } catch (exception) {
+    debugPrint('Failed to read from ${file.uri}');
+  }
 }
 ```
 
@@ -115,7 +119,11 @@ await file
     .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
     ?.startAccessingSecurityScopedResource();
 
-debugPrint(await file.readAsString());
+try {
+  debugPrint(await file.readAsString());
+} catch (exception) {
+  debugPrint('Failed to read from ${file.uri}');
+}
 
 if (file is ScopedStorageXFile) {
   await file.dispose();

@@ -37,6 +37,41 @@ base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirector
   }
 
   @override
+  Future<bool> canWrite() => _documentFile.canWrite();
+
+  @override
+  Future<PlatformXFile> createFile(PlatformCreateParams params) async {
+    final DocumentFile? file = await _documentFile.createFile(params.name);
+    if (file != null) {
+      final String uri = await file.getUri();
+      return AndroidScopedStorageXFile(PlatformScopedStorageXFileCreationParams(uri: uri));
+    }
+
+    throw Exception('Failed to create file in directory with uri: ${this.params.uri}');
+  }
+
+  @override
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) async {
+    final DocumentFile? file = await _documentFile.createDirectory(params.name);
+    if (file != null) {
+      final String uri = await file.getUri();
+      return AndroidScopedStorageXDirectory(
+        PlatformScopedStorageXDirectoryCreationParams(uri: uri),
+      );
+    }
+
+    throw Exception('Failed to create directory in directory with uri: ${this.params.uri}');
+  }
+
+  @override
+  Future<void> delete(PlatformDirectoryDeleteParams params) async {
+    final bool directoryDeleted = await _documentFile.delete();
+    if (!directoryDeleted) {
+      throw Exception('Failed to delete directory with uri: ${this.params.uri}');
+    }
+  }
+
+  @override
   Future<void> dispose() async {
     // Reference to the resource does not need to be released.
   }
