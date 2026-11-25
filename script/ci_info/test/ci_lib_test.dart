@@ -106,6 +106,92 @@ void main() {
     });
   });
 
+  group('fetchLog', () {
+    const url =
+        'https://logs.chromium.org/logs/flutter/buildbucket/cr-buildbucket/1/+/u/step/stdout';
+    late Directory tempCache;
+    late int requests;
+
+    setUp(() {
+      tempCache = Directory.systemTemp.createTempSync('ci_info_test_');
+      cacheDirOverride = tempCache.path;
+      requests = 0;
+    });
+
+    tearDown(() {
+      cacheDirOverride = null;
+      tempCache.deleteSync(recursive: true);
+    });
+
+    MockClient clientReturning(String body, int statusCode) {
+      return MockClient((http.Request request) async {
+        requests++;
+        expect(request.url.queryParameters['format'], 'raw');
+        return http.Response(body, statusCode);
+      });
+    }
+
+    test('returns and caches the log text', () async {
+      expect(await fetchLog(url, client: clientReturning('log text', 200)), 'log text');
+      expect(await fetchLog(url, client: clientReturning('other', 200)), 'log text');
+      expect(requests, 1);
+    });
+
+    test('treats a purged stream as missing', () async {
+      expect(
+        await fetchLog(url, client: clientReturning('stream path not found', 200)),
+        logMissing,
+      );
+    });
+
+    test('treats a 404 as missing without caching it', () async {
+      expect(await fetchLog(url, client: clientReturning('', 404)), logMissing);
+      expect(await fetchLog(url, client: clientReturning('log text', 200)), 'log text');
+      expect(requests, 2);
+    });
+
+    test('retries server errors', () async {
+      var attempt = 0;
+      final client = MockClient((http.Request request) async {
+        attempt++;
+        return attempt == 1 ? http.Response('busy', 503) : http.Response('log text', 200);
+      });
+
+      expect(await fetchLog(url, client: client), 'log text');
+      expect(attempt, 2);
+    });
+
+    test('does not cache a 403', () async {
+      expect(await fetchLog(url, client: clientReturning('', 403)), logInaccessible);
+      expect(await fetchLog(url, client: clientReturning('log text', 200)), 'log text');
+      expect(requests, 2);
+    });
+  });
+
+  group('stepLogUrl', () {
+    test('turns each step name part into a URL segment', () {
+      expect(
+        stepLogUrl('123', 'Run package tests|process logs (6)'),
+        'https://logs.chromium.org/logs/flutter/buildbucket/cr-buildbucket/'
+        '123/+/u/Run_package_tests/process_logs__6_/stdout?format=raw',
+      );
+    });
+  });
+
+  group('parseBuildTime', () {
+    test('accepts nanosecond precision', () {
+      expect(
+        parseBuildTime('2026-09-15T01:02:03.123456789Z'),
+        DateTime.utc(2026, 9, 15, 1, 2, 3, 123, 456),
+      );
+    });
+
+    test('returns null for missing or invalid times', () {
+      expect(parseBuildTime(null), isNull);
+      expect(parseBuildTime('not a time'), isNull);
+    });
+  });
+
   group('truncate', () {
     test('returns text unchanged when within maxLength', () {
       expect(truncate('hello', 10), 'hello');
