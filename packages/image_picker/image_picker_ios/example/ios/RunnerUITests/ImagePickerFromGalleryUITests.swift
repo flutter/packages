@@ -234,12 +234,16 @@ extension XCTestCase {
     // Dialog may have option "Allow" (iOS 27) or "Allow Full Access" (iOS 26) depending on iOS version.
     let predicate = NSPredicate(format: "label BEGINSWITH 'Allow'")
     let allowButton = springboardApp.alerts.buttons.matching(predicate).firstMatch
-    // Wait until both exists and hittable. If tapped while transitioning in, the tap may fail to dismiss.
-    let hittableExpectation = XCTNSPredicateExpectation(
-      predicate: NSPredicate(format: "exists == true AND isHittable == true"),
-      object: allowButton)
-    if XCTWaiter.wait(for: [hittableExpectation], timeout: timeout) == .completed {
-      allowButton.tap()
+    if allowButton.waitForExistence(timeout: timeout) {
+      // Keep trying to tap the button until the dialog is dismissed, in case tapping during the
+      // transition animation fails to dismiss it.
+      let deadline = Date().addingTimeInterval(timeout)
+      while allowButton.exists && Date() < deadline {
+        allowButton.tap()
+        if allowButton.waitForNonExistence(timeout: 1) {
+          break
+        }
+      }
     }
 
     // Wait until photo is done being added so UserDefaults is ensured to be updated.
