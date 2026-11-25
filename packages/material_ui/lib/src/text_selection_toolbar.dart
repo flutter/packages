@@ -680,6 +680,12 @@ class _RenderTextSelectionToolbarItemsLayout extends RenderBox
   }
 
   @override
+  bool paintsChild(RenderBox child) {
+    assert(child.parent == this);
+    return (child.parentData! as ToolbarItemsParentData).shouldPaint;
+  }
+
+  @override
   void paint(PaintingContext context, Offset offset) {
     visitChildren((RenderObject renderObjectChild) {
       final child = renderObjectChild as RenderBox;
