@@ -39,13 +39,11 @@ It cannot verify behavior that depends on specific hardware, for example:
   `SurfaceTexture` preview backend that API 28 uses, see 3b.
 
 If the behavior depends on specific hardware, it needs a physical device: tell
-the user, and do not claim it was verified. You may still run the example app
-to check that the change does not crash. If you are not sure whether the
-emulator can reproduce a bug, try it on the emulator before deciding.
-
-Otherwise, do the verification yourself, including plan steps labeled
-"manual" or addressed to the user, and plan verification that way when you
-write implementation plans.
+the user, and do not claim it was verified (you may still run the example app
+to check that the change does not crash). Otherwise, verify it yourself, even
+plan steps labeled "manual" or addressed to the user, and write
+implementation plans that way. If you are not sure whether the emulator can
+reproduce a bug, try it on the emulator before deciding.
 
 ## 2. Start an emulator
 
@@ -192,18 +190,17 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    write an integration test instead so it is repeatable. Do not add Flutter
    Driver to the example app.
 3. **For visual changes, include a screenshot as evidence** in your report:
-   `android screen capture --device=<serial> -o <file>.png`, saved to a
-   scratch directory outside the repository.
-   A screenshot can show that the preview is visible (not black), that it is
-   rotated by 90° or 180°, or that a control or error appeared. To tell whether
-   the preview is live or frozen, take two screenshots of the front camera a
-   few seconds apart (its test pattern changes over time) and compare only the
-   preview area, by viewing both or by diffing that region. Do not compare
-   whole files or hashes: the status bar clock changes between screenshots. A
-   screenshot
-   cannot show aspect ratio, mirroring, cropping, exposure, color, or frame
-   rate: assert those in a test, or report them as not verified. To check
-   short-lived effects (e.g., a flash when pausing), record the screen with
+   `android screen capture --device=<serial> -o <file>.png`, saved to a scratch
+   directory outside the repository. A screenshot can show that the preview is
+   visible (not black), that it is rotated by 90° or 180°, or that a control or
+   error appeared. To tell whether the preview is live or frozen, take two
+   screenshots of the front camera a few seconds apart (its test pattern changes
+   over time) and compare only the preview area, by viewing both or by diffing
+   that region. Do not compare whole files or hashes: the status bar clock
+   changes between screenshots. A screenshot cannot show aspect ratio,
+   mirroring, cropping, exposure, color, or frame rate: assert those in a test,
+   or report them as not verified. To check short-lived effects (e.g., a flash
+   when pausing), record the screen with
    `adb -s <serial> shell screenrecord --time-limit <sec> /sdcard/<name>.mp4`,
    pull it with `adb -s <serial> pull`, and inspect its frames (e.g., with
    `ffmpeg`, if it is installed).
@@ -240,6 +237,5 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    To confirm the switch took effect, open a camera and check that
    `adb -s <serial> logcat -d | grep 'Surface(name=android.graphics.SurfaceTexture'`
    prints a match. This covers the backend, not other API-level differences.
-   If those matter,
-   ask the user to approve an AVD with the API level you need (section 2,
-   step 3).
+   If those matter, ask the user to approve an AVD with the API level you need
+   (section 2, step 3).

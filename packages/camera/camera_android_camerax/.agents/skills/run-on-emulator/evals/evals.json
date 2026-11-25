@@ -43,7 +43,7 @@
     },
     {
       "id": 4,
-      "prompt": "An implementation plan for a camera preview change ends with the section below, and the change is already in the code. Handle this section and report back.\n\n## Manual Verification (user)\n1. Launch the example app on an emulator.\n2. Select the front camera.\n3. Pause the preview and confirm that it freezes.\n4. Resume the preview and confirm that it updates again.",
+      "prompt": "An implementation plan for a camera preview change ends with the section below, and the change is already in the code. Handle this section and report back.\n\nManual Verification (user):\n1. Launch the example app on an emulator.\n2. Select the front camera.\n3. Pause the preview and confirm that it freezes.\n4. Resume the preview and confirm that it updates again.",
       "expected_chat_output": [
         "The agent carried out the steps itself instead of handing them back to the user, despite the section being labeled for the user.",
         "The agent rebuilt the example app and launched it on an emulator (e.g., with 'android run').",
