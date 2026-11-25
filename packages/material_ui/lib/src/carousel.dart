@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'dart:async';
 /// @docImport 'color_scheme.dart';
 library;
 
@@ -136,6 +137,19 @@ import 'theme.dart';
 ///
 /// </callout-box>
 ///
+/// <callout-box>
+///
+/// This example shows how to create an auto-playing carousel by using a [Timer]
+/// to periodically animate the [CarouselController].
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/carousel/carousel.2.dart#body}
+///
+/// </callout-box>
+///
 /// See also:
 ///
 ///  * [CarouselController], which controls the first fully visible item in the
@@ -208,6 +222,21 @@ class CarouselView extends StatefulWidget {
   /// is particularly useful for achieving [Hero](https://m3.material.io/components/carousel/specs#b33a5579-d648-42a9-b934-98718d65454f)
   /// and [Center-aligned hero](https://m3.material.io/components/carousel/specs#92c779ce-de8b-4dee-8201-95d3e429204f)
   /// layouts indicated in the Material Design 3.
+  ///
+  /// <callout-box>
+  ///
+  /// This example shows how to create an auto-playing weighted carousel by using
+  /// a [Timer] to periodically animate the [CarouselController]. It tracks the
+  /// current item index using [onIndexChanged] to know exactly which item to
+  /// animate to next.
+  ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/carousel/carousel.2.dart#body}
+  ///
+  /// </callout-box>
   const CarouselView.weighted({
     super.key,
     this.padding,
@@ -2010,10 +2039,7 @@ class CarouselController extends ScrollController {
   double _getTargetOffset(_CarouselPosition position, int index, bool hasFlexWeights) {
     if (!hasFlexWeights) {
       final double targetInFirstCycle = index * _carouselState!._itemExtent!;
-      if (!_carouselState!.widget.infinite) {
-        return targetInFirstCycle;
-      }
-      return _adjustForInfiniteCycle(position, targetInFirstCycle);
+      return _resolveTargetOffset(position, targetInFirstCycle);
     }
 
     final _CarouselViewState carouselState = _carouselState!;
@@ -2032,8 +2058,18 @@ class CarouselController extends ScrollController {
     }
 
     final double targetInFirstCycle = dimension * (weights.first / totalWeight) * leadingIndex;
-    if (!carouselState.widget.infinite) {
-      return targetInFirstCycle;
+    return _resolveTargetOffset(position, targetInFirstCycle);
+  }
+
+  double _resolveTargetOffset(_CarouselPosition position, double targetInFirstCycle) {
+    if (!_carouselState!.widget.infinite) {
+      if (!position.hasContentDimensions) {
+        return targetInFirstCycle;
+      }
+      return math.min(
+        math.max(targetInFirstCycle, position.minScrollExtent),
+        position.maxScrollExtent,
+      );
     }
     return _adjustForInfiniteCycle(position, targetInFirstCycle);
   }
