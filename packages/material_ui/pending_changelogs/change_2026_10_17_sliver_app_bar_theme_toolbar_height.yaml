@@ -1,0 +1,4 @@
+changelog: |
+  - Makes `SliverAppBar`, `SliverAppBar.medium`, and `SliverAppBar.large` respect `AppBarThemeData.toolbarHeight` when `toolbarHeight` is not specified, matching `AppBar`.
+  - Fixes `SliverAppBar.medium` and `SliverAppBar.large` ignoring `toolbarHeight` when computing their collapsed height.
+version: minor
