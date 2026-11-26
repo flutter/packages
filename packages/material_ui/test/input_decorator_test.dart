@@ -8,6 +8,7 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -2094,6 +2095,69 @@ void main() {
         ),
       );
     });
+
+    // Regression test for https://github.com/flutter/flutter/issues/197397.
+    test(
+      'OutlineInputBorder draws the top right arc when the RTL gap starts inside the corner radius',
+      () {
+        const canvasRect = Rect.fromLTWH(0, 0, 200, 56);
+        const border = OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(50.0)));
+
+        // The border has height 56 and 1.0 stroke width, so center has height
+        // 55.0 and scaled corner radius 27.5. The top-right corner arc spans
+        // x from 172.0 (199.5 - 27.5) to 199.5, centered at (172.0, 28.0).
+        // With gapStart = 188.0, gapPadding = 4.0, gapExtent = 60.0, and
+        // gapPercentage = 0.1:
+        //   extent = (60.0 + 8.0) * 0.1 = 6.8
+        //   start  = 188.0 + 4.0 - 6.8 = 185.2
+        //   gapEnd = 192.0
+        // Both start (185.2) and gapEnd (192.0) lie inside the top-right corner.
+        Path? borderPath;
+        expect(
+          (Canvas canvas) => border.paint(
+            canvas,
+            canvasRect,
+            gapStart: 188.0,
+            gapExtent: 60.0,
+            gapPercentage: 0.1,
+            textDirection: TextDirection.rtl,
+          ),
+          paints..something((Symbol methodName, List<dynamic> arguments) {
+            if (methodName != #drawPath) {
+              return false;
+            }
+            borderPath = arguments[0] as Path;
+            return true;
+          }),
+        );
+
+        final samples = <Offset>[
+          for (final PathMetric metric in borderPath!.computeMetrics())
+            for (double d = 0.0; d <= metric.length; d += 0.25)
+              metric.getTangentForOffset(d)!.position,
+        ];
+        bool isOnBorder(Offset point) => samples.any((Offset s) => (s - point).distance < 0.5);
+
+        const cornerCenter = Offset(172.0, 28.0);
+        const strokeRadius = 27.5;
+        Offset pointOnTopRightArc(double degrees) =>
+            cornerCenter + Offset.fromDirection(degrees * math.pi / 180.0, strokeRadius);
+
+        // start = 185.2 is at ~298.7 degrees; gapEnd = 192.0 is at ~316.7 degrees.
+        // The top-right arc before the gap must be drawn.
+        expect(isOnBorder(pointOnTopRightArc(275.0)), isTrue);
+        expect(isOnBorder(pointOnTopRightArc(290.0)), isTrue);
+        // The part of the arc inside the gap must not be drawn.
+        expect(isOnBorder(pointOnTopRightArc(307.0)), isFalse);
+        // The top-right arc after the gap must be drawn.
+        expect(isOnBorder(pointOnTopRightArc(330.0)), isTrue);
+        expect(isOnBorder(pointOnTopRightArc(350.0)), isTrue);
+        // The top border must not continue as a straight horizontal line into the corner.
+        expect(isOnBorder(const Offset(180.0, 0.5)), isFalse);
+        // The straight portion of the top border is still drawn.
+        expect(isOnBorder(const Offset(100.0, 0.5)), isTrue);
+      },
+    );
 
     // Regression test for https://github.com/flutter/flutter/issues/82321.
     // Regression test for https://github.com/flutter/flutter/issues/150109.

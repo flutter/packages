@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes `OutlineInputBorder` drawing a straight top-right corner during RTL floating label animation when the gap starts inside the corner radius.
+version: patch
+
