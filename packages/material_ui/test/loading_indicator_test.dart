@@ -374,6 +374,30 @@ void main() {
     handle.dispose();
   });
 
+  testWidgets('LoadingIndicator has its own semantics node inside a button', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    await tester.pumpWidget(
+      buildApp(
+        FilledButton(
+          onPressed: () {},
+          child: const LoadingIndicator(value: 0.5, semanticsLabel: 'Progress'),
+        ),
+      ),
+    );
+
+    final SemanticsNode buttonNode = tester.getSemantics(find.byType(FilledButton));
+    final SemanticsNode indicatorNode = tester.getSemantics(find.byType(LoadingIndicator));
+    expect(indicatorNode.id, isNot(buttonNode.id));
+    expect(buttonNode.role, isNot(SemanticsRole.progressBar));
+    expect(buttonNode.flagsCollection.isButton, isTrue);
+    expect(indicatorNode.role, SemanticsRole.progressBar);
+    expect(indicatorNode.label, 'Progress');
+    expect(indicatorNode.value, '50');
+    handle.dispose();
+  });
+
   testWidgets('Determinate LoadingIndicator semantics', (WidgetTester tester) async {
     final SemanticsHandle handle = tester.ensureSemantics();
     await tester.pumpWidget(

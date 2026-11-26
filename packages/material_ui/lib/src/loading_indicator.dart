@@ -519,6 +519,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
     final isProgressBar = value != null;
 
     return Semantics(
+      container: true,
       label: widget.semanticsLabel,
       role: isProgressBar ? SemanticsRole.progressBar : SemanticsRole.loadingSpinner,
       minValue: isProgressBar ? '0' : null,
