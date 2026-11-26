@@ -861,21 +861,23 @@ void main() {
     test('LoadingIndicatorTemplateM3E emits M3E LoadingIndicator defaults from tokens', () {
       const template = LoadingIndicatorTemplateM3E();
       final String contents = _generateContents(template);
-      expect(template.className, '_LoadingIndicatorDefaultsM3E');
       expect(template.outputFileName, 'loading_indicator_defaults_m3e.g.dart');
       expect(
         contents,
         contains('class _LoadingIndicatorDefaultsM3E extends LoadingIndicatorThemeData'),
       );
+      expect(
+        contents,
+        contains('class _ContainedLoadingIndicatorDefaultsM3E extends LoadingIndicatorThemeData'),
+      );
       expect(contents, contains('containerShape: const StadiumBorder()'));
       expect(contents, contains('Color? get color => _colors.primary;'));
-      expect(contents, contains('Color? get containedColor => _colors.onPrimaryContainer;'));
+      expect(contents, contains('Color? get color => _colors.onPrimaryContainer;'));
       expect(contents, contains('Color? get containerColor => _colors.primaryContainer;'));
       expect(contents, contains('BoxConstraints get constraints => const BoxConstraints('));
       expect(contents, contains('minWidth: 48.0,'));
       expect(contents, contains('minHeight: 48.0,'));
-      expect(contents, contains('Size get containerSize => const Size(48.0, 48.0);'));
-      expect(contents, contains('double get activeIndicatorSize => 38.0;'));
+      expect(contents, contains('static const double activeIndicatorScale = 38.0 / 48.0;'));
     });
 
     test('MenuTemplateM3 emits M3 Menu defaults from tokens', () {

@@ -490,10 +490,9 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final LoadingIndicatorThemeData theme = LoadingIndicatorTheme.of(context);
-    final defaults = _LoadingIndicatorDefaultsM3E(context);
-    final Color color = widget._contained
-        ? widget.color ?? theme.color ?? defaults.containedColor!
-        : widget.color ?? theme.color ?? defaults.color!;
+    final LoadingIndicatorThemeData defaults = widget._contained
+        ? _ContainedLoadingIndicatorDefaultsM3E(context)
+        : _LoadingIndicatorDefaultsM3E(context);
 
     Widget result = CustomPaint(
       painter: _LoadingIndicatorPainter(
@@ -501,9 +500,8 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
         value: widget._effectiveValue,
         elapsed: _elapsed,
         indeterminateStartRotation: _indeterminateStartRotation,
-        color: color,
-        scaleFactor:
-            _scaleFactor * defaults.activeIndicatorSize / defaults.containerSize.shortestSide,
+        color: widget.color ?? theme.color ?? defaults.color!,
+        scaleFactor: _scaleFactor * _LoadingIndicatorDefaultsM3E.activeIndicatorScale,
       ),
     );
 
@@ -527,7 +525,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
       maxValue: isProgressBar ? '100' : null,
       value: isProgressBar ? '${(value * 100).round()}' : null,
       child: ConstrainedBox(
-        constraints: widget.constraints ?? theme.constraints ?? defaults.constraints,
+        constraints: widget.constraints ?? theme.constraints ?? defaults.constraints!,
         child: result,
       ),
     );

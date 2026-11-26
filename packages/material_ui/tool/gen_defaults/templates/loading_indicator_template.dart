@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+
 import '../data/loading_indicator.dart';
 import 'template.dart';
 
@@ -15,36 +17,49 @@ class LoadingIndicatorTemplateM3E extends TokenTemplateM3E {
   String get parentFilePath => 'loading_indicator.dart';
 
   @override
+  String get className => '';
+
+  @override
   String generateContents(String className) =>
       '''
-class $className extends LoadingIndicatorThemeData {
-  $className(this.context)
-    : super(containerShape: ${shape(TokenLoadingIndicator.containerShape)});
+class _LoadingIndicatorDefaultsM3E extends LoadingIndicatorThemeData {
+  _LoadingIndicatorDefaultsM3E(this.context);
 
   final BuildContext context;
-
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
   Color? get color => ${color(TokenLoadingIndicator.activeIndicatorColor)};
 
   @override
-  Color? get containedColor => ${color(TokenLoadingIndicator.containedActiveIndicatorColor)};
+  BoxConstraints get constraints => const BoxConstraints(
+    minWidth: ${TokenLoadingIndicator.containerWidth},
+    minHeight: ${TokenLoadingIndicator.containerHeight},
+  );
+
+  /// The size of the active indicator relative to the shortest side of the
+  /// loading indicator.
+  static const double activeIndicatorScale = ${TokenLoadingIndicator.activeIndicatorSize} / ${math.min(TokenLoadingIndicator.containerWidth, TokenLoadingIndicator.containerHeight)};
+}
+
+class _ContainedLoadingIndicatorDefaultsM3E extends LoadingIndicatorThemeData {
+  _ContainedLoadingIndicatorDefaultsM3E(this.context)
+    : super(containerShape: ${shape(TokenLoadingIndicator.containerShape)});
+
+  final BuildContext context;
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
+  @override
+  Color? get color => ${color(TokenLoadingIndicator.containedActiveIndicatorColor)};
 
   @override
   Color? get containerColor => ${color(TokenLoadingIndicator.containedContainerColor)};
 
   @override
   BoxConstraints get constraints => const BoxConstraints(
-    minWidth: ${number(TokenLoadingIndicator.containerWidth)},
-    minHeight: ${number(TokenLoadingIndicator.containerHeight)},
+    minWidth: ${TokenLoadingIndicator.containerWidth},
+    minHeight: ${TokenLoadingIndicator.containerHeight},
   );
-
-  /// The default size of the container that the active indicator is drawn in.
-  Size get containerSize => const Size(${number(TokenLoadingIndicator.containerWidth)}, ${number(TokenLoadingIndicator.containerHeight)});
-
-  /// The default size of the active indicator.
-  double get activeIndicatorSize => ${number(TokenLoadingIndicator.activeIndicatorSize)};
 }
 ''';
 }
