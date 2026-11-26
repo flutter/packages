@@ -561,6 +561,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// This is just exposed for testing. It shouldn't be used by anyone depending
   /// on the plugin.
+  ///
+  /// Returns [kUninitializedPlayerId] before the player has been created and
+  /// once [dispose] has started.
   @visibleForTesting
   int get playerId => _playerId;
 
@@ -698,6 +701,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return initializingCompleter.future;
   }
 
+  /// Releases the platform player and stops listening for its events.
+  ///
+  /// [playerId] goes back to [kUninitializedPlayerId] before the platform
+  /// player is released, so a [VideoPlayer] that still shows this controller
+  /// renders nothing on its next build instead of asking the platform for a
+  /// player that no longer exists.
+  ///
+  /// Calling this more than once has no further effect.
   @override
   Future<void> dispose() async {
     if (_isDisposed) {
@@ -709,8 +720,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (!_isDisposed) {
         _isDisposed = true;
         _timer?.cancel();
+        final int playerId = _playerId;
+        _playerId = kUninitializedPlayerId;
         await _eventSubscription?.cancel();
-        await _videoPlayerPlatform.dispose(_playerId);
+        await _videoPlayerPlatform.dispose(playerId);
       }
       _lifeCycleObserver?.dispose();
     }

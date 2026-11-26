@@ -588,8 +588,31 @@ void main() {
 
       await controller.dispose();
 
-      expect(controller.playerId, 0);
+      expect(controller.playerId, VideoPlayerController.kUninitializedPlayerId);
+      expect(fakeVideoPlayerPlatform.disposedPlayerIds, <int>[0]);
       expect(await controller.position, isNull);
+    });
+
+    testWidgets('VideoPlayer renders nothing while its controller is disposing', (
+      WidgetTester tester,
+    ) async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await tester.runAsync(controller.initialize);
+      await tester.pumpWidget(VideoPlayer(controller));
+      expect(find.byType(Texture), findsOneWidget);
+
+      final disposeGate = Completer<void>();
+      fakeVideoPlayerPlatform.disposeGate = disposeGate;
+      final Future<void> disposing = controller.dispose();
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      expect(fakeVideoPlayerPlatform.disposedPlayerIds, <int>[0]);
+      await tester.pumpWidget(VideoPlayer(controller));
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Texture), findsNothing);
+
+      disposeGate.complete();
+      await tester.runAsync(() => disposing);
     });
 
     test('calling dispose() on disposed controller does not throw', () async {
@@ -2063,6 +2086,8 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Completer<bool> initialized = Completer<bool>();
   Completer<void>? seekCompleter;
   List<String> calls = <String>[];
+  List<int> disposedPlayerIds = <int>[];
+  Completer<void>? disposeGate;
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
@@ -2117,6 +2142,8 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int playerId) async {
     calls.add('dispose');
+    disposedPlayerIds.add(playerId);
+    await disposeGate?.future;
   }
 
   @override
@@ -2183,6 +2210,9 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 
   @override
   Widget buildView(int playerId) {
+    if (disposedPlayerIds.contains(playerId)) {
+      throw StateError('No active player with ID $playerId.');
+    }
     return Texture(textureId: playerId);
   }
 

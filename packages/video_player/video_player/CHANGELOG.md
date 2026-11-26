@@ -1,5 +1,7 @@
-## NEXT
+## 2.14.2
 
+* Fixes a `StateError` ("No active player with ID") when a `VideoPlayer`
+  rebuilds while its controller is being disposed.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed iOS and macOS platform implementations.
   * Applications built with older versions of Flutter will continue to
