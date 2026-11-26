@@ -42,8 +42,7 @@ const Duration _kGlobalRotationDuration = Duration(milliseconds: 4666);
 /// the indicator its bounce.
 ///
 /// Unlike Compose, which stops the spring early and snaps it back to the end
-/// shape, the spring runs for the whole [_kMorphInterval], so that the
-/// overshoot settles smoothly.
+/// shape, the spring runs for the whole [_kMorphInterval].
 final SpringSimulation _kMorphSpring = SpringSimulation(
   SpringDescription.withDampingRatio(mass: 1, stiffness: 200, ratio: 0.6),
   0,
