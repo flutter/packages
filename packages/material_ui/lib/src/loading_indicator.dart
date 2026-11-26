@@ -423,7 +423,9 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
   }
 
   void _updateMorphs() {
-    _polygons = _effectivePolygons;
+    _polygons = widget.polygons == null
+        ? _effectivePolygons
+        : List<RoundedPolygon>.unmodifiable(widget.polygons!);
     assert(
       _polygons.length >= 2,
       'A LoadingIndicator needs at least two polygons to morph between, '

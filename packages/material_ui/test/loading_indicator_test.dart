@@ -323,6 +323,19 @@ void main() {
     expect(painterOf(tester).shouldRepaint(endPainter), isTrue);
   });
 
+  testWidgets('LoadingIndicator updates when its polygons list is changed in place', (
+    WidgetTester tester,
+  ) async {
+    final polygons = <RoundedPolygon>[MaterialShapes.square, MaterialShapes.triangle];
+
+    await tester.pumpWidget(buildApp(LoadingIndicator(value: 1.0, polygons: polygons)));
+    final CustomPainter painter = painterOf(tester);
+
+    polygons[1] = MaterialShapes.heart;
+    await tester.pumpWidget(buildApp(LoadingIndicator(value: 1.0, polygons: polygons)));
+    expect(painterOf(tester).shouldRepaint(painter), isTrue);
+  });
+
   testWidgets('LoadingIndicator asserts that it has at least two polygons', (
     WidgetTester tester,
   ) async {
