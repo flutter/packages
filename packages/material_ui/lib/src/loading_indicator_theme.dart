@@ -27,6 +27,9 @@ import 'theme.dart';
 ///
 /// See also:
 ///
+///  * [LoadingIndicator], which is the widget that this theme configures.
+///  * [LoadingIndicatorTheme], an [InheritedWidget] that propagates the theme
+///    down its subtree.
 ///  * [ThemeData], which describes the overall theme information for the
 ///    application.
 @immutable
@@ -71,6 +74,10 @@ class LoadingIndicatorThemeData with Diagnosticable {
   }
 
   /// Linearly interpolate between two loading indicator themes.
+  ///
+  /// If both arguments are null, then null is returned.
+  ///
+  /// {@macro dart.ui.shadow.lerp}
   static LoadingIndicatorThemeData? lerp(
     LoadingIndicatorThemeData? a,
     LoadingIndicatorThemeData? b,
@@ -124,6 +131,13 @@ class LoadingIndicatorThemeData with Diagnosticable {
 ///
 /// Values specified here are used for [LoadingIndicator] properties that are
 /// not given an explicit non-null value.
+///
+/// See also:
+///
+///  * [LoadingIndicatorThemeData], which describes the actual configuration of
+///    a loading indicator theme.
+///  * [ThemeData.loadingIndicatorTheme], which describes the defaults for any
+///    loading indicators as part of the application's [ThemeData].
 class LoadingIndicatorTheme extends InheritedTheme {
   /// Creates a theme that controls the configurations for [LoadingIndicator]s
   /// in this widget's subtree.
