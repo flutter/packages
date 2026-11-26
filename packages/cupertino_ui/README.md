@@ -87,7 +87,8 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-You can also wrap individual subtrees that contain legacy package widgets:
+You can also wrap individual subtrees that contain inline legacy package widgets
+that do not push routes onto `Navigator`:
 
 <?code-excerpt "readme_excerpts.dart (SubtreeUsage)"?>
 ```dart
@@ -98,6 +99,17 @@ CupertinoPageScaffold(
   child: CupertinoUiCompatibilityBridge(child: const LegacyPackageWidget()),
 )
 ```
+
+> **Note:** `CupertinoUiCompatibilityBridge` is marked `@Deprecated` to signal
+> that it is a temporary migration utility. If your project runs
+> `flutter analyze --fatal-infos`, add `// ignore: deprecated_member_use` where
+> it is used.
+>
+> Subtree placement does not provide `CupertinoLocalizations` to routes pushed
+> onto `Navigator` (such as dialogs, action sheets, pickers, or popup menus),
+> because `Navigator` routes only capture `InheritedTheme` widgets and not
+> `Localizations`. Use app-wide placement via `CupertinoApp.builder` if legacy
+> widgets push routes onto `Navigator`.
 
 ---
 

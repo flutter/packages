@@ -1,0 +1,4 @@
+changelog: |
+  - Maps `ThemeData.cupertinoOverrideTheme` in `MaterialUiCompatibilityBridge`.
+  - Documents `// ignore: deprecated_member_use` for `--fatal-infos` and clarifies that `Navigator` routes require `MaterialApp.builder`.
+version: patch

@@ -45,9 +45,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 /// }
 /// ```
 ///
-/// ## Subtree usage
+/// ## Subtree usage (inline widgets only)
 ///
-/// Alternatively, wrap specific legacy package widgets or subtrees:
+/// If legacy widgets do not push routes onto [Navigator] (no dialogs, action
+/// sheets, pickers, or popup menus), you can wrap individual subtrees:
 ///
 /// ```dart
 /// import 'package:cupertino_ui/cupertino_ui.dart';
@@ -69,6 +70,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 ///   }
 /// }
 /// ```
+///
+/// Note that subtree placement does not provide [legacy.CupertinoLocalizations]
+/// to routes pushed onto [Navigator], because [InheritedTheme.capture] only
+/// captures [InheritedTheme] widgets (such as [legacy.CupertinoTheme]) and not
+/// [Localizations]. Use app-wide placement in [modern.CupertinoApp.builder] if
+/// legacy widgets push routes onto [Navigator].
+///
+/// This is a temporary migration utility intended for use only while
+/// dependencies are being migrated to `package:cupertino_ui`, and is marked
+/// `@Deprecated` to indicate it will be removed in a future release. If your
+/// project runs `flutter analyze --fatal-infos`, suppress the diagnostic with
+/// `// ignore: deprecated_member_use`.
 @Deprecated(
   'CupertinoUiCompatibilityBridge is a temporary migration utility intended for use only while '
   'dependencies are being migrated to package:cupertino_ui. '

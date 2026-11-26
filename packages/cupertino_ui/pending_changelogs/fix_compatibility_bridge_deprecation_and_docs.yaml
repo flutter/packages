@@ -1,0 +1,3 @@
+changelog: |
+  - Documents `// ignore: deprecated_member_use` for `--fatal-infos` and clarifies that `Navigator` routes require `CupertinoApp.builder`.
+version: patch

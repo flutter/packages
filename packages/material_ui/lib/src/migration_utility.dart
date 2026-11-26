@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cupertino_ui/cupertino_ui.dart' as modern_cupertino;
+import 'package:flutter/cupertino.dart' as legacy_cupertino;
 import 'package:flutter/material.dart' as legacy;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -45,9 +47,10 @@ import 'package:material_ui/material_ui.dart' as modern; // ignore: prefer_relat
 /// }
 /// ```
 ///
-/// ## Subtree usage
+/// ## Subtree usage (inline widgets only)
 ///
-/// Alternatively, wrap specific legacy package widgets or subtrees:
+/// If legacy widgets do not push routes onto [Navigator] (no dialogs, pickers,
+/// bottom sheets, or popup menus), you can wrap individual subtrees:
 ///
 /// ```dart
 /// import 'package:material_ui/material_ui.dart';
@@ -67,6 +70,18 @@ import 'package:material_ui/material_ui.dart' as modern; // ignore: prefer_relat
 ///   }
 /// }
 /// ```
+///
+/// Note that subtree placement does not provide [legacy.MaterialLocalizations]
+/// to routes pushed onto [Navigator], because [InheritedTheme.capture] only
+/// captures [InheritedTheme] widgets (such as [legacy.Theme]) and not
+/// [Localizations]. Use app-wide placement in [modern.MaterialApp.builder] if
+/// legacy widgets open dialogs, pickers, bottom sheets, or popup menus.
+///
+/// This is a temporary migration utility intended for use only while
+/// dependencies are being migrated to `package:material_ui`, and is marked
+/// `@Deprecated` to indicate it will be removed in a future release. If your
+/// project runs `flutter analyze --fatal-infos`, suppress the diagnostic with
+/// `// ignore: deprecated_member_use`.
 @Deprecated(
   'MaterialUiCompatibilityBridge is a temporary migration utility intended for use only while '
   'dependencies are being migrated to package:material_ui. '
@@ -173,6 +188,43 @@ class MaterialUiCompatibilityBridge extends StatelessWidget {
         labelMedium: textTheme.labelMedium,
         labelSmall: textTheme.labelSmall,
       ),
+      cupertinoOverrideTheme: _mapCupertinoOverrideTheme(
+        modernTheme.cupertinoOverrideTheme,
+        modernTheme.colorScheme.primary,
+      ),
+    );
+  }
+
+  legacy_cupertino.NoDefaultCupertinoThemeData? _mapCupertinoOverrideTheme(
+    modern_cupertino.NoDefaultCupertinoThemeData? override,
+    Color fallbackPrimaryColor,
+  ) {
+    if (override == null) {
+      return null;
+    }
+    final modern_cupertino.CupertinoTextThemeData? textTheme = override.textTheme;
+    return legacy_cupertino.NoDefaultCupertinoThemeData(
+      brightness: override.brightness,
+      primaryColor: override.primaryColor,
+      primaryContrastingColor: override.primaryContrastingColor,
+      barBackgroundColor: override.barBackgroundColor,
+      scaffoldBackgroundColor: override.scaffoldBackgroundColor,
+      selectionHandleColor: override.selectionHandleColor,
+      applyThemeToAll: override.applyThemeToAll,
+      textTheme: textTheme == null
+          ? null
+          : legacy_cupertino.CupertinoTextThemeData(
+              primaryColor: override.primaryColor ?? fallbackPrimaryColor,
+              textStyle: textTheme.textStyle,
+              actionTextStyle: textTheme.actionTextStyle,
+              actionSmallTextStyle: textTheme.actionSmallTextStyle,
+              tabLabelTextStyle: textTheme.tabLabelTextStyle,
+              navTitleTextStyle: textTheme.navTitleTextStyle,
+              navLargeTitleTextStyle: textTheme.navLargeTitleTextStyle,
+              navActionTextStyle: textTheme.navActionTextStyle,
+              pickerTextStyle: textTheme.pickerTextStyle,
+              dateTimePickerTextStyle: textTheme.dateTimePickerTextStyle,
+            ),
     );
   }
 }
