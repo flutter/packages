@@ -218,6 +218,12 @@ class LoadingIndicator extends StatefulWidget {
 
   /// Defines minimum and maximum sizes for this loading indicator.
   ///
+  /// The loading indicator takes the smallest size that these constraints
+  /// allow, so both a minimum width and a minimum height should usually be
+  /// given. To keep a [LoadingIndicator.contained] from stretching inside a
+  /// parent that forces its width or height, consider wrapping it in a
+  /// [Center] or [Align] widget.
+  ///
   /// If null, then [LoadingIndicatorThemeData.constraints] is used. If that is
   /// also null, then a minimum width and height of 48.0 are used.
   final BoxConstraints? constraints;
