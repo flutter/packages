@@ -118,7 +118,7 @@ class RemoveDevDependenciesCommand extends PackageLoopingCommand {
           // A bare `library;` that lost all preceding @docImport directives fails
           // `unnecessary_library_directive`, so drop it as well.
           if ((updatedLines.isEmpty || updatedLines.last.trim().isEmpty) &&
-              i + 2 < lines.length &&
+              i + 1 < lines.length &&
               lines[i + 1].trim().isEmpty) {
             i += 2;
             continue;

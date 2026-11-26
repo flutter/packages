@@ -217,4 +217,25 @@ dev_dependencies:
     expect(output, containsAllInOrder(<Matcher>[contains('Removed dev_dependencies')]));
     expect(package.pubspecFile.readAsStringSync(), isNot(contains('dev_only:')));
   });
+
+  test('does not leave extra trailing empty line when removing bare library at EOF', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir, version: '1.0.0');
+
+    addToPubspec(package, '''
+dev_dependencies:
+  dev_only: ^1.0.0
+''');
+
+    final File trailingLibrary = package.libDirectory.childFile('trailing_library.dart');
+    trailingLibrary.writeAsStringSync(
+      '// Copyright header\n'
+      '\n'
+      "/// @docImport 'package:dev_only/dev_only.dart';\n"
+      'library;\n',
+    );
+
+    await runCapturingPrint(runner, <String>['remove-dev-dependencies']);
+
+    expect(trailingLibrary.readAsStringSync(), '// Copyright header\n');
+  });
 }
