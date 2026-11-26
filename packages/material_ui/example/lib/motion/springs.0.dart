@@ -172,28 +172,21 @@ class _SpringsExampleState extends State<SpringsExample> {
                               spring: Springs.standardFastEffects,
                               target: target,
                               timeScale: timeScale,
-                              builder: (BuildContext context, double value) =>
-                                  _buildEffectsSwatch(context, 'Fast', value),
+                              builder: _buildEffectsSwatch,
                             ),
                             _SpringCard(
                               label: 'Default',
                               spring: Springs.standardDefaultEffects,
                               target: target,
                               timeScale: timeScale,
-                              builder: (BuildContext context, double value) =>
-                                  _buildEffectsSwatch(
-                                    context,
-                                    'Default',
-                                    value,
-                                  ),
+                              builder: _buildEffectsSwatch,
                             ),
                             _SpringCard(
                               label: 'Slow',
                               spring: Springs.standardSlowEffects,
                               target: target,
                               timeScale: timeScale,
-                              builder: (BuildContext context, double value) =>
-                                  _buildEffectsSwatch(context, 'Slow', value),
+                              builder: _buildEffectsSwatch,
                             ),
                           ],
                         },
@@ -279,12 +272,15 @@ class _SpringsExampleState extends State<SpringsExample> {
     );
   }
 
-  Widget _buildEffectsSwatch(BuildContext context, String label, double value) {
+  Widget _buildEffectsSwatch(BuildContext context, double value) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     return Card.filled(
-      key: ValueKey<String>('effects-swatch-$label'),
       margin: EdgeInsets.zero,
-      color: Color.lerp(colors.surfaceContainerHighest, colors.primary, value),
+      color: Color.lerp(
+        colors.surfaceContainerHighest,
+        colors.primary,
+        value.clamp(0.0, 1.0),
+      ),
       child: const SizedBox(height: 56.0),
     );
   }
@@ -322,12 +318,13 @@ class _SpringCardState extends State<_SpringCard>
   @override
   void didUpdateWidget(_SpringCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.target != oldWidget.target) {
+    if (widget.target != oldWidget.target ||
+        (widget.timeScale != oldWidget.timeScale && _controller.isAnimating)) {
       final SpringSimulation simulation = SpringSimulation(
         widget.spring,
         _controller.value,
         widget.target,
-        _controller.velocity / widget.timeScale,
+        _controller.velocity / oldWidget.timeScale,
         snapToEnd: true,
       );
       _controller.animateWith(

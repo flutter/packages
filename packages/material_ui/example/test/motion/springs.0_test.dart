@@ -99,15 +99,16 @@ void main() {
     expect(find.text('stiffness 1600 · damping ratio 1.00'), findsOne);
     expect(find.text('stiffness 800 · damping ratio 1.00'), findsOne);
 
-    final Finder fastSwatch = find.byKey(
-      const ValueKey<String>('effects-swatch-Fast'),
-    );
-    final Finder defaultSwatch = find.byKey(
-      const ValueKey<String>('effects-swatch-Default'),
-    );
-    final Finder slowSwatch = find.byKey(
-      const ValueKey<String>('effects-swatch-Slow'),
-    );
+    Finder effectsSwatch(String label) {
+      return find.descendant(
+        of: find.ancestor(of: find.text(label), matching: find.byType(Card)),
+        matching: find.byType(Card),
+      );
+    }
+
+    final Finder fastSwatch = effectsSwatch('Fast');
+    final Finder defaultSwatch = effectsSwatch('Default');
+    final Finder slowSwatch = effectsSwatch('Slow');
     final Rect fastRect = tester.getRect(fastSwatch);
     final Rect defaultRect = tester.getRect(defaultSwatch);
     final Rect slowRect = tester.getRect(slowSwatch);
@@ -125,8 +126,9 @@ void main() {
     // At 48ms, Fast is closer to colors.primary (darker) than Default, which is
     // closer than Slow.
     final double fastLuminance = swatchColor(fastSwatch)!.computeLuminance();
-    final double defaultLuminance = swatchColor(defaultSwatch)!
-        .computeLuminance();
+    final double defaultLuminance = swatchColor(
+      defaultSwatch,
+    )!.computeLuminance();
     final double slowLuminance = swatchColor(slowSwatch)!.computeLuminance();
     expect(fastLuminance, lessThan(defaultLuminance));
     expect(defaultLuminance, lessThan(slowLuminance));
@@ -143,12 +145,15 @@ void main() {
     await tester.tap(find.text('Animate'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 48));
-    final double slowModeFastLuminance = swatchColor(fastSwatch)!
-        .computeLuminance();
-    final double slowModeDefaultLuminance = swatchColor(defaultSwatch)!
-        .computeLuminance();
-    final double slowModeSlowLuminance = swatchColor(slowSwatch)!
-        .computeLuminance();
+    final double slowModeFastLuminance = swatchColor(
+      fastSwatch,
+    )!.computeLuminance();
+    final double slowModeDefaultLuminance = swatchColor(
+      defaultSwatch,
+    )!.computeLuminance();
+    final double slowModeSlowLuminance = swatchColor(
+      slowSwatch,
+    )!.computeLuminance();
     // At 48ms in 0.25x mode, Fast has only progressed ~17% back toward
     // surfaceContainerHighest (still much darker than at 1x speed).
     expect(slowModeFastLuminance, lessThan(0.25));
@@ -159,5 +164,67 @@ void main() {
     expect(swatchColor(fastSwatch), colors.surfaceContainerHighest);
     expect(swatchColor(defaultSwatch), colors.surfaceContainerHighest);
     expect(swatchColor(slowSwatch), colors.surfaceContainerHighest);
+  });
+
+  testWidgets('Toggling 0.25x speed mid-flight updates speed without spiking', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.SpringsExampleApp());
+
+    final Finder expressivePuck = find.byIcon(Icons.star_rounded).last;
+    final Finder expressiveBox = find
+        .ancestor(of: expressivePuck, matching: find.byType(DecoratedBox))
+        .first;
+    final Rect expressiveCardRect = tester.getRect(
+      find.ancestor(of: expressivePuck, matching: find.byType(Card)).first,
+    );
+
+    // Toggle 0.25x speed ON during a 1x Fast spatial animation, then reverse:
+    // the physics velocity must not be amplified by 4x and push the puck past
+    // the card's right edge.
+    await tester.tap(find.text('Fast'));
+    await tester.pump();
+    final double startX = tester.getCenter(expressivePuck).dx;
+    await tester.tap(find.text('Animate'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 48));
+
+    await tester.tap(find.text('0.25x speed'));
+    await tester.pump();
+    await tester.tap(find.text('Animate'));
+    await tester.pump();
+
+    double maxRight = 0.0;
+    for (var frame = 0; frame < 60; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      maxRight = math.max(maxRight, tester.getTopRight(expressiveBox).dx);
+    }
+    expect(maxRight, lessThanOrEqualTo(expressiveCardRect.right));
+    await tester.pumpAndSettle();
+    expect(
+      tester.getCenter(expressivePuck).dx,
+      moreOrLessEquals(startX, epsilon: 1.0),
+    );
+
+    // Toggle 0.25x speed OFF during a slow-motion Effects animation: the
+    // running animation immediately resumes 1x speed and finishes within 220ms
+    // (at 0.25x it would still be partway through).
+    await tester.tap(find.text('Effects'));
+    await tester.pump();
+    final ColorScheme colors = Theme.of(
+      tester.element(find.byType(example.SpringsExample)),
+    ).colorScheme;
+    final Finder fastSwatch = find.descendant(
+      of: find.ancestor(of: find.text('Fast'), matching: find.byType(Card)),
+      matching: find.byType(Card),
+    );
+
+    await tester.tap(find.text('Animate'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 32));
+    await tester.tap(find.text('0.25x speed'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 220));
+    expect(tester.widget<Card>(fastSwatch).color, colors.primary);
   });
 }
