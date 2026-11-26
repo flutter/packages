@@ -501,6 +501,8 @@ void main() {
       tester.getSemantics(sliderRenderWidget),
       matchesSemantics(
         isSlider: true,
+        hasEnabledState: true,
+        isEnabled: true,
         hasIncreaseAction: true,
         hasDecreaseAction: true,
         value: '50%',
@@ -521,7 +523,10 @@ void main() {
       ),
     );
 
-    expect(tester.getSemantics(sliderRenderWidget), matchesSemantics(isSlider: true));
+    expect(
+      tester.getSemantics(sliderRenderWidget),
+      matchesSemantics(isSlider: true, hasEnabledState: true),
+    );
 
     handle.dispose();
   });
@@ -542,6 +547,8 @@ void main() {
       tester.getSemantics(sliderRenderWidget),
       matchesSemantics(
         isSlider: true,
+        hasEnabledState: true,
+        isEnabled: true,
         hasIncreaseAction: true,
         hasDecreaseAction: true,
         value: '50%',
@@ -565,6 +572,8 @@ void main() {
       tester.getSemantics(sliderRenderWidget),
       matchesSemantics(
         isSlider: true,
+        hasEnabledState: true,
+        isEnabled: true,
         hasIncreaseAction: true,
         hasDecreaseAction: true,
         value: '60%',
