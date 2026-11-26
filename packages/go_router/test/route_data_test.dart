@@ -57,6 +57,21 @@ class _GoRouteDataBuildWithKey extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) => SizedBox(key: key);
 }
 
+class _RecordingNavigatorObserver extends NavigatorObserver {
+  final List<Route<dynamic>> pushedRoutes = <Route<dynamic>>[];
+  final List<Route<dynamic>> poppedRoutes = <Route<dynamic>>[];
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    pushedRoutes.add(route);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    poppedRoutes.add(route);
+  }
+}
+
 final GoRoute _goRouteDataBuild = GoRouteData.$route(
   path: '/build',
   factory: (GoRouterState state) => const _GoRouteDataBuild(),
@@ -241,6 +256,12 @@ final List<GoRoute> _relativeRoutes = <GoRoute>[
 String _coder(String? value) => '';
 
 bool _compare(String a, String b) => true;
+
+Widget _buildNavigationContainer(
+  BuildContext _,
+  StatefulNavigationShell navigationShell,
+  List<Widget> children,
+) => IndexedStack(index: navigationShell.currentIndex, children: children);
 
 void main() {
   group('GoRouteData', () {
@@ -551,6 +572,114 @@ void main() {
       await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       expect(find.byKey(const Key('builder')), findsNothing);
       expect(find.byKey(const Key('page-builder')), findsOneWidget);
+    });
+
+    test('Forwards notifyRootObserver', () {
+      List<StatefulShellBranch> branches() => <StatefulShellBranch>[
+        StatefulShellBranchData.$branch(
+          routes: <RouteBase>[
+            GoRouteData.$route(
+              path: '/child',
+              factory: (GoRouterState state) => const _GoRouteDataBuild(),
+            ),
+          ],
+        ),
+      ];
+
+      expect(
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+          branches: branches(),
+        ).notifyRootObserver,
+        isTrue,
+      );
+      expect(
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+          branches: branches(),
+          notifyRootObserver: false,
+        ).notifyRootObserver,
+        isFalse,
+      );
+      expect(
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+          branches: branches(),
+          navigatorContainerBuilder: _buildNavigationContainer,
+          notifyRootObserver: false,
+        ).notifyRootObserver,
+        isFalse,
+      );
+      expect(
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+          branches: branches(),
+          navigatorContainerBuilder: _buildNavigationContainer,
+        ).notifyRootObserver,
+        isTrue,
+      );
+    });
+
+    testWidgets('Notifies branch observers but not root observers when '
+        'notifyRootObserver is false', (WidgetTester tester) async {
+      final rootObserver = _RecordingNavigatorObserver();
+      final branchObserver = _RecordingNavigatorObserver();
+      final goRouter = GoRouter(
+        initialLocation: '/child',
+        observers: <NavigatorObserver>[rootObserver],
+        routes: <RouteBase>[
+          StatefulShellRouteData.$route(
+            factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
+            navigatorContainerBuilder: _buildNavigationContainer,
+            notifyRootObserver: false,
+            branches: <StatefulShellBranch>[
+              StatefulShellBranchData.$branch(
+                observers: <NavigatorObserver>[branchObserver],
+                routes: <RouteBase>[
+                  GoRouteData.$route(
+                    path: '/child',
+                    factory: (GoRouterState state) => const _GoRouteDataBuildWithKey(Key('child')),
+                    routes: <RouteBase>[
+                      GoRouteData.$route(
+                        path: 'detail',
+                        factory: (GoRouterState state) =>
+                            const _GoRouteDataBuildWithKey(Key('detail')),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(goRouter.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      await tester.pumpAndSettle();
+      rootObserver.pushedRoutes.clear();
+      rootObserver.poppedRoutes.clear();
+      branchObserver.pushedRoutes.clear();
+      branchObserver.poppedRoutes.clear();
+
+      final Future<void> detailPopped = goRouter.push<void>('/child/detail');
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('detail')), findsOneWidget);
+      expect(branchObserver.pushedRoutes, hasLength(1));
+      expect(rootObserver.pushedRoutes, isEmpty);
+      expect(rootObserver.poppedRoutes, isEmpty);
+
+      final Route<dynamic> detailRoute = branchObserver.pushedRoutes.single;
+      goRouter.pop();
+      await tester.pumpAndSettle();
+      await detailPopped;
+
+      expect(find.byKey(const Key('child')), findsOneWidget);
+      expect(branchObserver.poppedRoutes, <Route<dynamic>>[detailRoute]);
+      expect(rootObserver.pushedRoutes, isEmpty);
+      expect(rootObserver.poppedRoutes, isEmpty);
+      expect(tester.takeException(), isNull);
     });
 
     test('Can assign parent navigator key', () {

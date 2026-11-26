@@ -379,6 +379,7 @@ abstract class StatefulShellRouteData extends RouteData {
     GlobalKey<NavigatorState>? parentNavigatorKey,
     ShellNavigationContainerBuilder? navigatorContainerBuilder,
     String? restorationScopeId,
+    bool notifyRootObserver = true,
   }) {
     T factoryImpl(GoRouterState state) {
       return (_stateObjectExpando[state] ??= factory(state)) as T;
@@ -405,6 +406,7 @@ abstract class StatefulShellRouteData extends RouteData {
         builder: builder,
         pageBuilder: pageBuilder,
         navigatorContainerBuilder: navigatorContainerBuilder,
+        notifyRootObserver: notifyRootObserver,
         parentNavigatorKey: parentNavigatorKey,
         restorationScopeId: restorationScopeId,
         redirect: redirect,
@@ -414,6 +416,7 @@ abstract class StatefulShellRouteData extends RouteData {
       branches: branches,
       builder: builder,
       pageBuilder: pageBuilder,
+      notifyRootObserver: notifyRootObserver,
       parentNavigatorKey: parentNavigatorKey,
       restorationScopeId: restorationScopeId,
       redirect: redirect,
