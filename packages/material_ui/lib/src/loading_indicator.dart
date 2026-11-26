@@ -176,10 +176,10 @@ class LoadingIndicator extends StatefulWidget {
 
   /// The color of the active indicator, the morphing shape.
   ///
-  /// If null, then [LoadingIndicatorThemeData.color] is used. If that is also
-  /// null, then [ColorScheme.primary] is used for the default loading
-  /// indicator, and [ColorScheme.onPrimaryContainer] for the
-  /// [LoadingIndicator.contained] one.
+  /// If null, then [LoadingIndicatorThemeData.color] is used for both the
+  /// default and the [LoadingIndicator.contained] loading indicators. If that
+  /// is also null, then [ColorScheme.primary] is used for the default loading
+  /// indicator, and [ColorScheme.onPrimaryContainer] for the contained one.
   final Color? color;
 
   /// The color of the container that the active indicator is drawn on.

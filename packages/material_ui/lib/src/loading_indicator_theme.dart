@@ -40,6 +40,9 @@ class LoadingIndicatorThemeData with Diagnosticable {
   });
 
   /// Overrides the default value for [LoadingIndicator.color].
+  ///
+  /// Applies to both the default and the [LoadingIndicator.contained] loading
+  /// indicators, even though their own defaults differ.
   final Color? color;
 
   /// Overrides the default value for [LoadingIndicator.containerColor].
