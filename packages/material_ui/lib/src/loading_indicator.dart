@@ -468,6 +468,11 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
     for (final polygon in polygons) {
       final Rect bounds = polygon.calculateBounds();
       final Rect maxBounds = polygon.calculateMaxBounds();
+      // A shape collapsed into a point, such as the start of a shape that
+      // grows in, says nothing about how much the others need to shrink.
+      if (maxBounds.isEmpty || (bounds.width <= 0 && bounds.height <= 0)) {
+        continue;
+      }
       // Taking the larger of the two ratios keeps an elongated shape, like a
       // pill, from shrinking all the others too much.
       scaleFactor = math.min(

@@ -336,6 +336,47 @@ void main() {
     expect(painterOf(tester).shouldRepaint(painter), isTrue);
   });
 
+  testWidgets('LoadingIndicator ignores collapsed polygons when scaling its shapes', (
+    WidgetTester tester,
+  ) async {
+    /// Returns the scale of the canvas that the indicator paints its shape
+    /// with.
+    double paintedScale() {
+      late double scale;
+      expect(
+        find.byType(LoadingIndicator),
+        paints..something((Symbol methodName, List<dynamic> arguments) {
+          if (methodName != #scale) {
+            return false;
+          }
+          scale = arguments[0] as double;
+          return true;
+        }),
+      );
+      return scale;
+    }
+
+    await tester.pumpWidget(
+      buildApp(
+        LoadingIndicator(
+          value: 1.0,
+          polygons: <RoundedPolygon>[MaterialShapes.square, MaterialShapes.square],
+        ),
+      ),
+    );
+    final double expectedScale = paintedScale();
+
+    await tester.pumpWidget(
+      buildApp(
+        LoadingIndicator(
+          value: 1.0,
+          polygons: <RoundedPolygon>[RoundedPolygon(4, radius: 0), MaterialShapes.square],
+        ),
+      ),
+    );
+    expect(paintedScale(), moreOrLessEquals(expectedScale));
+  });
+
   testWidgets('LoadingIndicator asserts that it has at least two polygons', (
     WidgetTester tester,
   ) async {
