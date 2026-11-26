@@ -491,7 +491,7 @@ void main() {
         .map((DiagnosticsNode node) => node.toString())
         .toList();
 
-    expect(description, <String>[]);
+    expect(description, <String>['<indeterminate>']);
   });
 
   testWidgets('LoadingIndicator implements debugFillProperties', (WidgetTester tester) async {
@@ -511,7 +511,7 @@ void main() {
         .toList();
 
     expect(description, <String>[
-      'value: 0.5',
+      '50.0%',
       'color: ${const Color(0xfffffff0)}',
       'containerColor: ${const Color(0xfffffff1)}',
       'containerShape: CircleBorder(BorderSide(width: 0.0, style: none))',

@@ -281,7 +281,7 @@ class LoadingIndicator extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DoubleProperty('value', value, defaultValue: null));
+    properties.add(PercentProperty('value', value, showName: false, ifNull: '<indeterminate>'));
     properties.add(ColorProperty('color', color, defaultValue: null));
     properties.add(ColorProperty('containerColor', containerColor, defaultValue: null));
     properties.add(
