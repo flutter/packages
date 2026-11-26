@@ -29,6 +29,10 @@ void main() {
       return (box.decoration as BoxDecoration).color;
     }
 
+    Color? swatchColor(Finder finder) {
+      return tester.widget<Card>(finder).color;
+    }
+
     Finder puckBox(Finder icon) {
       return find.ancestor(of: icon, matching: find.byType(DecoratedBox)).first;
     }
@@ -54,10 +58,14 @@ void main() {
     await tester.pump();
     expect(find.text('stiffness 1400 · damping ratio 0.90'), findsOne);
     expect(find.text('stiffness 800 · damping ratio 0.60'), findsOne);
+    final Rect expressiveCardRect = tester.getRect(
+      find.ancestor(of: expressivePuck, matching: find.byType(Card)).first,
+    );
     await tester.tap(find.text('Animate'));
     await tester.pump();
     double standardMinX = endX;
     double expressiveMinX = endX;
+    double expressiveMinLeft = endX;
     for (var frame = 0; frame < 60; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
       standardMinX = math.min(standardMinX, tester.getCenter(standardPuck).dx);
@@ -65,9 +73,14 @@ void main() {
         expressiveMinX,
         tester.getCenter(expressivePuck).dx,
       );
+      expressiveMinLeft = math.min(
+        expressiveMinLeft,
+        tester.getTopLeft(puckBox(expressivePuck)).dx,
+      );
     }
     expect(standardMinX, greaterThan(startX - 2.0));
     expect(expressiveMinX, lessThan(startX - 10.0));
+    expect(expressiveMinLeft, greaterThanOrEqualTo(expressiveCardRect.left));
     await tester.pumpAndSettle();
     expect(
       tester.getCenter(standardPuck).dx,
@@ -98,9 +111,9 @@ void main() {
     final Rect fastRect = tester.getRect(fastSwatch);
     final Rect defaultRect = tester.getRect(defaultSwatch);
     final Rect slowRect = tester.getRect(slowSwatch);
-    expect(decoratedBoxColor(fastSwatch), colors.surfaceContainerHighest);
-    expect(decoratedBoxColor(defaultSwatch), colors.surfaceContainerHighest);
-    expect(decoratedBoxColor(slowSwatch), colors.surfaceContainerHighest);
+    expect(swatchColor(fastSwatch), colors.surfaceContainerHighest);
+    expect(swatchColor(defaultSwatch), colors.surfaceContainerHighest);
+    expect(swatchColor(slowSwatch), colors.surfaceContainerHighest);
 
     await tester.tap(find.text('Animate'));
     await tester.pump();
@@ -111,21 +124,40 @@ void main() {
     expect(tester.getRect(slowSwatch), slowRect);
     // At 48ms, Fast is closer to colors.primary (darker) than Default, which is
     // closer than Slow.
-    final double fastLuminance = decoratedBoxColor(
-      fastSwatch,
-    )!.computeLuminance();
-    final double defaultLuminance = decoratedBoxColor(
-      defaultSwatch,
-    )!.computeLuminance();
-    final double slowLuminance = decoratedBoxColor(
-      slowSwatch,
-    )!.computeLuminance();
+    final double fastLuminance = swatchColor(fastSwatch)!.computeLuminance();
+    final double defaultLuminance = swatchColor(defaultSwatch)!
+        .computeLuminance();
+    final double slowLuminance = swatchColor(slowSwatch)!.computeLuminance();
     expect(fastLuminance, lessThan(defaultLuminance));
     expect(defaultLuminance, lessThan(slowLuminance));
 
     await tester.pumpAndSettle();
-    expect(decoratedBoxColor(fastSwatch), colors.primary);
-    expect(decoratedBoxColor(defaultSwatch), colors.primary);
-    expect(decoratedBoxColor(slowSwatch), colors.primary);
+    expect(swatchColor(fastSwatch), colors.primary);
+    expect(swatchColor(defaultSwatch), colors.primary);
+    expect(swatchColor(slowSwatch), colors.primary);
+
+    // Slow motion (0.25x speed) stretches out the spring animations while
+    // keeping their relative ordering and settling cleanly on the target.
+    await tester.tap(find.text('0.25x speed'));
+    await tester.pump();
+    await tester.tap(find.text('Animate'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 48));
+    final double slowModeFastLuminance = swatchColor(fastSwatch)!
+        .computeLuminance();
+    final double slowModeDefaultLuminance = swatchColor(defaultSwatch)!
+        .computeLuminance();
+    final double slowModeSlowLuminance = swatchColor(slowSwatch)!
+        .computeLuminance();
+    // At 48ms in 0.25x mode, Fast has only progressed ~17% back toward
+    // surfaceContainerHighest (still much darker than at 1x speed).
+    expect(slowModeFastLuminance, lessThan(0.25));
+    expect(slowModeFastLuminance, greaterThan(slowModeDefaultLuminance));
+    expect(slowModeDefaultLuminance, greaterThan(slowModeSlowLuminance));
+
+    await tester.pumpAndSettle();
+    expect(swatchColor(fastSwatch), colors.surfaceContainerHighest);
+    expect(swatchColor(defaultSwatch), colors.surfaceContainerHighest);
+    expect(swatchColor(slowSwatch), colors.surfaceContainerHighest);
   });
 }
