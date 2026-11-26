@@ -2097,107 +2097,104 @@ void main() {
     });
 
     // Regression test for https://github.com/flutter/flutter/issues/197397.
-    test(
-      'OutlineInputBorder draws the corner arcs when the gap lies inside the corner radius',
-      () {
-        const canvasRect = Rect.fromLTWH(0, 0, 200, 56);
-        const border = OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(50.0)));
-        const strokeRadius = 27.5;
+    test('OutlineInputBorder draws the corner arcs when the gap lies inside the corner radius', () {
+      const canvasRect = Rect.fromLTWH(0, 0, 200, 56);
+      const border = OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(50.0)));
+      const strokeRadius = 27.5;
 
-        List<Offset> sampleBorderPath({
-          required double gapStart,
-          required TextDirection textDirection,
-        }) {
-          Path? borderPath;
-          expect(
-            (Canvas canvas) => border.paint(
-              canvas,
-              canvasRect,
-              gapStart: gapStart,
-              gapExtent: 60.0,
-              gapPercentage: 0.1,
-              textDirection: textDirection,
-            ),
-            paints..something((Symbol methodName, List<dynamic> arguments) {
-              if (methodName != #drawPath) {
-                return false;
-              }
-              borderPath = arguments[0] as Path;
-              return true;
-            }),
-          );
-          return <Offset>[
-            for (final PathMetric metric in borderPath!.computeMetrics())
-              for (double d = 0.0; d <= metric.length; d += 0.25)
-                metric.getTangentForOffset(d)!.position,
-          ];
-        }
-
-        // RTL: The border has height 56 and 1.0 stroke width, so center has height
-        // 55.0 and scaled corner radius 27.5. The top-right corner arc spans
-        // x from 172.0 (199.5 - 27.5) to 199.5, centered at (172.0, 28.0).
-        // With gapStart = 188.0, gapPadding = 4.0, gapExtent = 60.0, and
-        // gapPercentage = 0.1:
-        //   extent = (60.0 + 8.0) * 0.1 = 6.8
-        //   start  = 188.0 + 4.0 - 6.8 = 185.2
-        //   gapEnd = 192.0
-        // Both start (185.2) and gapEnd (192.0) lie inside the top-right corner.
-        final List<Offset> rtlSamples = sampleBorderPath(
-          gapStart: 188.0,
-          textDirection: TextDirection.rtl,
+      List<Offset> sampleBorderPath({
+        required double gapStart,
+        required TextDirection textDirection,
+      }) {
+        Path? borderPath;
+        expect(
+          (Canvas canvas) => border.paint(
+            canvas,
+            canvasRect,
+            gapStart: gapStart,
+            gapExtent: 60.0,
+            gapPercentage: 0.1,
+            textDirection: textDirection,
+          ),
+          paints..something((Symbol methodName, List<dynamic> arguments) {
+            if (methodName != #drawPath) {
+              return false;
+            }
+            borderPath = arguments[0] as Path;
+            return true;
+          }),
         );
-        bool isOnRtlBorder(Offset point) => rtlSamples.any((Offset s) => (s - point).distance < 0.5);
+        return <Offset>[
+          for (final PathMetric metric in borderPath!.computeMetrics())
+            for (double d = 0.0; d <= metric.length; d += 0.25)
+              metric.getTangentForOffset(d)!.position,
+        ];
+      }
 
-        const trCornerCenter = Offset(172.0, 28.0);
-        Offset pointOnTopRightArc(double degrees) =>
-            trCornerCenter + Offset.fromDirection(degrees * math.pi / 180.0, strokeRadius);
+      // RTL: The border has height 56 and 1.0 stroke width, so center has height
+      // 55.0 and scaled corner radius 27.5. The top-right corner arc spans
+      // x from 172.0 (199.5 - 27.5) to 199.5, centered at (172.0, 28.0).
+      // With gapStart = 188.0, gapPadding = 4.0, gapExtent = 60.0, and
+      // gapPercentage = 0.1:
+      //   extent = (60.0 + 8.0) * 0.1 = 6.8
+      //   start  = 188.0 + 4.0 - 6.8 = 185.2
+      //   gapEnd = 192.0
+      // Both start (185.2) and gapEnd (192.0) lie inside the top-right corner.
+      final List<Offset> rtlSamples = sampleBorderPath(
+        gapStart: 188.0,
+        textDirection: TextDirection.rtl,
+      );
+      bool isOnRtlBorder(Offset point) => rtlSamples.any((Offset s) => (s - point).distance < 0.5);
 
-        // start = 185.2 is at ~297.5 degrees; gapEnd = 192.0 is at ~315.1 degrees.
-        // The top-right arc before the gap must be drawn.
-        expect(isOnRtlBorder(pointOnTopRightArc(275.0)), isTrue);
-        expect(isOnRtlBorder(pointOnTopRightArc(290.0)), isTrue);
-        // The part of the arc inside the gap must not be drawn.
-        expect(isOnRtlBorder(pointOnTopRightArc(307.0)), isFalse);
-        // The top-right arc after the gap must be drawn.
-        expect(isOnRtlBorder(pointOnTopRightArc(330.0)), isTrue);
-        expect(isOnRtlBorder(pointOnTopRightArc(350.0)), isTrue);
-        // The top border must not continue as a straight horizontal line into the corner.
-        expect(isOnRtlBorder(const Offset(180.0, 0.5)), isFalse);
-        // The straight portion of the top border is still drawn.
-        expect(isOnRtlBorder(const Offset(100.0, 0.5)), isTrue);
+      const trCornerCenter = Offset(172.0, 28.0);
+      Offset pointOnTopRightArc(double degrees) =>
+          trCornerCenter + Offset.fromDirection(degrees * math.pi / 180.0, strokeRadius);
 
-        // LTR: The top-left corner arc spans x from 0.5 to 28.0, centered at (28.0, 28.0).
-        // With gapStart = 12.0, gapPadding = 4.0, gapExtent = 60.0, and
-        // gapPercentage = 0.1:
-        //   extent = (60.0 + 8.0) * 0.1 = 6.8
-        //   start  = 12.0 - 4.0 = 8.0
-        //   gapEnd = 14.8
-        // Both start (8.0) and gapEnd (14.8) lie inside the top-left corner.
-        final List<Offset> ltrSamples = sampleBorderPath(
-          gapStart: 12.0,
-          textDirection: TextDirection.ltr,
-        );
-        bool isOnLtrBorder(Offset point) => ltrSamples.any((Offset s) => (s - point).distance < 0.5);
+      // start = 185.2 is at ~297.5 degrees; gapEnd = 192.0 is at ~315.1 degrees.
+      // The top-right arc before the gap must be drawn.
+      expect(isOnRtlBorder(pointOnTopRightArc(275.0)), isTrue);
+      expect(isOnRtlBorder(pointOnTopRightArc(290.0)), isTrue);
+      // The part of the arc inside the gap must not be drawn.
+      expect(isOnRtlBorder(pointOnTopRightArc(307.0)), isFalse);
+      // The top-right arc after the gap must be drawn.
+      expect(isOnRtlBorder(pointOnTopRightArc(330.0)), isTrue);
+      expect(isOnRtlBorder(pointOnTopRightArc(350.0)), isTrue);
+      // The top border must not continue as a straight horizontal line into the corner.
+      expect(isOnRtlBorder(const Offset(180.0, 0.5)), isFalse);
+      // The straight portion of the top border is still drawn.
+      expect(isOnRtlBorder(const Offset(100.0, 0.5)), isTrue);
 
-        const tlCornerCenter = Offset(28.0, 28.0);
-        Offset pointOnTopLeftArc(double degrees) =>
-            tlCornerCenter + Offset.fromDirection(degrees * math.pi / 180.0, strokeRadius);
+      // LTR: The top-left corner arc spans x from 0.5 to 28.0, centered at (28.0, 28.0).
+      // With gapStart = 12.0, gapPadding = 4.0, gapExtent = 60.0, and
+      // gapPercentage = 0.1:
+      //   extent = (60.0 + 8.0) * 0.1 = 6.8
+      //   start  = 12.0 - 4.0 = 8.0
+      //   gapEnd = 14.8
+      // Both start (8.0) and gapEnd (14.8) lie inside the top-left corner.
+      final List<Offset> ltrSamples = sampleBorderPath(
+        gapStart: 12.0,
+        textDirection: TextDirection.ltr,
+      );
+      bool isOnLtrBorder(Offset point) => ltrSamples.any((Offset s) => (s - point).distance < 0.5);
 
-        // start = 8.0 is at ~224.9 degrees; gapEnd = 14.8 is at ~242.5 degrees.
-        // The top-left arc before the gap must be drawn.
-        expect(isOnLtrBorder(pointOnTopLeftArc(190.0)), isTrue);
-        expect(isOnLtrBorder(pointOnTopLeftArc(210.0)), isTrue);
-        // The part of the arc inside the gap must not be drawn.
-        expect(isOnLtrBorder(pointOnTopLeftArc(233.0)), isFalse);
-        // The top-left arc after the gap must be drawn.
-        expect(isOnLtrBorder(pointOnTopLeftArc(250.0)), isTrue);
-        expect(isOnLtrBorder(pointOnTopLeftArc(265.0)), isTrue);
-        // The top border must not start as a straight horizontal line inside the corner.
-        expect(isOnLtrBorder(const Offset(20.0, 0.5)), isFalse);
-        // The straight portion of the top border is still drawn.
-        expect(isOnLtrBorder(const Offset(100.0, 0.5)), isTrue);
-      },
-    );
+      const tlCornerCenter = Offset(28.0, 28.0);
+      Offset pointOnTopLeftArc(double degrees) =>
+          tlCornerCenter + Offset.fromDirection(degrees * math.pi / 180.0, strokeRadius);
+
+      // start = 8.0 is at ~224.9 degrees; gapEnd = 14.8 is at ~242.5 degrees.
+      // The top-left arc before the gap must be drawn.
+      expect(isOnLtrBorder(pointOnTopLeftArc(190.0)), isTrue);
+      expect(isOnLtrBorder(pointOnTopLeftArc(210.0)), isTrue);
+      // The part of the arc inside the gap must not be drawn.
+      expect(isOnLtrBorder(pointOnTopLeftArc(233.0)), isFalse);
+      // The top-left arc after the gap must be drawn.
+      expect(isOnLtrBorder(pointOnTopLeftArc(250.0)), isTrue);
+      expect(isOnLtrBorder(pointOnTopLeftArc(265.0)), isTrue);
+      // The top border must not start as a straight horizontal line inside the corner.
+      expect(isOnLtrBorder(const Offset(20.0, 0.5)), isFalse);
+      // The straight portion of the top border is still drawn.
+      expect(isOnLtrBorder(const Offset(100.0, 0.5)), isTrue);
+    });
 
     // Regression test for https://github.com/flutter/flutter/issues/82321.
     // Regression test for https://github.com/flutter/flutter/issues/150109.
