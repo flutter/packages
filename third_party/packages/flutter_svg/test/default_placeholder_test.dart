@@ -76,6 +76,21 @@ void main() {
     expect(find.byKey(const ValueKey<String>('global-placeholder')), findsNothing);
   });
 
+  testWidgets('without an assigned default, loading reserves the given size', (
+    WidgetTester tester,
+  ) async {
+    final response = Completer<ByteData>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(child: SvgPicture(_DeferredLoader(response.future), width: 24, height: 32)),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(SvgPicture)), const Size(24, 32));
+    expect(find.byType(LimitedBox), findsNothing);
+  });
+
   testWidgets('an explicit placeholder overrides the global default', (WidgetTester tester) async {
     final response = Completer<http.Response>();
     SvgPicture.defaultPlaceholderBuilder = (BuildContext context) {

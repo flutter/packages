@@ -1,6 +1,7 @@
 ## 2.5.1
 
-* Uses the configured default placeholder builder when no widget-specific placeholder is supplied.
+* Uses `SvgPicture.defaultPlaceholderBuilder`, once an app assigns it, when no
+  widget-specific placeholder is supplied.
 
 ## 2.5.0
 
