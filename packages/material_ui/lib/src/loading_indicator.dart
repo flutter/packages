@@ -222,7 +222,10 @@ class LoadingIndicator extends StatefulWidget {
   /// also null, then a minimum width and height of 48.0 are used.
   final BoxConstraints? constraints;
 
-  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
+  /// The [SemanticsProperties.label] for this loading indicator.
+  ///
+  /// This value indicates what is loading, such as "Loading news article" or
+  /// "Refreshing page", and will be read out by screen readers.
   final String? semanticsLabel;
 
   final bool _contained;
