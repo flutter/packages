@@ -2143,7 +2143,7 @@ void main() {
         Offset pointOnTopRightArc(double degrees) =>
             cornerCenter + Offset.fromDirection(degrees * math.pi / 180.0, strokeRadius);
 
-        // start = 185.2 is at ~298.7 degrees; gapEnd = 192.0 is at ~316.7 degrees.
+        // start = 185.2 is at ~297.5 degrees; gapEnd = 192.0 is at ~315.1 degrees.
         // The top-right arc before the gap must be drawn.
         expect(isOnBorder(pointOnTopRightArc(275.0)), isTrue);
         expect(isOnBorder(pointOnTopRightArc(290.0)), isTrue);
