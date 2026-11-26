@@ -236,6 +236,7 @@ bool _isExampleBuildFile(List<String> pathComponents) {
   return pathComponents.contains('gradle-wrapper.properties') ||
       pathComponents.contains('gradle.properties') ||
       pathComponents.contains('build.gradle') ||
+      pathComponents.contains('build.gradle.kts') ||
       pathComponents.contains('Runner.xcodeproj') ||
       pathComponents.contains('Runner.xcscheme') ||
       pathComponents.contains('Runner.xcworkspace') ||
@@ -243,6 +244,7 @@ bool _isExampleBuildFile(List<String> pathComponents) {
       pathComponents.contains('CMakeLists.txt') ||
       pathComponents.contains('.pluginToolsConfig.yaml') ||
       pathComponents.contains('settings.gradle') ||
+      pathComponents.contains('settings.gradle.kts') ||
       pathComponents.contains('pubspec.yaml');
 }
 
@@ -254,7 +256,7 @@ Future<bool> _isGradleTestDependencyChange(
   if (git == null) {
     return false;
   }
-  if (pathComponents.last != 'build.gradle') {
+  if (pathComponents.last != 'build.gradle' && pathComponents.last != 'build.gradle.kts') {
     return false;
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);

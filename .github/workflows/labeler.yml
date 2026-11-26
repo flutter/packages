@@ -46,7 +46,7 @@ jobs:
     permissions:
       actions: read
       checks: read
-      # Required for convertPullRequestToDraft and collaborator membership checks.
+      # Required by the convertPullRequestToDraft GraphQL mutation.
       contents: write
       pull-requests: write
     runs-on: ubuntu-latest
@@ -158,7 +158,7 @@ jobs:
           fi
 
       # Source available at https://github.com/actions/labeler/blob/main/README.md
-      - uses: actions/labeler@b8dd2d9be0f68b860e7dae5dae7d772984eacd6d # v6.2.0
+      - uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0
         if: steps.validate.outputs.pr_number != '' && steps.cla.outputs.cla_passed == 'true'
         with:
           pr-number: ${{ steps.validate.outputs.pr_number }}
@@ -235,13 +235,18 @@ jobs:
             echo "::notice::Author $AUTHOR is an org member/collaborator; skipping template check."
             exit 0
           fi
-          COLLAB_STATUS=$(gh api -i "repos/$REPO/collaborators/$AUTHOR" 2>/dev/null | awk 'NR==1 {print $2}' || true)
-          if [ "$COLLAB_STATUS" = "204" ]; then
-            echo "::notice::Author $AUTHOR is an org member/collaborator; skipping template check."
-            exit 0
-          elif [ "$COLLAB_STATUS" != "404" ]; then
-            echo "::error::Unexpected HTTP status '${COLLAB_STATUS:-empty}' checking collaborator status for $AUTHOR."
+          # GITHUB_TOKEN cannot see private org membership in author_association
+          # or team-granted access via /collaborators/{username}, so also check
+          # effective repository permissions across teams via /permission.
+          if ! PERM_JSON=$(gh api "repos/$REPO/collaborators/$AUTHOR/permission"); then
+            echo "::error::Failed to query repository permission for $AUTHOR."
             exit 1
+          fi
+          PERMISSION=$(jq -r '.permission // empty' <<<"$PERM_JSON")
+          ROLE_NAME=$(jq -r '.role_name // empty' <<<"$PERM_JSON")
+          if [[ "$PERMISSION" == "admin" || "$PERMISSION" == "write" || "$ROLE_NAME" == "triage" ]]; then
+            echo "::notice::Author $AUTHOR has '$ROLE_NAME' ($PERMISSION) access; skipping template check."
+            exit 0
           fi
 
           # 3. Validate the PR description against .github/PULL_REQUEST_TEMPLATE.md.

@@ -31,6 +31,7 @@ import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventLis
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 import java.lang.reflect.Field;
 import java.util.List;
+import kotlin.jvm.functions.Function0;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,7 +75,7 @@ public final class VideoPlayerTest {
         @NonNull MediaItem mediaItem,
         @NonNull VideoPlayerOptions options,
         @Nullable SurfaceProducer surfaceProducer,
-        @NonNull ExoPlayerProvider exoPlayerProvider) {
+        @NonNull Function0<? extends ExoPlayer> exoPlayerProvider) {
       super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
     }
 

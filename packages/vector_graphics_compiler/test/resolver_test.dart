@@ -28,6 +28,27 @@ void main() {
     expect(nodes.last.paint, const Paint(fill: Fill(color: Color(0xFFFF0000))));
   });
 
+  test('the initial stroke width scales like an explicit one', () {
+    final Node node = parseToNodeTree('''
+<svg viewBox="0 0 200 200">
+  <g transform="scale(4)">
+    <path d="M0 0H10" stroke="red"/>
+    <path d="M0 5H10" stroke="red" stroke-width="1"/>
+    <path d="M0 10H10" stroke="red" stroke-width="2"/>
+  </g>
+  <path d="M0 20H10" stroke="red"/>
+</svg>''');
+    final Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(resolvedNode);
+
+    expect(nodes.map((ResolvedPathNode node) => node.paint.stroke!.width), <double?>[
+      4,
+      4,
+      8,
+      null,
+    ]);
+  });
+
   test('group opacity node inheritence', () {
     final Node node = parseToNodeTree('''
 <svg viewBox="0 0 200 200">

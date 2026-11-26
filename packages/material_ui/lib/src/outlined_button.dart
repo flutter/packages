@@ -26,6 +26,7 @@ import 'theme.dart';
 import 'theme_data.dart';
 
 part 'generated/outlined_button_defaults_m3.g.dart';
+part 'generated/outlined_button_defaults_m3e.g.dart';
 
 /// A Material Design "Outlined Button"; essentially a [TextButton]
 /// with an outlined border.
@@ -41,19 +42,30 @@ part 'generated/outlined_button_defaults_m3.g.dart';
 /// by filling with the [style]'s [ButtonStyle.overlayColor].
 ///
 /// The outlined button's default style is defined by [defaultStyleOf].
-/// The style of this outline button can be overridden with its [style]
-/// parameter. The style of all text buttons in a subtree can be
+/// The style of this outlined button can be overridden with its [style]
+/// parameter. The style of all outlined buttons in a subtree can be
 /// overridden with the [OutlinedButtonTheme] and the style of all of the
 /// outlined buttons in an app can be overridden with the [Theme]'s
 /// [ThemeData.outlinedButtonTheme] property.
 ///
-/// Unlike [TextButton] or [ElevatedButton], outline buttons have a
+/// Unlike [TextButton] or [ElevatedButton], outlined buttons have a
 /// default [ButtonStyle.side] which defines the appearance of the
 /// outline. Because the default `side` is non-null, it
 /// unconditionally overrides the shape's [OutlinedBorder.side]. In
 /// other words, to specify an outlined button's shape _and_ the
 /// appearance of its outline, both the [ButtonStyle.shape] and
 /// [ButtonStyle.side] properties must be specified.
+///
+/// To use the Material 3 Expressive style, set
+/// [OutlinedButtonThemeData.variant] to [StyleVariant.material3Expressive].
+/// The Expressive size and shape variants can then be selected with
+/// [ButtonStyle.sizeVariant] and [ButtonStyle.shapeVariant], and the button
+/// becomes a toggle button when [isSelected] is non-null.
+///
+/// With the Material 3 style, [isSelected] updates [WidgetState.selected] and
+/// the button's semantics, but the default style doesn't change the button's
+/// appearance when it's selected. To show the selected state, use a [style]
+/// that resolves [WidgetState.selected].
 ///
 /// <callout-box>
 ///
@@ -67,13 +79,13 @@ part 'generated/outlined_button_defaults_m3.g.dart';
 ///
 /// </callout-box>
 ///
-/// The static [styleFrom] method is a convenient way to create a
+/// The static [styleFrom] method is a convenient way to create an
 /// outlined button [ButtonStyle] from simple values.
 ///
 /// See also:
 ///
-///  * [ElevatedButton], a filled button whose material elevates when pressed.
-///  * [FilledButton], a filled button that doesn't elevate when pressed.
+///  * [ElevatedButton], a filled button with a shadow.
+///  * [FilledButton], a filled button that uses a primary fill color.
 ///  * [FilledButton.tonal], a filled button variant that uses a secondary fill color.
 ///  * [TextButton], a button with no outline or fill color.
 ///  * <https://material.io/design/components/buttons.html>
@@ -91,14 +103,20 @@ class OutlinedButton extends ButtonStyleButton {
     super.autofocus = false,
     super.clipBehavior,
     super.statesController,
+    super.isSelected,
     required super.child,
   }) : _addPadding = false;
 
   /// Create an outlined button from a pair of widgets that serve as the button's
   /// [icon] and [label].
   ///
-  /// The icon and label are arranged in a row and padded by 12 logical pixels
-  /// at the start, and 16 at the end, with an 8 pixel gap in between.
+  /// The icon and label are arranged in a row and padded by 16 logical pixels
+  /// at the start, and 24 at the end, with an 8 pixel gap in between. If
+  /// [ThemeData.useMaterial3] is false, the padding is 16 at both ends.
+  ///
+  /// With the Material 3 Expressive style, the padding and the gap between the
+  /// icon and the label depend on [ButtonStyle.sizeVariant]. See
+  /// [defaultStyleOf].
   ///
   /// If [icon] is null, this constructor will create an outlined button
   /// that doesn't display an icon.
@@ -116,6 +134,7 @@ class OutlinedButton extends ButtonStyleButton {
     super.autofocus = false,
     super.clipBehavior,
     super.statesController,
+    super.isSelected,
     Widget? icon,
     required Widget label,
     IconAlignment? iconAlignment,
@@ -161,6 +180,16 @@ class OutlinedButton extends ButtonStyleButton {
   /// All of the other parameters are either used directly or used to
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
+  ///
+  /// The [sizeVariant] and [shapeVariant] parameters are Material 3 Expressive
+  /// options. They provide extra-small through extra-large sizes and round or
+  /// square shapes through [ButtonStyle.sizeVariant] and
+  /// [ButtonStyle.shapeVariant].
+  ///
+  /// When [OutlinedButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive] and these properties are null,
+  /// Material 3 Expressive [OutlinedButton] defaults use
+  /// [ButtonSizeVariant.small] and [ButtonShapeVariant.round].
   ///
   /// All parameters default to null, by default this method returns
   /// a [ButtonStyle] that doesn't override anything.
@@ -210,6 +239,8 @@ class OutlinedButton extends ButtonStyleButton {
     InteractiveInkFeatureFactory? splashFactory,
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
+    ButtonSizeVariant? sizeVariant,
+    ButtonShapeVariant? shapeVariant,
   }) {
     final WidgetStateProperty<Color?>? backgroundColorProp = switch ((
       backgroundColor,
@@ -259,6 +290,8 @@ class OutlinedButton extends ButtonStyleButton {
       splashFactory: splashFactory,
       backgroundBuilder: backgroundBuilder,
       foregroundBuilder: foregroundBuilder,
+      sizeVariant: sizeVariant,
+      shapeVariant: shapeVariant,
     );
   }
 
@@ -287,21 +320,21 @@ class OutlinedButton extends ButtonStyleButton {
   ///
   /// ## Material 2 defaults
   ///
-  /// * `textStyle` - Theme.textTheme.button
+  /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor` - transparent
   /// * `foregroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.38)
   ///   * others - Theme.colorScheme.primary
   /// * `overlayColor`
   ///   * hovered - Theme.colorScheme.primary(0.08)
-  ///   * focused or pressed - Theme.colorScheme.primary(0.12)
+  ///   * focused or pressed - Theme.colorScheme.primary(0.1)
   /// * `shadowColor` - Theme.shadowColor
   /// * `elevation` - 0
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(16)
   ///   * `14 < default font size <= 28` - lerp(horizontal(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   /// * `minimumSize` - Size(64, 36)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
@@ -317,8 +350,9 @@ class OutlinedButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  /// With the Material 3 style, that is, when [ThemeData.useMaterial3] is true
+  /// and [OutlinedButtonThemeData.variant] isn't
+  /// [StyleVariant.material3Expressive], the following defaults will be used:
   ///
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor` - transparent
@@ -329,19 +363,22 @@ class OutlinedButton extends ButtonStyleButton {
   ///   * hovered - Theme.colorScheme.primary(0.08)
   ///   * focused or pressed - Theme.colorScheme.primary(0.1)
   ///   * others - null
-  /// * `shadowColor` - Colors.transparent,
-  /// * `surfaceTintColor` - null
+  /// * `shadowColor` - Colors.transparent
+  /// * `surfaceTintColor` - Colors.transparent
   /// * `elevation` - 0
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(24)
   ///   * `14 < default font size <= 28` - lerp(horizontal(24), horizontal(12))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(12), horizontal(6))
-  ///   * `36 < default font size` - horizontal(6)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(12), horizontal(6))
+  ///   * `42 < default font size` - horizontal(6)
   /// * `minimumSize` - Size(64, 40)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - 18
+  /// * `iconColor` - same as `foregroundColor`
   /// * `side`
   ///   * disabled - BorderSide(color: Theme.colorScheme.onSurface(0.12))
+  ///   * focused - BorderSide(color: Theme.colorScheme.primary)
   ///   * others - BorderSide(color: Theme.colorScheme.outline)
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
@@ -354,10 +391,90 @@ class OutlinedButton extends ButtonStyleButton {
   ///
   /// For the [OutlinedButton.icon] factory, the start (generally the left) value of
   /// [ButtonStyle.padding] is reduced from 24 to 16.
+  ///
+  /// ## Material 3 Expressive defaults
+  ///
+  // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
+  /// With the Material 3 Expressive style, that is, when
+  /// [ThemeData.useMaterial3] is true and [OutlinedButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive], the following defaults will be used.
+  /// Values listed per size are for [ButtonSizeVariant.xSmall],
+  /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
+  /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
+  /// The button becomes a toggle button when [isSelected] is non-null. The
+  /// selected and unselected values only apply to toggle buttons.
+  ///
+  /// * `textStyle` - based on [ButtonStyle.sizeVariant]
+  ///   * xSmall or small - Theme.textTheme.labelLarge
+  ///   * medium - Theme.textTheme.titleMedium
+  ///   * large - Theme.textTheme.headlineSmall
+  ///   * xLarge - Theme.textTheme.headlineLarge
+  /// * `backgroundColor`
+  ///   * selected and disabled - Theme.colorScheme.onSurface(0.1)
+  ///   * selected - Theme.colorScheme.inverseSurface
+  ///   * others - transparent
+  /// * `foregroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.38)
+  ///   * selected - Theme.colorScheme.onInverseSurface
+  ///   * others - Theme.colorScheme.onSurfaceVariant
+  /// * `overlayColor` - the `foregroundColor` of the same selection state
+  ///   * hovered - with opacity 0.08
+  ///   * focused or pressed - with opacity 0.1
+  /// * `shadowColor` - Theme.colorScheme.shadow
+  /// * `surfaceTintColor` - Colors.transparent
+  /// * `elevation` - 0
+  /// * `padding` - based on [ButtonStyle.sizeVariant]; horizontal(12),
+  ///   horizontal(16), horizontal(24), horizontal(48), horizontal(64)
+  /// * `minimumSize` - based on [ButtonStyle.sizeVariant]; Size(64, 32),
+  ///   Size(64, 40), Size(64, 56), Size(64, 96), Size(64, 136)
+  /// * `fixedSize` - null
+  /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - based on [ButtonStyle.sizeVariant]; 20, 20, 24, 32, 40
+  /// * `iconColor` - same as `foregroundColor`
+  /// * `side`
+  ///   * selected - BorderSide.none
+  ///   * others - BorderSide(color: Theme.colorScheme.outlineVariant), with
+  ///     width 1, 1, 1, 2, or 3 based on [ButtonStyle.sizeVariant]
+  /// * `shape` - based on [ButtonStyle.sizeVariant], [ButtonStyle.shapeVariant],
+  ///   and state
+  ///   * pressed - RoundedRectangleBorder with radius 8, 8, 12, 16, 16
+  ///   * selected
+  ///     * round - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
+  ///     * square - StadiumBorder()
+  ///   * others
+  ///     * round - StadiumBorder()
+  ///     * square - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
+  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `visualDensity` - VisualDensity.standard
+  /// * `tapTargetSize` - MaterialTapTargetSize.padded
+  /// * `animationDuration` - kThemeChangeDuration
+  /// * `enableFeedback` - true
+  /// * `alignment` - Alignment.center
+  /// * `splashFactory` - Theme.splashFactory
+  /// * `sizeVariant` - ButtonSizeVariant.small
+  /// * `shapeVariant` - ButtonShapeVariant.round
+  ///
+  /// For the [OutlinedButton.icon] factory, the padding is the same, and the
+  /// gap between the icon and the label is 4, 8, 8, 12, or 16 based on
+  /// [ButtonStyle.sizeVariant].
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
+    final bool useExpressive =
+        theme.useMaterial3 &&
+        OutlinedButtonTheme.variantOf(context) == StyleVariant.material3Expressive;
+    if (useExpressive) {
+      final OutlinedButtonThemeData outlinedButtonTheme = OutlinedButtonTheme.of(context);
+      final ButtonSizeVariant? effectiveSize =
+          style?.sizeVariant ?? outlinedButtonTheme.style?.sizeVariant;
+      final ButtonShapeVariant? effectiveShape =
+          style?.shapeVariant ?? outlinedButtonTheme.style?.shapeVariant;
+      // The Material 3 Expressive defaults use the same padding with or
+      // without an icon.
+      return _OutlinedButtonDefaultsM3E(context, isSelected != null, effectiveSize, effectiveShape);
+    }
+
     final ButtonStyle buttonStyle = theme.useMaterial3
         ? _OutlinedButtonDefaultsM3(context)
         : styleFrom(
@@ -437,12 +554,25 @@ class _OutlinedButtonWithIconChild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double defaultFontSize =
-        buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
-    final double scale =
-        clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
-
     final OutlinedButtonThemeData outlinedButtonTheme = OutlinedButtonTheme.of(context);
+    final bool useExpressive =
+        Theme.of(context).useMaterial3 &&
+        OutlinedButtonTheme.variantOf(context) == StyleVariant.material3Expressive;
+    final double spacing;
+    if (useExpressive) {
+      final ButtonSizeVariant effectiveSize =
+          buttonStyle?.sizeVariant ??
+          outlinedButtonTheme.style?.sizeVariant ??
+          ButtonSizeVariant.small;
+      spacing = _OutlinedButtonDefaultsM3E.iconLabelSpace(effectiveSize);
+    } else {
+      final double defaultFontSize =
+          buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
+      final double scale =
+          clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) -
+          1.0;
+      spacing = lerpDouble(8, 4, scale)!;
+    }
     final IconAlignment effectiveIconAlignment =
         iconAlignment ??
         outlinedButtonTheme.style?.iconAlignment ??
@@ -450,7 +580,7 @@ class _OutlinedButtonWithIconChild extends StatelessWidget {
         IconAlignment.start;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      spacing: lerpDouble(8, 4, scale)!,
+      spacing: spacing,
       children: effectiveIconAlignment == IconAlignment.start
           ? <Widget>[icon, Flexible(child: label)]
           : <Widget>[Flexible(child: label), icon],
