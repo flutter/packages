@@ -13,10 +13,6 @@ import CoreMedia
   #error("Unsupported platform.")
 #endif
 
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
-#endif
-
 // Forwarding bridge to handle Pigeon callbacks without preventing VideoPlayer from
 // being annotated as @MainActor. Synchronous methods use assumeIsolated since they
 // are guaranteed to be called on the main thread, and async methods rely on the `await`
@@ -134,7 +130,7 @@ class VideoPlayer: NSObject {
   /// The pixel buffer source associated with this video player.
   let pixelBufferSource: PixelBufferSource
   /// The view provider, to obtain view information from.
-  let viewProvider: FVPViewProvider
+  let viewProvider: ViewProvider
   /// The preferred transform for the video. It can be used to handle the rotation of the video.
   private var preferredTransform: CGAffineTransform = .identity
   /// The target playback speed requested by the plugin client.
@@ -157,7 +153,7 @@ class VideoPlayer: NSObject {
   init(
     playerItem: WrappedAVPlayerItem,
     avFactory: WrappedAVObjectFactory,
-    viewProvider: FVPViewProvider
+    viewProvider: ViewProvider
   ) {
     self.viewProvider = viewProvider
 

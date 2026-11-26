@@ -1,7 +1,11 @@
-## 2.5.1
+## 2.5.2
 
 * Uses `SvgPicture.defaultPlaceholderBuilder`, once an app assigns it, when no
   widget-specific placeholder is supplied.
+
+## 2.5.1
+
+* Fixes the default clip behavior shown by SVG widget diagnostics.
 
 ## 2.5.0
 

@@ -118,7 +118,7 @@ private enum QueueableEvent {
   /// Sends the given event to the event sink if it is ready to receive events, or enqueues it to send
   /// later if not.
   private func sendOrQueueEvent(_ event: PlatformVideoEvent) {
-    if let eventSink = self.eventSink {
+    if let eventSink {
       eventSink.success(event)
     } else {
       self.queuedEvents?.append(.event(event))
@@ -126,7 +126,7 @@ private enum QueueableEvent {
   }
 
   private func sendOrQueueError(_ error: FlutterError) {
-    if let eventSink = self.eventSink {
+    if let eventSink {
       eventSink.error(code: error.code, message: error.message, details: error.details)
     } else {
       self.queuedEvents?.append(.error(error))

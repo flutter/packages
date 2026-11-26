@@ -476,36 +476,9 @@ abstract interface class SelectableChipAttributes {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// A [StatefulWidget] that illustrates use of onSelected in an [InputChip].
   ///
-  /// ```dart
-  /// class Wood extends StatefulWidget {
-  ///   const Wood({super.key});
-  ///
-  ///   @override
-  ///   State<StatefulWidget> createState() => WoodState();
-  /// }
-  ///
-  /// class WoodState extends State<Wood> {
-  ///   bool _useChisel = false;
-  ///
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     return InputChip(
-  ///       label: const Text('Use Chisel'),
-  ///       selected: _useChisel,
-  ///       onSelected: (bool newValue) {
-  ///         setState(() {
-  ///           _useChisel = newValue;
-  ///         });
-  ///       },
-  ///     );
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/chip/selectable_chip_attributes.on_selected.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ValueChanged<bool>? get onSelected;
@@ -611,26 +584,7 @@ abstract interface class TappableChipAttributes {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// class Blacksmith extends StatelessWidget {
-  ///   const Blacksmith({super.key});
-  ///
-  ///   void startHammering() {
-  ///     print('bang bang bang');
-  ///   }
-  ///
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     return InputChip(
-  ///       label: const Text('Apply Hammer'),
-  ///       onPressed: startHammering,
-  ///     );
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/chip/tappable_chip_attributes.on_pressed.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   VoidCallback? get onPressed;
@@ -694,18 +648,7 @@ class ChipAnimationStyle {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// Chip(
-///   avatar: CircleAvatar(
-///     backgroundColor: Colors.grey.shade800,
-///     child: const Text('AB'),
-///   ),
-///   label: const Text('Aaron Burr'),
-/// )
-/// ```
+/// {@example /example/lib/chip/chip.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

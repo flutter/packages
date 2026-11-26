@@ -4,7 +4,6 @@
 
 import AVFoundation
 import Testing
-import video_player_avfoundation_objc
 
 @testable import video_player_avfoundation
 
@@ -120,23 +119,21 @@ final class TestTextureRegistry: NSObject, FlutterTextureRegistry {
   }
 }
 
-final class StubViewProvider: NSObject, FVPViewProvider {
+final class StubViewProvider: ViewProvider {
   #if os(iOS)
     var viewController: UIViewController?
     init(viewController: UIViewController? = nil) {
       self.viewController = viewController
-      super.init()
     }
   #else
     var view: NSView?
     init(view: NSView? = nil) {
       self.view = view
-      super.init()
     }
   #endif
 }
 
-final class StubAssetProvider: NSObject, FVPAssetProvider {
+final class StubAssetProvider: AssetProvider {
   func lookupKey(forAsset asset: String) -> String? {
     return asset
   }
@@ -243,21 +240,21 @@ final class StubAVFactory: WrappedAVObjectFactory {
   #endif
 }
 
-final class StubFVPDisplayLink: NSObject, FVPDisplayLink {
+final class StubDisplayLink: DisplayLink {
   var running: Bool = false
   var duration: CFTimeInterval {
     return 1.0 / 60.0
   }
 }
 
-final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
-  let displayLink = StubFVPDisplayLink()
+final class StubDisplayLinkFactory: DisplayLinkFactory {
+  let displayLink = StubDisplayLink()
   var fireDisplayLink: (() -> Void)?
 
   func displayLink(
-    with viewProvider: FVPViewProvider,
+    with viewProvider: ViewProvider,
     callback: @escaping () -> Void
-  ) -> FVPDisplayLink {
+  ) -> DisplayLink {
     fireDisplayLink = callback
     return displayLink
   }
