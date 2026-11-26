@@ -1494,17 +1494,21 @@ class HTTPURLResponse extends URLResponse {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.statusCode,
+    this.url,
     super.observeValue,
   }) : super.pigeon_detached();
 
   /// The response’s HTTP status code.
   final int statusCode;
 
+  /// The URL for the response.
+  final String? url;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    HTTPURLResponse Function(int statusCode)? pigeon_newInstance,
+    HTTPURLResponse Function(int statusCode, String? url)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
       pigeon_instanceManager ?? PigeonInstanceManager.instance,
@@ -1523,13 +1527,15 @@ class HTTPURLResponse extends URLResponse {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           final int arg_statusCode = args[1]! as int;
+          final String? arg_url = args[2] as String?;
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_statusCode) ??
+              pigeon_newInstance?.call(arg_statusCode, arg_url) ??
                   HTTPURLResponse.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     statusCode: arg_statusCode,
+                    url: arg_url,
                   ),
               arg_pigeon_instanceIdentifier,
             );
@@ -1552,6 +1558,7 @@ class HTTPURLResponse extends URLResponse {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       statusCode: statusCode,
+      url: url,
       observeValue: observeValue,
     );
   }

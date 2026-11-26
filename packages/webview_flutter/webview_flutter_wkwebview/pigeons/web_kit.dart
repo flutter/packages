@@ -409,6 +409,9 @@ abstract class URLRequest extends NSObject {
 abstract class HTTPURLResponse extends URLResponse {
   /// The response’s HTTP status code.
   late int statusCode;
+
+  /// The URL for the response.
+  late String? url;
 }
 
 /// The metadata associated with the response to a URL load request, independent

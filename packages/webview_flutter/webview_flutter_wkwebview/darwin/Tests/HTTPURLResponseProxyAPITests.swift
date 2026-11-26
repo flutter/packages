@@ -18,4 +18,15 @@ import Testing
 
     #expect(value == Int64(instance.statusCode))
   }
+
+  @Test func url() throws {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiHTTPURLResponse(registrar)
+
+    let instance = HTTPURLResponse(
+      url: URL(string: "http://google.com")!, statusCode: 400, httpVersion: nil, headerFields: nil)!
+    let value = try api.pigeonDelegate.url(pigeonApi: api, pigeonInstance: instance)
+
+    #expect(value == "http://google.com")
+  }
 }

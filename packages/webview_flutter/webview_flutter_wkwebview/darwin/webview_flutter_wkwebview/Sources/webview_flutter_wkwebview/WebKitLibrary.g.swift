@@ -1865,6 +1865,8 @@ protocol PigeonApiDelegateHTTPURLResponse {
   /// The response’s HTTP status code.
   func statusCode(pigeonApi: PigeonApiHTTPURLResponse, pigeonInstance: HTTPURLResponse) throws
     -> Int64
+  /// The URL for the response.
+  func url(pigeonApi: PigeonApiHTTPURLResponse, pigeonInstance: HTTPURLResponse) throws -> String?
 }
 
 protocol PigeonApiProtocolHTTPURLResponse {
@@ -1902,13 +1904,14 @@ final class PigeonApiHTTPURLResponse: PigeonApiProtocolHTTPURLResponse {
         pigeonInstance as AnyObject)
       let statusCodeArg = try! pigeonDelegate.statusCode(
         pigeonApi: self, pigeonInstance: pigeonInstance)
+      let urlArg = try! pigeonDelegate.url(pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
       let channelName: String =
         "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, statusCodeArg] as [Any?]) { response in
+      channel.sendMessage([pigeonIdentifierArg, statusCodeArg, urlArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
