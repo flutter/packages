@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes an app hang when leaving a nested `ShellRoute` whose builder reads `GoRouterState.of` under a parent shell that changes its widget key.
+version: patch
