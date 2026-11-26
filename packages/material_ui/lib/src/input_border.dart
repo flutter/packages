@@ -495,7 +495,16 @@ class OutlineInputBorder extends InputBorder {
       final double sweep = math.asin(clampDouble(1 - dx / scaledRRect.trRadiusX, 0.0, 1.0));
       path.addArc(trCorner, trCornerArcStart, sweep);
     }
-    if (start + extent < outerWidth - scaledRRect.trRadiusX) {
+    if (start + extent < scaledRRect.tlRadiusX) {
+      final double tlGapEndSweep = math.acos(
+        clampDouble(1 - (start + extent) / scaledRRect.tlRadiusX, 0.0, 1.0),
+      );
+      path.addArc(tlCorner, math.pi + tlGapEndSweep, cornerArcSweep - tlGapEndSweep);
+      path.lineTo(scaledRRect.right - scaledRRect.trRadiusX, scaledRRect.top);
+      if (scaledRRect.trRadius != Radius.zero) {
+        path.addArc(trCorner, trCornerArcStart, trCornerArcSweep);
+      }
+    } else if (start + extent < outerWidth - scaledRRect.trRadiusX) {
       path.moveTo(start + extent, scaledRRect.top);
       path.lineTo(scaledRRect.right - scaledRRect.trRadiusX, scaledRRect.top);
       if (scaledRRect.trRadius != Radius.zero) {
