@@ -1172,11 +1172,15 @@ class VideoPlayer extends StatefulWidget {
 
 class _VideoPlayerState extends State<VideoPlayer> {
   late int _playerId;
+  late int _rotationCorrection;
+
   void _controllerDidUpdateValue() {
     final int newPlayerId = widget.controller.playerId;
-    if (newPlayerId != _playerId) {
+    final int newRotationCorrection = widget.controller.value.rotationCorrection;
+    if (newPlayerId != _playerId || newRotationCorrection != _rotationCorrection) {
       setState(() {
         _playerId = newPlayerId;
+        _rotationCorrection = newRotationCorrection;
       });
     }
   }
@@ -1185,8 +1189,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
   void initState() {
     super.initState();
     _playerId = widget.controller.playerId;
-    // Need to listen for initialization events since the actual widget ID
-    // becomes available after asynchronous initialization finishes.
+    _rotationCorrection = widget.controller.value.rotationCorrection;
+    // The texture ID and rotation correction can arrive separately.
     widget.controller.addListener(_controllerDidUpdateValue);
   }
 
@@ -1195,6 +1199,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
     super.didUpdateWidget(oldWidget);
     oldWidget.controller.removeListener(_controllerDidUpdateValue);
     _playerId = widget.controller.playerId;
+    _rotationCorrection = widget.controller.value.rotationCorrection;
     widget.controller.addListener(_controllerDidUpdateValue);
   }
 
@@ -1209,7 +1214,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
     return _playerId == VideoPlayerController.kUninitializedPlayerId
         ? Container()
         : _VideoPlayerWithRotation(
-            rotation: widget.controller.value.rotationCorrection,
+            rotation: _rotationCorrection,
             child: _videoPlayerPlatform.buildViewWithOptions(
               platform_interface.VideoViewOptions(playerId: _playerId),
             ),
