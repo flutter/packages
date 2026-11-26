@@ -531,6 +531,10 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
 
   final GlobalKey _tableKey = GlobalKey();
 
+  static bool _absorbScrollNotification(Notification notification) {
+    return notification is ScrollNotification || notification is ScrollMetricsNotification;
+  }
+
   @protected
   @override
   Widget build(BuildContext context) {
@@ -718,11 +722,17 @@ class PaginatedDataTableState extends State<PaginatedDataTable> {
                     // TODO(bkonyi): this won't handle text zoom correctly,
                     //  https://github.com/flutter/flutter/issues/48522
                     height: 56.0,
-                    child: SingleChildScrollView(
-                      dragStartBehavior: widget.dragStartBehavior,
-                      scrollDirection: Axis.horizontal,
-                      reverse: true,
-                      child: Row(children: footerWidgets),
+                    // This scroll view only keeps the footer from overflowing.
+                    // Its notifications would otherwise be mistaken for the
+                    // table's by a Scrollbar that wraps this widget.
+                    child: NotificationListener<Notification>(
+                      onNotification: _absorbScrollNotification,
+                      child: SingleChildScrollView(
+                        dragStartBehavior: widget.dragStartBehavior,
+                        scrollDirection: Axis.horizontal,
+                        reverse: true,
+                        child: Row(children: footerWidgets),
+                      ),
                     ),
                   ),
                 ),
