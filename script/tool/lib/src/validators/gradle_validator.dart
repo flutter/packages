@@ -31,27 +31,6 @@ class GradleValidator {
 
   static const int _minimumJavaVersion = 17;
 
-  /// Documentation url for Artifact hub implementation in flutter repo's.
-  @visibleForTesting
-  static const String artifactHubDocumentationString =
-      r'https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure';
-
-  /// String printed as example of valid example root build.gradle.kts
-  /// repository configuration that enables artifact hub env variable.
-  @visibleForTesting
-  static const String exampleRootGradleArtifactHubString =
-      '''
-        // See $artifactHubDocumentationString for more info.
-        val artifactRepoKey = "ARTIFACT_HUB_REPOSITORY"
-        val artifactRepoUrl = System.getenv(artifactRepoKey)
-        if (artifactRepoUrl != null) {
-            println("Using artifact hub")
-            maven {
-                url = uri(artifactRepoUrl)
-            }
-        }
-''';
-
   /// Validates the Gradle configuration for the given package, returning a list
   /// of error messages.
   ///
@@ -160,50 +139,6 @@ class GradleValidator {
     return succeeded;
   }
 
-  /// Validates that [gradleLines] reads and uses a artifiact hub repository
-  /// when ARTIFACT_HUB_REPOSITORY is set.
-  ///
-  /// Required in root gradle file.
-  bool _validateArtifactHubUsage(RepositoryPackage example, List<String> gradleLines) {
-    // Gradle variable name used to hold environment variable string.
-    const keyVariable = 'artifactRepoKey';
-    const urlVariable = 'artifactRepoUrl';
-    final keyPresentRegex = RegExp(
-      '$keyVariable'
-      r'''\s+=\s+["']ARTIFACT_HUB_REPOSITORY["']''',
-    );
-    final documentationPresentRegex = RegExp(
-      r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure',
-    );
-    final keyReadRegex = RegExp(
-      '$urlVariable'
-      r'\s*=\s*System\.getenv\('
-      '$keyVariable'
-      r'\)',
-    );
-    final keyUsedRegex = RegExp(
-      r'url = uri\('
-      '$urlVariable'
-      r'\)',
-    );
-
-    final bool keyPresent = gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
-    final bool documentationPresent = gradleLines.any(
-      (String line) => documentationPresentRegex.hasMatch(line),
-    );
-    final bool keyRead = gradleLines.any((String line) => keyReadRegex.hasMatch(line));
-    final bool keyUsed = gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
-
-    if (!(documentationPresent && keyPresent && keyRead && keyUsed)) {
-      printError(
-        'Failed Artifact Hub validation. Include the following in '
-        'example root build.gradle:\n$exampleRootGradleArtifactHubString',
-      );
-    }
-
-    return keyPresent && documentationPresent && keyRead && keyUsed;
-  }
-
   /// Validates the top-level settings.gradle for an example app (e.g.,
   /// some_package/example/android/settings.gradle).
   bool _validateExampleTopLevelSettingsGradle(RepositoryPackage package, File gradleSettingsFile) {
@@ -213,66 +148,7 @@ class GradleValidator {
     );
     final String contents = gradleSettingsFile.readAsStringSync();
     final List<String> lines = contents.split('\n');
-    // This is tracked as a variable rather than a sequence of &&s so that all
-    // failures are reported at once, not just the first one.
-    var succeeded = true;
-    if (!_validateArtifactHubSettingsUsage(package, lines)) {
-      succeeded = false;
-    }
-    if (!_validateKotlinVersion(package, lines)) {
-      succeeded = false;
-    }
-    return succeeded;
-  }
-
-  /// String printed as a valid example of settings.gradle.kts repository
-  /// configuration that enables artifact hub env variable.
-  @visibleForTesting
-  static const String exampleSettingsArtifactHubString = '''
-plugins {
-    id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    // ...other plugins
-    id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.1"
-}
-  ''';
-
-  /// Validates that [gradleLines] reads and uses a artifiact hub repository
-  /// when ARTIFACT_HUB_REPOSITORY is set.
-  ///
-  /// Required in root gradle file.
-  bool _validateArtifactHubSettingsUsage(RepositoryPackage example, List<String> gradleLines) {
-    final documentationPresentRegex = RegExp(
-      r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure',
-    );
-    final artifactRegistryPluginApplyRegex = RegExp(
-      r'id.*com\.google\.cloud\.artifactregistry\.gradle-plugin.*version.*\b\d+\.\d+\.\d+\b',
-    );
-
-    final bool documentationPresent = gradleLines.any(
-      (String line) => documentationPresentRegex.hasMatch(line),
-    );
-    final bool declarativeArtifactRegistryApplied = gradleLines.any(
-      (String line) => artifactRegistryPluginApplyRegex.hasMatch(line),
-    );
-    final bool validArtifactConfiguration =
-        documentationPresent && declarativeArtifactRegistryApplied;
-
-    if (!validArtifactConfiguration) {
-      printError('Failed Artifact Hub validation.');
-      if (!documentationPresent) {
-        printError(
-          'The link to the Artifact Hub documentation is missing. Include the following in '
-          'example root settings.gradle:\n// See $artifactHubDocumentationString for more info.',
-        );
-      }
-      if (!declarativeArtifactRegistryApplied) {
-        printError(
-          'Include the following in '
-          'example root settings.gradle:\n$exampleSettingsArtifactHubString',
-        );
-      }
-    }
-    return validArtifactConfiguration;
+    return _validateKotlinVersion(package, lines);
   }
 
   /// Validates the top-level build.gradle(.kts) for an example app (e.g.,
@@ -284,17 +160,7 @@ plugins {
     );
     final String contents = gradleFile.readAsStringSync();
     final List<String> lines = contents.split('\n');
-
-    // This is tracked as a variable rather than a sequence of &&s so that all
-    // failures are reported at once, not just the first one.
-    var succeeded = true;
-    if (!_validateJavacLintConfig(package, lines)) {
-      succeeded = false;
-    }
-    if (!_validateArtifactHubUsage(package, lines)) {
-      succeeded = false;
-    }
-    return succeeded;
+    return _validateJavacLintConfig(package, lines);
   }
 
   /// Validates the app-level build.gradle(.kts) for an example app (e.g.,
