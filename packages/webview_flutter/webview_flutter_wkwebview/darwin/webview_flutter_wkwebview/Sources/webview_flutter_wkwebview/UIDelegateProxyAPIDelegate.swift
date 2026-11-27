@@ -50,6 +50,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
         wrapperCaptureType = .unknown
       }
 
+      let decisionHandler = CompletionHandlerGuard(defaultValue: .deny, handler: decisionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.requestMediaCapturePermission(
           pigeonInstance: self, webView: webView, origin: origin, frame: frame,
@@ -93,6 +94,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
         wrapperCaptureType = .unknown
       }
 
+      let decisionHandler = CompletionHandlerGuard(defaultValue: .deny, handler: decisionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.requestMediaCapturePermission(
           pigeonInstance: self, webView: webView, origin: origin, frame: frame,
@@ -124,6 +126,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
       initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor () -> Void
     ) {
+      let completionHandler = CompletionHandlerGuard(handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.runJavaScriptAlertPanel(
           pigeonInstance: self, webView: webView, message: message, frame: frame
@@ -142,6 +145,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
       initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void
     ) {
+      let completionHandler = CompletionHandlerGuard(handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.runJavaScriptAlertPanel(
           pigeonInstance: self, webView: webView, message: message, frame: frame
@@ -162,6 +166,8 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
       initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor (Bool) -> Void
     ) {
+      let completionHandler = CompletionHandlerGuard(
+        defaultValue: false, handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.runJavaScriptConfirmPanel(
           pigeonInstance: self, webView: webView, message: message, frame: frame
@@ -183,6 +189,8 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
       initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void
     ) {
+      let completionHandler = CompletionHandlerGuard(
+        defaultValue: false, handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.runJavaScriptConfirmPanel(
           pigeonInstance: self, webView: webView, message: message, frame: frame
@@ -207,6 +215,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       defaultText: String?, initiatedByFrame frame: WKFrameInfo,
       completionHandler: @escaping @MainActor (String?) -> Void
     ) {
+      let completionHandler = CompletionHandlerGuard(defaultValue: nil, handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.runJavaScriptTextInputPanel(
           pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
@@ -230,6 +239,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       defaultText: String?, initiatedByFrame frame: WKFrameInfo,
       completionHandler: @escaping (String?) -> Void
     ) {
+      let completionHandler = CompletionHandlerGuard(defaultValue: nil, handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.runJavaScriptTextInputPanel(
           pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
