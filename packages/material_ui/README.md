@@ -1,5 +1,7 @@
 # material_ui
 
+<?code-excerpt path-base="example/lib"?>
+
 The official Flutter Material Design library, implementing Google's [Material
 Design](https://m3.material.io/) design system for Flutter applications.
 
@@ -15,7 +17,7 @@ package, which is Flutter's official iOS- and macOS-style design library.
 
 Install the package with the following command:
 
-```dart
+```sh
 flutter pub add material_ui
 ```
 
@@ -56,8 +58,9 @@ classes from `material_ui` and `cupertino_ui`, respectively.
 A typical app can use the following localization delegate from `material_ui` to
 cover all of the localization strings in Flutter, Material, and Cupertino:
 
+<?code-excerpt "readme_excerpts.dart (LocalizationsDelegates)"?>
 ```dart
-  localizationsDelegates: GlobalMaterialLocalizations.delegates,
+localizationsDelegates: GlobalMaterialLocalizations.delegates,
 ```
 
 ### Step 3: Bridge legacy dependencies (if needed)
@@ -69,6 +72,7 @@ within modern widget trees.
 
 Wrap your app using `MaterialApp.builder`:
 
+<?code-excerpt "readme_excerpts.dart (AppWideUsage)"?>
 ```dart
 import 'package:material_ui/material_ui.dart';
 
@@ -93,12 +97,11 @@ class MyApp extends StatelessWidget {
 
 You can also wrap individual subtrees that contain legacy package widgets:
 
+<?code-excerpt "readme_excerpts.dart (SubtreeUsage)"?>
 ```dart
 Scaffold(
   appBar: AppBar(title: const Text('Modern Screen')),
-  body: MaterialUiCompatibilityBridge(
-    child: LegacyPackageWidget(),
-  ),
+  body: MaterialUiCompatibilityBridge(child: const LegacyPackageWidget()),
 )
 ```
 

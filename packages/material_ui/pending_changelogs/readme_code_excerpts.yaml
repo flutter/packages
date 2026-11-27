@@ -1,0 +1,3 @@
+changelog: |
+  - Adopts `code-excerpt` for README code snippets.
+version: patch
