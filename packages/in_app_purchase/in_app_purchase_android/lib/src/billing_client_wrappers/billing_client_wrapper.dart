@@ -95,10 +95,16 @@ class BillingClient {
     BillingChoiceMode billingChoiceMode = BillingChoiceMode.playBillingOnly,
     PendingPurchasesParamsWrapper? pendingPurchasesParams,
   }) async {
-    hostCallbackHandler.disconnectCallbacks.add(onBillingServiceDisconnected);
+    int callbackHandle = hostCallbackHandler.disconnectCallbacks.indexOf(
+      onBillingServiceDisconnected,
+    );
+    if (callbackHandle == -1) {
+      callbackHandle = hostCallbackHandler.disconnectCallbacks.length;
+      hostCallbackHandler.disconnectCallbacks.add(onBillingServiceDisconnected);
+    }
     return resultWrapperFromPlatform(
       await _hostApi.startConnection(
-        hostCallbackHandler.disconnectCallbacks.length - 1,
+        callbackHandle,
         platformBillingChoiceMode(billingChoiceMode),
         switch (pendingPurchasesParams) {
           final PendingPurchasesParamsWrapper params => pendingPurchasesParamsFromWrapper(params),

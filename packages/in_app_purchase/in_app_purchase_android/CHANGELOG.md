@@ -1,3 +1,8 @@
+## 0.5.5+1
+
+* Limits retries when the billing service is disconnected and avoids retaining
+  duplicate disconnection callbacks.
+
 ## 0.5.5
 
 * Updates Google Play Billing Library from 8.0.0 to 9.1.0.
