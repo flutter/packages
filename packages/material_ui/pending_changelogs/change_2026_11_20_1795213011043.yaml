@@ -1,0 +1,3 @@
+changelog: |
+  - Fix horizontal intrinsic sizes in SegmentedButton with direction: Axis.vertical
+version: patch
