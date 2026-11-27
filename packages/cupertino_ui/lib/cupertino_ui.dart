@@ -30,6 +30,7 @@ export 'src/app.dart';
 export 'src/bottom_tab_bar.dart';
 export 'src/button.dart';
 export 'src/checkbox.dart';
+export 'src/color_picker.dart';
 export 'src/colors.dart';
 export 'src/constants.dart';
 export 'src/context_menu.dart';
