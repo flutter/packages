@@ -390,8 +390,9 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// With the Material 3 style, that is, when [ThemeData.useMaterial3] is true
-  /// and [ElevatedButtonThemeData.variant] isn't
+  // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
+  /// When [ThemeData.useMaterial3] is true and
+  /// [ElevatedButtonThemeData.variant] isn't
   /// [StyleVariant.material3Expressive], the following defaults will be used:
   ///
   /// * `textStyle` - Theme.textTheme.labelLarge
@@ -437,13 +438,13 @@ class ElevatedButton extends ButtonStyleButton {
   /// ## Material 3 Expressive defaults
   ///
   // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
-  /// With the Material 3 Expressive style, that is, when
-  /// [ThemeData.useMaterial3] is true and [ElevatedButtonThemeData.variant] is
-  /// [StyleVariant.material3Expressive], the following defaults will be used.
-  /// Values listed per size are for [ButtonSizeVariant.xSmall],
-  /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
-  /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
-  /// The selected values only apply when [isSelected] is non-null.
+  /// When [ThemeData.useMaterial3] is true and
+  /// [ElevatedButtonThemeData.variant] is [StyleVariant.material3Expressive],
+  /// the following defaults will be used. Values listed per size are for
+  /// [ButtonSizeVariant.xSmall], [ButtonSizeVariant.small],
+  /// [ButtonSizeVariant.medium], [ButtonSizeVariant.large], and
+  /// [ButtonSizeVariant.xLarge] respectively. The selected values only apply
+  /// when [isSelected] is non-null.
   ///
   /// * `textStyle` - based on [ButtonStyle.sizeVariant]
   ///   * xSmall or small - Theme.textTheme.labelLarge
