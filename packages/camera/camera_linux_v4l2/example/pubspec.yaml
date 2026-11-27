@@ -1,0 +1,28 @@
+name: camera_linux_v4l2_example
+description: Demonstrates how to use the camera_linux_v4l2 plugin.
+publish_to: 'none'
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
+
+dependencies:
+  camera_linux_v4l2:
+    # When depending on this package from a real application you should use:
+    #   camera_linux_v4l2: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: ../
+  camera_platform_interface: ^2.14.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
