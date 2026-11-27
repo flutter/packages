@@ -72,7 +72,7 @@ class UserConsentVerifierImpl : public UserConsentVerifier {
             &::IUserConsentVerifierInterop::RequestVerificationForWindowAsync,
             root_window_handle, reason.get());
 
-    return consent_result;
+    co_return consent_result;
   }
 
   // Calls the native Windows API to check for the Windows Hello availability.
