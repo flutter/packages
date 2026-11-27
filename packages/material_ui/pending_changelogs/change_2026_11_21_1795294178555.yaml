@@ -1,0 +1,3 @@
+changelog: |
+  - fix documentation in showModalBottomSheet
+version: patch
