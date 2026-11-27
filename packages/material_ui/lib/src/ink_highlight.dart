@@ -58,7 +58,6 @@ class InkHighlight extends InteractiveInkFeature {
       ..addListener(controller.markNeedsPaint)
       ..addStatusListener(_handleAlphaStatusChanged)
       ..forward();
-    _alpha = _alphaController.drive(IntTween(begin: 0, end: color.alpha));
 
     controller.addInkFeature(this);
   }
@@ -69,7 +68,6 @@ class InkHighlight extends InteractiveInkFeature {
   final RectCallback? _rectCallback;
   final TextDirection _textDirection;
 
-  late Animation<int> _alpha;
   late AnimationController _alphaController;
 
   /// Whether this part of the material is being visually emphasized.
@@ -127,7 +125,8 @@ class InkHighlight extends InteractiveInkFeature {
 
   @override
   void paintFeature(Canvas canvas, Matrix4 transform) {
-    final paint = Paint()..color = color.withAlpha(_alpha.value);
+    // Uses the alpha of the current color, which can change after creation.
+    final paint = Paint()..color = color.withAlpha((color.alpha * _alphaController.value).round());
     final Offset? originOffset = MatrixUtils.getAsTranslation(transform);
     final Rect rect = _rectCallback != null ? _rectCallback() : Offset.zero & referenceBox.size;
     if (originOffset == null) {

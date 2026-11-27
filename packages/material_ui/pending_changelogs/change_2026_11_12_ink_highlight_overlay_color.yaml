@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `InkWell` and `InkResponse` hover and focus highlights using the opacity of the other state's `overlayColor` when both hovered and focused.
+version: patch
