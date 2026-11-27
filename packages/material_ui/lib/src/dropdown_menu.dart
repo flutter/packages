@@ -193,9 +193,11 @@ class DropdownMenu<T> extends StatefulWidget {
   /// Creates a const [DropdownMenu].
   ///
   /// The leading and trailing icons in the text field can be customized by using
-  /// [leadingIcon], [trailingIcon] and [selectedTrailingIcon] properties. They are
-  /// passed down to the [InputDecoration] properties, and will override values
-  /// in the [InputDecoration.prefixIcon] and [InputDecoration.suffixIcon].
+  /// [leadingIcon], [trailingIcon] and [selectedTrailingIcon] properties. When
+  /// [decorationBuilder] is provided, they are only used as fallbacks: if the
+  /// resulting [InputDecoration.prefixIcon] is null, [leadingIcon] is used; if the
+  /// resulting [InputDecoration.suffixIcon] is null, a default [IconButton] using
+  /// [trailingIcon] and [selectedTrailingIcon] is used.
   ///
   /// Except leading and trailing icons, the text field can be configured by the
   /// [inputDecorationTheme] property. The menu can be configured by the [menuStyle].
@@ -424,6 +426,9 @@ class DropdownMenu<T> extends StatefulWidget {
   final Object? _inputDecorationTheme;
 
   /// The builder function used to create the [InputDecoration] passed to the text field.
+  ///
+  /// If the resulting [InputDecoration.prefixIcon] is null, [leadingIcon] is
+  /// assigned as the prefix icon.
   ///
   /// If a value is provided for this property and the resulting [InputDecoration.suffixIcon]
   /// is null, a default [IconButton] is assigned as the suffix icon. This button's icon will
@@ -1325,6 +1330,9 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         final DropdownMenuDecorationBuilder decorationBuilder =
             widget.decorationBuilder ?? _buildDefaultDecoration;
         InputDecoration decoration = decorationBuilder(context, controller);
+        if (widget.leadingIcon != null && decoration.prefixIcon == null) {
+          decoration = decoration.copyWith(prefixIcon: widget.leadingIcon);
+        }
         // If no suffixIcon is provided, the default IconButton is used for convenience.
         if (decoration.suffixIcon == null) {
           decoration = decoration.copyWith(

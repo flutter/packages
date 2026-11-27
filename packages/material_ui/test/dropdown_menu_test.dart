@@ -4890,6 +4890,55 @@ void main() {
       },
     );
 
+    testWidgets(
+      'leadingIcon is used as prefixIcon when decorationBuilder does not set InputDecoration.prefixIcon',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: DropdownMenu<TestMenu>(
+                dropdownMenuEntries: menuChildren,
+                leadingIcon: const Icon(Icons.star),
+                decorationBuilder: buildDecoration,
+              ),
+            ),
+          ),
+        );
+
+        final TextField textField = tester.firstWidget(find.byType(TextField));
+        expect(textField.decoration!.prefixIcon, isNotNull);
+        expect(
+          find.descendant(of: find.byType(TextField), matching: find.byIcon(Icons.star)),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('prefixIcon set by decorationBuilder takes precedence over leadingIcon', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DropdownMenu<TestMenu>(
+              dropdownMenuEntries: menuChildren,
+              leadingIcon: const Icon(Icons.star),
+              decorationBuilder: (BuildContext context, MenuController controller) {
+                return const InputDecoration(
+                  labelText: labelText,
+                  prefixIcon: Icon(Icons.favorite),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      final Finder textField = find.byType(TextField);
+      expect(find.descendant(of: textField, matching: find.byIcon(Icons.favorite)), findsOneWidget);
+      expect(find.descendant(of: textField, matching: find.byIcon(Icons.star)), findsNothing);
+    });
+
     testWidgets('Passing label and decorationBuilder throws', (WidgetTester tester) async {
       final menuController = MenuController();
       await expectLater(() async {
