@@ -2415,7 +2415,7 @@ class _BackLabel extends StatelessWidget {
       return Semantics(label: backLabel, child: const SizedBox.shrink());
     }
 
-    final bool useOnlyBackLabel = previousTitle.length > 12;
+    final bool useOnlyBackLabel = previousTitle.isEmpty || previousTitle.length > 12;
 
     var textWidget = Text(previousTitle, maxLines: 1, overflow: TextOverflow.ellipsis);
 
