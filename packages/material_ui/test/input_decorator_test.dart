@@ -8,6 +8,7 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -1788,6 +1789,46 @@ void main() {
       );
     });
 
+    testWidgets('OutlineInputBorder with floating label draws rounded corners during animation', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for OutlineInputBorder appearing straight instead of
+      // rounded during the floating label animation.
+      const borderRadius = 20.0;
+      const labelText = 'Label';
+
+      await tester.pumpWidget(
+        buildInputDecorator(
+          isFocused: true,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color(0xFF00FF00),
+            labelText: labelText,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(borderRadius)),
+          ),
+        ),
+      );
+
+      expect(find.text(labelText), findsOneWidget);
+      expect(findBorderPainter(), findsOneWidget);
+      // Verify fill via paintInterior (drawRRect), then stroke path (outline with label gap).
+      const inputDecoratorWidth = 800.0;
+      const inputDecoratorHeight = 56.0;
+      expect(
+        findBorderPainter(),
+        paints
+          ..save()
+          ..rrect(
+            style: PaintingStyle.fill,
+            color: const Color(0xFF00FF00),
+            rrect: BorderRadius.circular(borderRadius)
+                .toRRect(const Rect.fromLTWH(0, 0, inputDecoratorWidth, inputDecoratorHeight)),
+          )
+          ..path(style: PaintingStyle.stroke)
+          ..restore(),
+      );
+    });
+
     testWidgets('OutlineInputBorder with BorderRadius.zero should draw a rectangular border', (
       WidgetTester tester,
     ) async {
@@ -2094,6 +2135,64 @@ void main() {
         ),
       );
     });
+
+    // Regression test for https://github.com/flutter/flutter/issues/153387.
+    test(
+      'OutlineInputBorder resumes the top left arc when the gap ends inside the corner radius',
+      () {
+        const canvasRect = Rect.fromLTWH(0, 0, 200, 56);
+        const border = OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20.0)));
+
+        // With the default gapPadding of 4.0, the gap starts at 4.0 - 4.0 = 0.0 and
+        // its extent is (4.0 + 4.0 * 2) * 0.5 = 6.0, so the gap ends at x = 6.0,
+        // which is inside the 20.0 top left corner radius.
+        Path? borderPath;
+        expect(
+          (Canvas canvas) => border.paint(
+            canvas,
+            canvasRect,
+            gapStart: 4.0,
+            gapExtent: 4.0,
+            gapPercentage: 0.5,
+            textDirection: TextDirection.ltr,
+          ),
+          paints..something((Symbol methodName, List<dynamic> arguments) {
+            if (methodName != #drawPath) {
+              return false;
+            }
+            borderPath = arguments[0] as Path;
+            return true;
+          }),
+        );
+
+        // Sample points along the stroked path.
+        final samples = <Offset>[
+          for (final PathMetric metric in borderPath!.computeMetrics())
+            for (double d = 0.0; d <= metric.length; d += 0.25)
+              metric.getTangentForOffset(d)!.position,
+        ];
+        bool isOnBorder(Offset point) => samples.any((Offset s) => (s - point).distance < 0.5);
+
+        // The default 1.0 wide border is drawn inside the rect, so the stroke
+        // center is a rounded rect deflated by 0.5 with a corner radius of 19.5.
+        const cornerCenter = Offset(20.0, 20.0);
+        const strokeRadius = 19.5;
+        Offset pointOnTopLeftArc(double degrees) =>
+            cornerCenter + Offset.fromDirection(degrees * math.pi / 180.0, strokeRadius);
+
+        // The gap ends at about 226 degrees on the top left arc. The part of the
+        // arc after the gap end must be drawn.
+        expect(isOnBorder(pointOnTopLeftArc(240.0)), isTrue);
+        expect(isOnBorder(pointOnTopLeftArc(255.0)), isTrue);
+        expect(isOnBorder(pointOnTopLeftArc(270.0)), isTrue);
+        // The part of the arc inside the gap must not be drawn.
+        expect(isOnBorder(pointOnTopLeftArc(200.0)), isFalse);
+        // The top border must not be a straight line starting at the gap end.
+        expect(isOnBorder(const Offset(12.0, 0.5)), isFalse);
+        // The rest of the top border is still drawn.
+        expect(isOnBorder(const Offset(100.0, 0.5)), isTrue);
+      },
+    );
 
     // Regression test for https://github.com/flutter/flutter/issues/82321.
     // Regression test for https://github.com/flutter/flutter/issues/150109.
