@@ -77,6 +77,7 @@ Future<void> main(List<String> args) async {
   const ButtonTemplateM3('Outlined Button').generateFile(verbose: verbose);
   const ButtonTemplateM3E('Outlined Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Text Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3E('Text Button').generateFile(verbose: verbose);
   const CardTemplateM3('Card').generateFile(verbose: verbose);
   const CardTemplateM3('Filled Card').generateFile(verbose: verbose);
   const CardTemplateM3('Outlined Card').generateFile(verbose: verbose);

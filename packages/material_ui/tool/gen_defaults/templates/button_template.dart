@@ -1109,13 +1109,18 @@ if (toggleable && states.contains(WidgetState.selected)) {
         }''';
   }
 
+  // Text buttons can't be toggle buttons, so their defaults don't take a
+  // toggleable argument.
+  String get _toggleableParameter => _hasToggleTokens ? '\n    this.toggleable,' : '';
+
+  String get _toggleableField => _hasToggleTokens ? '\n  final bool toggleable;' : '';
+
   @override
   String generateContents(String className) =>
       '''
 class $className extends ButtonStyle {
   $className(
-    this.context,
-    this.toggleable,
+    this.context,$_toggleableParameter
     ButtonSizeVariant? sizeVariant,
     ButtonShapeVariant? shapeVariant,
   ) : _sizeVariant = sizeVariant,
@@ -1126,8 +1131,7 @@ class $className extends ButtonStyle {
         alignment: Alignment.center,
       );
 
-  final BuildContext context;
-  final bool toggleable;
+  final BuildContext context;$_toggleableField
   final ButtonSizeVariant? _sizeVariant;
   final ButtonShapeVariant? _shapeVariant;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
