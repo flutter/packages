@@ -1,0 +1,3 @@
+changelog: |
+  - Documents that `CupertinoTabScaffold`'s background extends behind bottom view insets (such as from a translucent keyboard or one with rounded corners) when `resizeToAvoidBottomInset` is true.
+version: patch
