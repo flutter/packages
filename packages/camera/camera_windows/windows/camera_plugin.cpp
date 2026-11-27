@@ -85,6 +85,42 @@ std::string GetCurrentTimeString() {
   return time_start + std::to_string(ms);
 }
 
+// Returns the directory for captures of the given kind, under the user's temp
+// directory, with a trailing backslash. Creates the directory if needed.
+//
+// Captures are written here rather than to the user's Pictures or Videos
+// folders, matching the other platform implementations (camera_avfoundation
+// uses the same camera\<subfolder> layout). Callers that need to keep a capture
+// are expected to move it.
+std::optional<std::string> GetCaptureDirectory(const std::wstring& subfolder) {
+  wchar_t temp_path[MAX_PATH + 1];
+  // The returned length includes the trailing backslash.
+  DWORD length = GetTempPathW(MAX_PATH + 1, temp_path);
+  if (length == 0 || length > MAX_PATH) {
+    return std::nullopt;
+  }
+
+  std::wstring directory =
+      std::wstring(temp_path, length) + L"camera\\" + subfolder;
+
+  // GetTempPathW doesn't verify that the temp directory exists, e.g. if TMP
+  // points to a deleted directory, so create any missing parent directories.
+  DWORD attributes = GetFileAttributesW(directory.c_str());
+  if (attributes == INVALID_FILE_ATTRIBUTES) {
+    int create_result =
+        SHCreateDirectoryExW(nullptr, directory.c_str(), nullptr);
+    if (create_result != ERROR_SUCCESS &&
+        create_result != ERROR_ALREADY_EXISTS &&
+        create_result != ERROR_FILE_EXISTS) {
+      return std::nullopt;
+    }
+  } else if ((attributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+    return std::nullopt;
+  }
+
+  return Utf8FromUtf16(directory) + "\\";
+}
+
 // Builds file path for picture capture in the given directory.
 std::string GetFilePathForPicture(const std::string& directory) {
   return directory + "PhotoCapture_" + GetCurrentTimeString() + "." +
@@ -176,37 +212,6 @@ bool CameraPlugin::EnumerateVideoCaptureDeviceSources(IMFActivate*** devices,
                                                       UINT32* count) {
   return CaptureControllerImpl::EnumerateVideoCaptureDeviceSources(devices,
                                                                    count);
-}
-
-std::optional<std::wstring> CameraPlugin::GetKnownFolderPath(
-    REFKNOWNFOLDERID folder_id) {
-  ComHeapPtr<wchar_t> known_folder_path;
-  // KF_FLAG_CREATE opens the folder with write intent even if it already
-  // exists, so this acts also as write permission check.
-  HRESULT hr = SHGetKnownFolderPath(folder_id, KF_FLAG_CREATE, nullptr,
-                                    &known_folder_path);
-  if (FAILED(hr)) {
-    return std::nullopt;
-  }
-
-  return std::wstring(known_folder_path);
-}
-
-std::optional<std::string> CameraPlugin::GetCaptureDirectory(
-    REFKNOWNFOLDERID folder_id) {
-  std::optional<std::wstring> known_folder_path = GetKnownFolderPath(folder_id);
-  if (known_folder_path) {
-    return Utf8FromUtf16(*known_folder_path) + "\\";
-  }
-
-  wchar_t temp_path[MAX_PATH + 1];
-  // The returned length includes the trailing backslash.
-  DWORD length = GetTempPathW(MAX_PATH + 1, temp_path);
-  if (length == 0 || length > MAX_PATH) {
-    return std::nullopt;
-  }
-
-  return Utf8FromUtf16(std::wstring(temp_path, length));
 }
 
 void CameraPlugin::Create(const std::string& camera_name,
@@ -324,7 +329,7 @@ void CameraPlugin::StartVideoRecording(
   if (video_output_path && !video_output_path->empty()) {
     path = *video_output_path;
   } else if (std::optional<std::string> directory =
-                 GetCaptureDirectory(FOLDERID_Videos)) {
+                 GetCaptureDirectory(L"videos")) {
     path = GetFilePathForVideo(*directory);
   }
 
@@ -373,7 +378,7 @@ void CameraPlugin::TakePicture(
         FlutterError("camera_error", "Pending take picture request exists"));
   }
 
-  std::optional<std::string> directory = GetCaptureDirectory(FOLDERID_Pictures);
+  std::optional<std::string> directory = GetCaptureDirectory(L"pictures");
   if (directory) {
     if (camera->AddPendingStringResult(PendingResultType::kTakePicture,
                                        std::move(result))) {
