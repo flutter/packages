@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable, internal;
+import 'package:flutter/foundation.dart' show internal;
 
 import '../cross_directory.dart';
 
@@ -28,7 +28,6 @@ import '../cross_directory.dart';
 ///   print(ioExtension.directory.statSync().accessed);
 /// }
 /// ```
-@immutable
 base class FileSystemXDirectory extends XDirectory {
   /// Constructs a [FileSystemXDirectory].
   ///
@@ -71,7 +70,7 @@ base class FileSystemXDirectory extends XDirectory {
   /// Constructs a [FileSystemXDirectory] from a specific platform
   /// implementation.
   @internal
-  const FileSystemXDirectory.fromPlatform(PlatformFileSystemXDirectory super.platform);
+  FileSystemXDirectory.fromPlatform(PlatformFileSystemXDirectory super.platform);
 
   /// The path of the directory.
   String get path => platform.params.path;

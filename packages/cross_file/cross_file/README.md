@@ -51,9 +51,13 @@ debugPrint('File information:');
 debugPrint('- URI: ${file.uri}');
 debugPrint('- Name: ${await file.name()}');
 
-if (await file.exists()) {
-  final String fileContent = await file.readAsString();
-  debugPrint('Content of the file: $fileContent');
+try {
+  if (await file.exists()) {
+    final String fileContent = await file.readAsString();
+    debugPrint('Content of the file: $fileContent');
+  }
+} finally {
+  await file.dispose();
 }
 ```
 
@@ -111,13 +115,13 @@ switch (CrossFile.implementation) {
     file = XFile.fileSystem(path: '/my/file.txt');
 }
 
-await file
-    .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
-    ?.startAccessingSecurityScopedResource();
+try {
+  await file
+      .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
+      ?.startAccessingSecurityScopedResource();
 
-debugPrint(await file.readAsString());
-
-if (file is ScopedStorageXFile) {
+  debugPrint(await file.readAsString());
+} finally {
   await file.dispose();
 }
 ```

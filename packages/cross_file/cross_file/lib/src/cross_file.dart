@@ -2,23 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable, internal, protected;
+import 'package:flutter/foundation.dart' show internal, protected;
 
 import 'cross_entity.dart';
 import 'file_system/file_system_cross_file.dart';
 import 'scoped_storage/scoped_storage_cross_file.dart';
 
 /// A reference to a data resource.
-@immutable
 abstract base class XFile extends XEntity {
   /// Constructs a [XFile] from a specific platform implementation.
   @internal
   @protected
-  const XFile(PlatformXFile super.platform);
+  XFile(PlatformXFile super.platform);
 
   /// Instantiates a [FileSystemXFile] as a reference to a local data resource
   /// on the file system.
@@ -39,12 +39,18 @@ abstract base class XFile extends XEntity {
 
   /// Date and time when the resource was last modified, if the information is
   /// available.
-  Future<DateTime?> lastModified() => platform.lastModified();
+  Future<DateTime?> lastModified() {
+    assert(assertNotDisposed());
+    return platform.lastModified();
+  }
 
   /// The length of the data represented by this uri, in bytes.
   ///
   /// Returns null if the information is not available.
-  Future<int?> length() => platform.length();
+  Future<int?> length() {
+    assert(assertNotDisposed());
+    return platform.length();
+  }
 
   /// Creates a new independent Stream for the contents of this resource.
   ///
@@ -57,6 +63,7 @@ abstract base class XFile extends XEntity {
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
   Stream<Uint8List> openRead([int? start, int? end]) {
+    assert(assertNotDisposed());
     if (start != null && start < 0) {
       return Stream.error(RangeError('`start` must be >= 0. start: $start'));
     } else if (end != null && end <= (start ?? 0)) {
@@ -67,26 +74,49 @@ abstract base class XFile extends XEntity {
       );
     }
 
-    return platform.openRead(start, end);
+    // Ensure `dispose` is not called before the listen event of the stream.
+    late final StreamController<Uint8List> controller;
+    controller = StreamController<Uint8List>(
+      onListen: () {
+        try {
+          assert(assertNotDisposed());
+          controller
+              .addStream(platform.openRead(start, end))
+              .then((_) => controller.close(), onError: controller.addError);
+        } catch (exception, stacktrace) {
+          controller.addError(exception, stacktrace);
+          controller.close();
+        }
+      },
+    );
+    return controller.stream;
   }
 
   /// Reads the entire resource contents as a list of bytes.
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
-  Future<Uint8List> readAsBytes() => platform.readAsBytes();
+  Future<Uint8List> readAsBytes() {
+    assert(assertNotDisposed());
+    return platform.readAsBytes();
+  }
 
   /// Reads the entire resource contents as a string using the given [Encoding].
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
-  Future<String> readAsString({Encoding encoding = utf8}) =>
-      platform.readAsString(encoding: encoding);
+  Future<String> readAsString({Encoding encoding = utf8}) {
+    assert(assertNotDisposed());
+    return platform.readAsString(encoding: encoding);
+  }
 
   /// The name of the resource represented by this object or null if the file
   /// doesn't exist or information is not available.
   ///
   /// If the file is identified by a path, only the base name of the file will
   /// be included in the name.
-  Future<String?> name() => platform.name();
+  Future<String?> name() {
+    assert(assertNotDisposed());
+    return platform.name();
+  }
 }

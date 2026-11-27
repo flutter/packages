@@ -102,18 +102,6 @@ void main() {
       expect(await file.name(), name);
     });
 
-    test('name', () async {
-      const name = 'name';
-      CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
-            TestFileSystemXFile(params, onName: () async => name),
-      );
-
-      final file = XFile.fileSystem(path: 'to/myFile.txt');
-
-      expect(await file.name(), name);
-    });
-
     test('writeAsBytes', () async {
       final testBytes = Uint8List.fromList(<int>[0, 1, 2, 3]);
       CrossFilePlatform.instance = TestCrossFilePlatform(
@@ -130,6 +118,64 @@ void main() {
       final file = FileSystemXFile('to/myFile.txt');
 
       await file.writeAsBytes(testBytes);
+    });
+
+    group('calling methods after dispose', () {
+      setUp(() async {
+        CrossFilePlatform.instance = TestCrossFilePlatform(
+          onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
+              TestFileSystemXFile(params),
+        );
+      });
+
+      test('lastModified throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.lastModified(), throwsAssertionError);
+      });
+
+      test('length throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.length(), throwsAssertionError);
+      });
+
+      test('openRead throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.openRead(), throwsAssertionError);
+      });
+
+      test('listening to openRead stream after dispose throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        final Stream<Uint8List> stream = file.openRead();
+        await file.dispose();
+        await expectLater(stream.drain<void>(), throwsAssertionError);
+      });
+
+      test('readAsBytes throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.readAsBytes(), throwsAssertionError);
+      });
+
+      test('readAsString throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.readAsString(), throwsAssertionError);
+      });
+
+      test('name throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.name(), throwsAssertionError);
+      });
+
+      test('writeAsBytes throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.writeAsBytes(Uint8List(0)), throwsAssertionError);
+      });
     });
   });
 }

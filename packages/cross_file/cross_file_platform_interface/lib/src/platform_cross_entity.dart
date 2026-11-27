@@ -33,4 +33,9 @@ abstract base class PlatformXEntity {
 
   /// Whether the resource represented by this reference exists.
   Future<bool> exists();
+
+  /// Releases the underlying reference to the resource, if necessary.
+  ///
+  /// This is expected to be called when the app is finished with the resource.
+  Future<void> dispose() async {}
 }

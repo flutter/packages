@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable, internal, protected;
+import 'package:flutter/foundation.dart' show internal, protected;
 
 import 'cross_entity.dart';
 import 'file_system/file_system_cross_directory.dart';
@@ -14,12 +14,11 @@ import 'scoped_storage/scoped_storage_cross_file.dart';
 /// A reference to a container of data resources.
 ///
 /// Note: Not all platforms support accessing directories.
-@immutable
 abstract base class XDirectory extends XEntity {
   /// Constructs a [XDirectory] from a specific platform implementation.
   @internal
   @protected
-  const XDirectory(PlatformXDirectory super.platform);
+  XDirectory(PlatformXDirectory super.platform);
 
   /// Instantiates a [FileSystemXDirectory] as a reference to a directory
   /// (or folder) on the file system.
@@ -40,6 +39,7 @@ abstract base class XDirectory extends XEntity {
 
   /// Lists the sub-directories and files of this directory.
   Stream<XEntity> list() {
+    assert(assertNotDisposed());
     // Converts PlatformXEntities to XEntities.
     return platform.list(const PlatformListParams()).map<XEntity>((PlatformXEntity entity) {
       switch (entity) {

@@ -66,13 +66,35 @@ void main() {
 
     test('dispose', () async {
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
-            TestScopedStorageXFile(params, onDispose: expectAsync0(() async {})),
+        onCreatePlatformScopedStorageXDirectory:
+            (PlatformScopedStorageXDirectoryCreationParams params) =>
+                TestScopedStorageXDirectory(params, onDispose: expectAsync0(() async {})),
       );
 
-      final file = ScopedStorageXFile(uri: 'uri');
+      final directory = ScopedStorageXDirectory(uri: 'uri');
+      await expectLater(directory.dispose(), completes);
+    });
 
-      await file.dispose();
+    group('calling methods after dispose', () {
+      setUp(() async {
+        CrossFilePlatform.instance = TestCrossFilePlatform(
+          onCreatePlatformScopedStorageXDirectory:
+              (PlatformScopedStorageXDirectoryCreationParams params) =>
+                  TestScopedStorageXDirectory(params),
+        );
+      });
+
+      test('list throws StateError', () async {
+        final directory = ScopedStorageXDirectory(uri: 'my/dir/');
+        await directory.dispose();
+        expect(() => directory.list(), throwsAssertionError);
+      });
+
+      test('canRead throws StateError', () async {
+        final directory = ScopedStorageXDirectory(uri: 'my/dir/');
+        await directory.dispose();
+        await expectLater(() => directory.canRead(), throwsAssertionError);
+      });
     });
   });
 }

@@ -12,7 +12,7 @@ import 'package:cross_file_web/cross_file_web.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 
 /// Demonstrate instantiating an XFile for the README.
-Future<XFile> instantiateXFile() async {
+Future<void> instantiateXFile() async {
   // #docregion Instantiate
   final file = XFile.fileSystem(path: 'assets/hello.txt');
 
@@ -20,17 +20,19 @@ Future<XFile> instantiateXFile() async {
   debugPrint('- URI: ${file.uri}');
   debugPrint('- Name: ${await file.name()}');
 
-  if (await file.exists()) {
-    final String fileContent = await file.readAsString();
-    debugPrint('Content of the file: $fileContent');
+  try {
+    if (await file.exists()) {
+      final String fileContent = await file.readAsString();
+      debugPrint('Content of the file: $fileContent');
+    }
+  } finally {
+    await file.dispose();
   }
   // #enddocregion Instantiate
-
-  return file;
 }
 
 /// Demonstrate accessing platform features.
-Future<XFile> accessPlatformFeatures() async {
+Future<void> accessPlatformFeatures() async {
   // #docregion platform_features
   late final XFile file;
 
@@ -46,16 +48,14 @@ Future<XFile> accessPlatformFeatures() async {
       file = XFile.fileSystem(path: '/my/file.txt');
   }
 
-  await file
-      .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
-      ?.startAccessingSecurityScopedResource();
+  try {
+    await file
+        .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
+        ?.startAccessingSecurityScopedResource();
 
-  debugPrint(await file.readAsString());
-
-  if (file is ScopedStorageXFile) {
+    debugPrint(await file.readAsString());
+  } finally {
     await file.dispose();
   }
   // #enddocregion platform_features
-
-  return file;
 }

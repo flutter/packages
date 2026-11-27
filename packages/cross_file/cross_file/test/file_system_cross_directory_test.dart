@@ -47,5 +47,21 @@ void main() {
       expect(directoryEntities[2], isA<XEntity>());
       expect(directoryEntities[2].uri, entities[2].params.uri);
     });
+
+    group('calling methods after dispose', () {
+      setUp(() async {
+        CrossFilePlatform.instance = TestCrossFilePlatform(
+          onCreatePlatformFileSystemXDirectory:
+              (PlatformFileSystemXDirectoryCreationParams params) =>
+                  TestFileSystemXDirectory(params),
+        );
+      });
+
+      test('list throws StateError', () async {
+        final directory = FileSystemXDirectory('my/dir/');
+        await directory.dispose();
+        expect(() => directory.list(), throwsAssertionError);
+      });
+    });
   });
 }
