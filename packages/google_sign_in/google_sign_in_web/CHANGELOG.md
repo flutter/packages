@@ -1,5 +1,6 @@
-## NEXT
+## 1.2.0
 
+* Adds a `google-signin-defer-sdk` meta tag that defers loading the GIS SDK until `init` is called.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.1.3

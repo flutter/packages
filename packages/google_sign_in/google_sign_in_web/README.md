@@ -49,6 +49,21 @@ You can tell `flutter run` to listen for requests in a specific host and port wi
 flutter run -d chrome --web-hostname localhost --web-port 7357
 ```
 
+### Deferring the SDK load
+
+By default, the Google Identity Services (GIS) SDK starts loading as soon as the
+plugin is registered, before the app's `main()` runs. If your app must not
+contact Google until later, for example because it asks for consent first, add
+this `meta` tag to the `head` of your `web/index.html`:
+
+```html
+<meta name="google-signin-defer-sdk">
+```
+
+The SDK is then loaded when `GoogleSignIn.instance.initialize()` is called.
+Since `initialize()` has to wait for the SDK to load, it takes longer to complete
+than it does by default.
+
 ## Authentication
 
 This implementation returns false for `supportsAuthentication`, and will throw
