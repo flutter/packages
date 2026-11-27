@@ -1,5 +1,6 @@
-## NEXT
+## 2.19.1
 
+* Updates README to reflect that this is now the default endorsed iOS implementation.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.19.0
