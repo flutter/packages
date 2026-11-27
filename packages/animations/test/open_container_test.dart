@@ -1438,6 +1438,101 @@ void main() {
     expect(_getScrimColor(tester), Colors.transparent);
   });
 
+  for (final ContainerTransitionType transitionType in ContainerTransitionType.values) {
+    testWidgets('Custom scrimColor is used when opening and closing - $transitionType', (
+      WidgetTester tester,
+    ) async {
+      const scrimColor = Color(0x80FF0000);
+      const transparentScrimColor = Color(0x00FF0000);
+      await tester.pumpWidget(
+        _boilerplate(
+          child: Center(
+            child: OpenContainer(
+              scrimColor: scrimColor,
+              transitionType: transitionType,
+              closedBuilder: (BuildContext context, VoidCallback _) {
+                return const Text('Closed');
+              },
+              openBuilder: (BuildContext context, VoidCallback _) {
+                return const Text('Open');
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Closed'));
+      await tester.pump();
+      expect(_getScrimColor(tester), transparentScrimColor);
+
+      await tester.pump(const Duration(milliseconds: 50));
+      final Color halfwayFadeInColor = _getScrimColor(tester);
+      expect(halfwayFadeInColor.a, greaterThan(0.0));
+      expect(halfwayFadeInColor.a, lessThan(scrimColor.a));
+      // Only the alpha animates, so the scrim never passes through black.
+      expect(halfwayFadeInColor.withValues(alpha: scrimColor.a), scrimColor);
+
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(_getScrimColor(tester), scrimColor);
+
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(_getScrimColor(tester), scrimColor);
+
+      await tester.pumpAndSettle();
+
+      final NavigatorState navigator = tester.state(find.byType(Navigator));
+      navigator.pop();
+      await tester.pump();
+      expect(_getScrimColor(tester), scrimColor);
+
+      await tester.pump(const Duration(milliseconds: 200));
+      final Color halfwayFadeOutColor = _getScrimColor(tester);
+      expect(halfwayFadeOutColor.a, greaterThan(0.0));
+      expect(halfwayFadeOutColor.a, lessThan(scrimColor.a));
+      expect(halfwayFadeOutColor.withValues(alpha: scrimColor.a), scrimColor);
+
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(_getScrimColor(tester), transparentScrimColor);
+    });
+
+    testWidgets('Transparent scrimColor draws no scrim - $transitionType', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _boilerplate(
+          child: Center(
+            child: OpenContainer(
+              scrimColor: Colors.transparent,
+              transitionType: transitionType,
+              closedBuilder: (BuildContext context, VoidCallback _) {
+                return const Text('Closed');
+              },
+              openBuilder: (BuildContext context, VoidCallback _) {
+                return const Text('Open');
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Closed'));
+      await tester.pump();
+      for (var i = 0; i < 6; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(_getScrimColor(tester).a, 0.0);
+      }
+      await tester.pumpAndSettle();
+
+      final NavigatorState navigator = tester.state(find.byType(Navigator));
+      navigator.pop();
+      await tester.pump();
+      for (var i = 0; i < 5; i++) {
+        expect(_getScrimColor(tester).a, 0.0);
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+    });
+  }
+
   testWidgets('Container partly offscreen can be opened without crash - vertical', (
     WidgetTester tester,
   ) async {
