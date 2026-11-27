@@ -5,31 +5,30 @@
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Screen that allows the user to select an image file using
-/// `openFiles`, then displays the selected images in a gallery dialog.
+/// `openFile`, then displays the selected images in a gallery dialog.
 class OpenImagePage extends StatelessWidget {
   /// Default Constructor
   const OpenImagePage({super.key});
 
   Future<void> _openImageFile(BuildContext context) async {
     const typeGroup = XTypeGroup(label: 'images', extensions: <String>['jpg', 'png']);
-    final XFile? file = await FileSelectorPlatform.instance.openFile(
-      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    final XFile? file = await FileSelectorPlatform.instance!.openFile(
+      options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
     );
     if (file == null) {
       // Operation was canceled by the user.
       return;
     }
-    final String fileName = file.name;
-    final String filePath = file.path;
+    final String? fileName = await file.name();
+    final String filePath = Uri.parse(file.uri).toFilePath();
 
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => ImageDisplay(fileName, filePath),
+        builder: (BuildContext context) => ImageDisplay(fileName ?? 'Unknown Filename', filePath),
       );
     }
   }
@@ -72,9 +71,7 @@ class ImageDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(fileName),
-      // On web the filePath is a blob url
-      // while on other platforms it is a system path.
-      content: kIsWeb ? Image.network(filePath) : Image.file(File(filePath)),
+      content: Image.file(File(filePath)),
       actions: <Widget>[
         TextButton(
           child: const Text('Close'),

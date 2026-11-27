@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'image_loader.dart';
 
 /// Screen that shows an example of openFiles
 class OpenMultipleImagesPage extends StatelessWidget {
@@ -33,6 +32,7 @@ class OpenMultipleImagesPage extends StatelessWidget {
       // Operation was canceled by the user.
       return;
     }
+
     if (context.mounted) {
       await showDialog<void>(
         context: context,
@@ -64,12 +64,12 @@ class OpenMultipleImagesPage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog
+/// Widget that displays image files in a dialog.
 class MultipleImagesDisplay extends StatelessWidget {
-  /// Default Constructor
+  /// Default Constructor.
   const MultipleImagesDisplay(this.files, {super.key});
 
-  /// The files containing the images
+  /// The files containing the images.
   final List<XFile> files;
 
   @override
@@ -81,10 +81,8 @@ class MultipleImagesDisplay extends StatelessWidget {
       content: Center(
         child: Row(
           children: <Widget>[
-            ...files.map(
-              (XFile file) =>
-                  Flexible(child: kIsWeb ? Image.network(file.path) : Image.file(File(file.path))),
-            ),
+            for (int i = 0; i < files.length; i++)
+              Flexible(key: Key('result_image_name$i'), child: ImageBuilder(files[i])),
           ],
         ),
       ),

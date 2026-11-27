@@ -4,9 +4,11 @@
 
 import 'package:flutter/foundation.dart' show immutable;
 
+import 'x_type_group.dart';
+
 /// Configuration options for any file selector dialog.
 @immutable
-class FileDialogOptions {
+base class FileDialogOptions {
   /// Creates a new options set with the given settings.
   const FileDialogOptions({
     this.initialDirectory,
@@ -28,16 +30,72 @@ class FileDialogOptions {
   final bool? canCreateDirectories;
 }
 
-/// Configuration options for a save dialog.
+/// Configuration options to open a file.
 @immutable
-class SaveDialogOptions extends FileDialogOptions {
+base class OpenFileDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
-  const SaveDialogOptions({
+  const OpenFileDialogOptions({
     super.initialDirectory,
     super.confirmButtonText,
     super.canCreateDirectories,
+    this.acceptedTypeGroups,
+  });
+
+  /// A set of allowed XTypes.
+  final List<XTypeGroup>? acceptedTypeGroups;
+}
+
+/// Configuration options to open multiple files.
+@immutable
+base class OpenFilesDialogOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const OpenFilesDialogOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+    this.acceptedTypeGroups,
+  });
+
+  /// A set of allowed XTypes.
+  final List<XTypeGroup>? acceptedTypeGroups;
+}
+
+/// Configuration options to open a directory.
+@immutable
+base class GetDirectoryDialogOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const GetDirectoryDialogOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+  });
+}
+
+/// Configuration options to open multiple directories.
+@immutable
+base class GetDirectoriesDialogOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const GetDirectoriesDialogOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+  });
+}
+
+/// Configuration options for a save location.
+@immutable
+base class SaveLocationOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const SaveLocationOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+    this.acceptedTypeGroups,
     this.suggestedName,
   });
+
+  /// A set of allowed XTypes.
+  final List<XTypeGroup>? acceptedTypeGroups;
 
   /// The suggested name of the file to save or open.
   final String? suggestedName;

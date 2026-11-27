@@ -1,3 +1,7 @@
+## 0.6.0
+
+* **Breaking Change** Updates `file_selector_platform_interface` to `3.0.0`.
+
 ## 0.5.3+7
 
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
