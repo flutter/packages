@@ -115,7 +115,7 @@ void main() {
       // Wrong type throws.
       expect(() {
         datePickerTheme.copyWith(inputDecorationTheme: Object());
-      }, throwsA(isA<AssertionError>()));
+      }, throwsAssertionError);
     },
   );
 

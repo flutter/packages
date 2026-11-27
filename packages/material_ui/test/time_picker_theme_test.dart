@@ -29,7 +29,7 @@ void main() {
       // Wrong type throws.
       expect(() {
         timePickerTheme.copyWith(inputDecorationTheme: Object());
-      }, throwsA(isA<AssertionError>()));
+      }, throwsAssertionError);
     },
   );
 
