@@ -11,6 +11,671 @@ import 'package:material_ui/material_ui.dart';
 import 'test_helpers.dart';
 
 void main() {
+  for (final asynchronous in <bool>[false, true]) {
+    testWidgets('chained pops preserve results with ${asynchronous ? 'async' : 'sync'} onExit', (
+      WidgetTester tester,
+    ) async {
+      final results = <String?>[];
+      var exits = 0;
+      final GoRouter router = await createRouter(<GoRoute>[
+        GoRoute(path: '/', builder: (_, _) => const Text('A')),
+        GoRoute(path: '/b', builder: (_, _) => const Text('B')),
+        GoRoute(
+          path: '/c',
+          builder: (_, _) => const Text('C'),
+          onExit: (_, _) {
+            exits += 1;
+            return asynchronous ? Future<bool>.value(true) : true;
+          },
+        ),
+      ], tester);
+      router.push<String>('/b').then(results.add);
+      await tester.pumpAndSettle();
+      router.push<String>('/c').then((String? result) {
+        results.add(result);
+        // Deliberately pop B as soon as C's result is delivered, before a frame.
+        router.pop<String>('B:$result');
+      });
+      await tester.pumpAndSettle();
+
+      router.pop<String>('C');
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(results, <String?>['C', 'B:C']);
+      expect(exits, 1);
+      expect(find.text('A'), findsOneWidget);
+      expect(router.canPop(), isFalse);
+    });
+  }
+
+  for (final allowExit in <bool>[false, true]) {
+    testWidgets('repeated pops share pending onExit that returns $allowExit', (
+      WidgetTester tester,
+    ) async {
+      var approval = Completer<bool>();
+      var exits = 0;
+      final results = <String?>[];
+      final GoRouter router = await createRouter(<GoRoute>[
+        GoRoute(path: '/', builder: (_, _) => const Text('A')),
+        GoRoute(path: '/b', builder: (_, _) => const Text('B')),
+        GoRoute(
+          path: '/c',
+          builder: (_, _) => const Text('C'),
+          onExit: (_, _) {
+            exits += 1;
+            return approval.future;
+          },
+        ),
+      ], tester);
+      router.push<void>('/b');
+      await tester.pumpAndSettle();
+      router.push<String>('/c').then(results.add);
+      await tester.pumpAndSettle();
+
+      router.pop<String>('first');
+      router.pop<String>('duplicate');
+      await tester.pumpAndSettle();
+      expect(exits, 1);
+      expect(results, isEmpty);
+      expect(find.text('C'), findsOneWidget);
+
+      approval.complete(allowExit);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(results, allowExit ? <String?>['first'] : isEmpty);
+      expect(find.text(allowExit ? 'B' : 'C'), findsOneWidget);
+      if (!allowExit) {
+        approval = Completer<bool>();
+        router.pop<String>('retry');
+        await tester.pumpAndSettle();
+        expect(exits, 2);
+        approval.complete(true);
+        await tester.pumpAndSettle();
+        expect(results, <String?>['retry']);
+        expect(find.text('B'), findsOneWidget);
+      }
+    });
+  }
+
+  testWidgets('a pop in the same event as a back swipe shares the pending onExit', (
+    WidgetTester tester,
+  ) async {
+    final results = <String?>[];
+    final GoRouter router = await createRouter(<GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, _) => const Scaffold(body: Text('A')),
+      ),
+      GoRoute(
+        path: '/b',
+        builder: (_, _) => const Scaffold(body: Text('B')),
+      ),
+      GoRoute(
+        path: '/c',
+        builder: (_, _) => const Scaffold(body: Text('C')),
+        // Same as the default GoRouteData.onExit.
+        onExit: (_, _) => true,
+      ),
+    ], tester);
+    router.push<void>('/b');
+    await tester.pumpAndSettle();
+    router.push<String>('/c').then(results.add);
+    await tester.pumpAndSettle();
+
+    tester.binding.handlePointerEvent(const PointerDownEvent(pointer: 1, position: Offset(5, 300)));
+    await tester.pump();
+    tester.binding.handlePointerEvent(
+      const PointerMoveEvent(pointer: 1, position: Offset(505, 300), delta: Offset(500, 0)),
+    );
+    await tester.pump();
+    // No microtask runs between the swipe commit and the pop, so both reach
+    // the delegate while the onExit of /c is pending.
+    tester.binding.handlePointerEvent(const PointerUpEvent(pointer: 1, position: Offset(505, 300)));
+    router.pop<String>('duplicate');
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(results, <String?>[null]);
+    expect(find.text('B'), findsOneWidget);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+  testWidgets('pending onExit does not pop a newer pushed page', (WidgetTester tester) async {
+    final approval = Completer<bool>();
+    final results = <String?>[];
+    final GoRouter router = await createRouter(<GoRoute>[
+      GoRoute(path: '/', builder: (_, _) => const Text('A')),
+      GoRoute(path: '/b', builder: (_, _) => const Text('B'), onExit: (_, _) => approval.future),
+      GoRoute(path: '/c', builder: (_, _) => const Text('C')),
+    ], tester);
+    router.push<String>('/b').then(results.add);
+    await tester.pumpAndSettle();
+    router.pop<String>('stale');
+    await tester.pumpAndSettle();
+    router.push<String>('/c').then(results.add);
+    await tester.pumpAndSettle();
+
+    approval.complete(true);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('C'), findsOneWidget);
+    expect(results, isEmpty);
+    router.pop<String>('C');
+    await tester.pumpAndSettle();
+    expect(find.text('B'), findsOneWidget);
+    router.pop<String>('B');
+    await tester.pumpAndSettle();
+    expect(results, <String?>['C', 'B']);
+  });
+
+  for (final navigation in <String>['go', 'replace', 'pushReplacement']) {
+    testWidgets('pending onExit ignores stale approval after $navigation', (
+      WidgetTester tester,
+    ) async {
+      final approval = Completer<bool>();
+      var exits = 0;
+      final results = <String?>[];
+      final GoRouter router = await createRouter(<GoRoute>[
+        GoRoute(path: '/', builder: (_, _) => const Text('A')),
+        GoRoute(
+          path: '/b',
+          builder: (_, _) => const Text('B'),
+          onExit: (_, _) => exits++ == 0 ? approval.future : true,
+        ),
+        GoRoute(path: '/c', builder: (_, _) => const Text('C')),
+      ], tester);
+      router.push<String>('/b').then(results.add);
+      await tester.pumpAndSettle();
+      router.pop<String>('stale');
+      await tester.pumpAndSettle();
+
+      switch (navigation) {
+        case 'go':
+          router.go('/c');
+        case 'replace':
+          router.replace<String>('/c').then(results.add);
+        case 'pushReplacement':
+          router.pushReplacement<String>('/c').then(results.add);
+      }
+      // Flush navigation without rebuilding Navigator. The old Route can still
+      // be current even though the router's configuration has changed.
+      await tester.idle();
+      approval.complete(true);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('C'), findsOneWidget);
+      expect(results, isNot(contains('stale')));
+    });
+  }
+
+  testWidgets('pending onExit is ignored after disposal', (WidgetTester tester) async {
+    final approval = Completer<bool>();
+    final router = GoRouter(
+      routes: <GoRoute>[
+        GoRoute(path: '/', builder: (_, _) => const Text('A')),
+        GoRoute(path: '/b', builder: (_, _) => const Text('B'), onExit: (_, _) => approval.future),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    router.push<void>('/b');
+    await tester.pumpAndSettle();
+    router.pop();
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(const SizedBox());
+    router.dispose();
+
+    approval.complete(true);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('onExit can approve a pop through a dialog', (WidgetTester tester) async {
+    final results = <String?>[];
+    final GoRouter router = await createRouter(<GoRoute>[
+      GoRoute(path: '/', builder: (_, _) => const Text('A')),
+      GoRoute(
+        path: '/b',
+        builder: (_, _) => const Text('B'),
+        onExit: (BuildContext context, GoRouterState state) async {
+          return await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Leave'),
+                    ),
+                  ],
+                ),
+              ) ??
+              false;
+        },
+      ),
+    ], tester);
+    router.push<String>('/b').then(results.add);
+    await tester.pumpAndSettle();
+    router.pop<String>('B');
+    await tester.pumpAndSettle();
+    expect(find.text('Leave'), findsOneWidget);
+    expect(results, isEmpty);
+
+    await tester.tap(find.text('Leave'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(results, <String?>['B']);
+    expect(find.text('A'), findsOneWidget);
+  });
+
+  testWidgets('pending onExit does not pop a newer pageless route', (WidgetTester tester) async {
+    final approval = Completer<bool>();
+    final results = <String?>[];
+    late BuildContext pageContext;
+    final GoRouter router = await createRouter(<GoRoute>[
+      GoRoute(path: '/', builder: (_, _) => const Text('A')),
+      GoRoute(
+        path: '/b',
+        builder: (BuildContext context, GoRouterState state) {
+          pageContext = context;
+          return const Text('B');
+        },
+        onExit: (_, _) => approval.future,
+      ),
+    ], tester);
+    router.push<String>('/b').then(results.add);
+    await tester.pumpAndSettle();
+    router.pop<String>('stale');
+    await tester.pumpAndSettle();
+    showDialog<void>(
+      context: pageContext,
+      builder: (_) => const AlertDialog(content: Text('Dialog')),
+    );
+    await tester.pumpAndSettle();
+
+    approval.complete(true);
+    await tester.pumpAndSettle();
+    expect(find.text('Dialog'), findsOneWidget);
+    expect(results, isEmpty);
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.text('B'), findsOneWidget);
+    router.pop<String>('B');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(results, <String?>['B']);
+  });
+
+  for (final nested in <bool>[false, true]) {
+    final shell = nested ? 'a nested shell' : 'a shell';
+
+    Future<_PendingShellExit> pushPendingShellExit(
+      WidgetTester tester, {
+      required Future<bool> Function(BuildContext context) onExit,
+      required String result,
+      bool pop = true,
+    }) async {
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final outerNavigatorKey = GlobalKey<NavigatorState>();
+      final innerNavigatorKey = GlobalKey<NavigatorState>();
+      final results = <String?>[];
+      final pages = <RouteBase>[
+        GoRoute(path: '/', builder: (_, _) => const Text('A')),
+        GoRoute(
+          path: '/b',
+          builder: (_, _) => const Text('B'),
+          onExit: (BuildContext context, _) => onExit(context),
+        ),
+      ];
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          ShellRoute(
+            navigatorKey: outerNavigatorKey,
+            builder: (_, _, Widget child) => child,
+            routes: nested
+                ? <RouteBase>[
+                    ShellRoute(
+                      navigatorKey: innerNavigatorKey,
+                      builder: (_, _, Widget child) => child,
+                      routes: pages,
+                    ),
+                  ]
+                : pages,
+          ),
+        ],
+        tester,
+        navigatorKey: rootNavigatorKey,
+      );
+      router.push<String>('/b').then(results.add);
+      await tester.pumpAndSettle();
+      if (pop) {
+        router.pop<String>(result);
+        await tester.pumpAndSettle();
+      }
+      return (
+        router: router,
+        navigators: <String, GlobalKey<NavigatorState>>{
+          'root': rootNavigatorKey,
+          if (nested) ...<String, GlobalKey<NavigatorState>>{
+            'outer shell': outerNavigatorKey,
+            'inner shell': innerNavigatorKey,
+          } else
+            'shell': outerNavigatorKey,
+        },
+        results: results,
+      );
+    }
+
+    for (final dialogNavigator
+        in nested ? <String>['root', 'outer shell', 'inner shell'] : <String>['root', 'shell']) {
+      testWidgets('pending onExit in $shell does not pop under a pageless route '
+          'on the $dialogNavigator Navigator', (WidgetTester tester) async {
+        final approval = Completer<bool>();
+        final _PendingShellExit pending = await pushPendingShellExit(
+          tester,
+          onExit: (_) => approval.future,
+          result: 'stale',
+        );
+        final NavigatorState navigator = pending.navigators[dialogNavigator]!.currentState!;
+        showDialog<void>(
+          context: navigator.context,
+          useRootNavigator: false,
+          builder: (_) => const AlertDialog(content: Text('Dialog')),
+        );
+        await tester.pumpAndSettle();
+
+        approval.complete(true);
+        await tester.pumpAndSettle();
+        expect(find.text('Dialog'), findsOneWidget);
+        expect(find.text('B'), findsOneWidget);
+        expect(pending.results, isEmpty);
+
+        navigator.pop();
+        await tester.pumpAndSettle();
+        expect(find.text('B'), findsOneWidget);
+        pending.router.pop<String>('B');
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(pending.results, <String?>['B']);
+        expect(find.text('A'), findsOneWidget);
+      });
+    }
+
+    testWidgets('onExit in $shell can approve a pop through a root dialog', (
+      WidgetTester tester,
+    ) async {
+      final _PendingShellExit pending = await pushPendingShellExit(
+        tester,
+        onExit: (BuildContext context) async {
+          return await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Leave'),
+                    ),
+                  ],
+                ),
+              ) ??
+              false;
+        },
+        result: 'B',
+      );
+      expect(find.text('Leave'), findsOneWidget);
+      expect(pending.results, isEmpty);
+
+      await tester.tap(find.text('Leave'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(pending.results, <String?>['B']);
+      expect(find.text('A'), findsOneWidget);
+    });
+
+    testWidgets(
+      'approved onExit in $shell pops under a root pageless route that was already open',
+      (WidgetTester tester) async {
+        final approval = Completer<bool>();
+        final _PendingShellExit pending = await pushPendingShellExit(
+          tester,
+          onExit: (_) => approval.future,
+          result: 'B',
+          pop: false,
+        );
+        final NavigatorState rootNavigator = pending.navigators['root']!.currentState!;
+        showDialog<void>(
+          context: rootNavigator.context,
+          builder: (_) => const AlertDialog(content: Text('Dialog')),
+        );
+        await tester.pumpAndSettle();
+        pending.navigators[nested ? 'inner shell' : 'shell']!.currentState!.pop('B');
+        await tester.pumpAndSettle();
+
+        approval.complete(true);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(pending.results, <String?>['B']);
+        expect(find.text('Dialog'), findsOneWidget);
+      },
+    );
+
+    testWidgets('pending onExit in $shell pops after a root pageless route closes', (
+      WidgetTester tester,
+    ) async {
+      final approval = Completer<bool>();
+      final _PendingShellExit pending = await pushPendingShellExit(
+        tester,
+        onExit: (_) => approval.future,
+        result: 'B',
+      );
+      final NavigatorState rootNavigator = pending.navigators['root']!.currentState!;
+      showDialog<void>(
+        context: rootNavigator.context,
+        builder: (_) => const AlertDialog(content: Text('Dialog')),
+      );
+      await tester.pumpAndSettle();
+      rootNavigator.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Dialog'), findsNothing);
+
+      approval.complete(true);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(pending.results, <String?>['B']);
+      expect(find.text('A'), findsOneWidget);
+    });
+  }
+
+  Future<_ShellExit> pushShellExit(
+    WidgetTester tester, {
+    required Future<bool> approval,
+    bool nested = false,
+  }) async {
+    final outerNavigatorKey = GlobalKey<NavigatorState>();
+    final innerNavigatorKey = GlobalKey<NavigatorState>();
+    final results = <String?>[];
+    final pages = <RouteBase>[
+      GoRoute(path: '/b', builder: (_, _) => const Text('B'), onExit: (_, _) => approval),
+    ];
+    final GoRouter router = await createRouter(<RouteBase>[
+      GoRoute(path: '/', builder: (_, _) => const Text('A')),
+      ShellRoute(
+        navigatorKey: outerNavigatorKey,
+        builder: (_, _, Widget child) => child,
+        routes: nested
+            ? <RouteBase>[
+                ShellRoute(
+                  navigatorKey: innerNavigatorKey,
+                  builder: (_, _, Widget child) => child,
+                  routes: pages,
+                ),
+              ]
+            : pages,
+      ),
+    ], tester);
+    router.push<String>('/b').then(results.add);
+    await tester.pumpAndSettle();
+    return (
+      router: router,
+      innerShell: (nested ? innerNavigatorKey : outerNavigatorKey).currentState!,
+      results: results,
+    );
+  }
+
+  void showDialogOn(NavigatorState navigator) {
+    showDialog<void>(
+      context: navigator.context,
+      useRootNavigator: false,
+      builder: (_) => const AlertDialog(content: Text('Dialog')),
+    );
+  }
+
+  for (final nested in <bool>[false, true]) {
+    testWidgets('pending onExit does not pop ${nested ? 'nested shells' : 'a shell'} under a '
+        'newer pageless route on the innermost shell Navigator', (WidgetTester tester) async {
+      final approval = Completer<bool>();
+      final _ShellExit exit = await pushShellExit(
+        tester,
+        approval: approval.future,
+        nested: nested,
+      );
+      // The shell Navigators cannot pop, so this pops the outermost shell page.
+      exit.router.pop<String>('stale');
+      await tester.pumpAndSettle();
+      showDialogOn(exit.innerShell);
+      await tester.pumpAndSettle();
+
+      approval.complete(true);
+      await tester.pumpAndSettle();
+      expect(find.text('Dialog'), findsOneWidget);
+      expect(find.text('B'), findsOneWidget);
+      expect(exit.results, isEmpty);
+
+      exit.innerShell.pop();
+      await tester.pumpAndSettle();
+      exit.router.pop<String>('B');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(exit.results, <String?>['B']);
+      expect(find.text('A'), findsOneWidget);
+    });
+  }
+
+  testWidgets('approved onExit pops a shell whose Navigator already showed a pageless route', (
+    WidgetTester tester,
+  ) async {
+    final _ShellExit exit = await pushShellExit(tester, approval: Future<bool>.value(true));
+    showDialogOn(exit.innerShell);
+    await tester.pumpAndSettle();
+
+    // The shell page is the top page of the root Navigator.
+    Navigator.of(exit.innerShell.context, rootNavigator: true).pop('B');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(exit.results, <String?>['B']);
+    expect(find.text('A'), findsOneWidget);
+  });
+
+  testWidgets('pending onExit in a StatefulShellRoute branch does not pop under a root dialog', (
+    WidgetTester tester,
+  ) async {
+    final rootNavigatorKey = GlobalKey<NavigatorState>();
+    final approval = Completer<bool>();
+    final results = <String?>[];
+    final GoRouter router = await createRouter(
+      <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: (_, _, StatefulNavigationShell navigationShell) => navigationShell,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(path: '/', builder: (_, _) => const Text('A')),
+                GoRoute(
+                  path: '/b',
+                  builder: (_, _) => const Text('B'),
+                  onExit: (_, _) => approval.future,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      tester,
+      navigatorKey: rootNavigatorKey,
+    );
+    router.push<String>('/b').then(results.add);
+    await tester.pumpAndSettle();
+    router.pop<String>('stale');
+    await tester.pumpAndSettle();
+    showDialog<void>(
+      context: rootNavigatorKey.currentContext!,
+      builder: (_) => const AlertDialog(content: Text('Dialog')),
+    );
+    await tester.pumpAndSettle();
+
+    approval.complete(true);
+    await tester.pumpAndSettle();
+    expect(find.text('Dialog'), findsOneWidget);
+    expect(find.text('B'), findsOneWidget);
+    expect(results, isEmpty);
+
+    rootNavigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    router.pop<String>('B');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(results, <String?>['B']);
+    expect(find.text('A'), findsOneWidget);
+  });
+
+  testWidgets('approved onExit pops a page in a StatefulShellRoute branch that is not active', (
+    WidgetTester tester,
+  ) async {
+    final branchNavigatorKey = GlobalKey<NavigatorState>();
+    final approval = Completer<bool>();
+    Future<bool>? pendingExit;
+    final GoRouter router = await createRouter(<RouteBase>[
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, StatefulNavigationShell navigationShell) => navigationShell,
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            navigatorKey: branchNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (_, _) => const Text('A'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'b',
+                    builder: (_, _) => const Text('B'),
+                    // Switching branches also exits the page; only the pop waits.
+                    onExit: (_, _) => pendingExit ?? true,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[GoRoute(path: '/c', builder: (_, _) => const Text('C'))],
+          ),
+        ],
+      ),
+    ], tester);
+    router.go('/b');
+    await tester.pumpAndSettle();
+    router.go('/c');
+    await tester.pumpAndSettle();
+    expect(branchNavigatorKey.currentState!.canPop(), isTrue);
+
+    pendingExit = approval.future;
+    branchNavigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    approval.complete(true);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(branchNavigatorKey.currentState!.canPop(), isFalse);
+    expect(find.text('C'), findsOneWidget);
+  });
+
   testWidgets('back button works synchronously', (WidgetTester tester) async {
     var allow = false;
     final home = UniqueKey();
@@ -607,3 +1272,11 @@ void main() {
     expect(find.byKey(home), findsOneWidget);
   });
 }
+
+typedef _PendingShellExit = ({
+  GoRouter router,
+  Map<String, GlobalKey<NavigatorState>> navigators,
+  List<String?> results,
+});
+
+typedef _ShellExit = ({GoRouter router, NavigatorState innerShell, List<String?> results});

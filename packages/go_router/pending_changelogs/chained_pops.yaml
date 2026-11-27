@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes chained pops completing the same pushed route twice, including routes with `onExit` and routes nested in a shell.
+  - Ignores an approved `onExit` when a pageless route, such as a dialog, covered the exiting page while `onExit` was pending.
+version: patch
