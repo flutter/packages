@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `DatePickerThemeData.copyWith` and `TimePickerThemeData.copyWith` rejecting an `InputDecorationThemeData` for `inputDecorationTheme`.
+version: patch

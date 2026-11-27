@@ -511,7 +511,7 @@ class DatePickerThemeData with Diagnosticable {
     Color? rangeSelectionBackgroundColor,
     WidgetStateProperty<Color?>? rangeSelectionOverlayColor,
     Color? dividerColor,
-    InputDecorationTheme? inputDecorationTheme,
+    Object? inputDecorationTheme,
     ButtonStyle? cancelButtonStyle,
     ButtonStyle? confirmButtonStyle,
     Locale? locale,
