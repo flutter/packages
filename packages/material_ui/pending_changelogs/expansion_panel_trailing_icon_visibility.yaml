@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `ExpansionPanel.trailingIconVisibility` to control expand/collapse icon visibility.
+version: minor
