@@ -4,6 +4,7 @@
 
 import '../data/list.dart';
 import '../data/menu.dart';
+import '../data/menus_standard.dart';
 import 'template.dart';
 
 class MenuTemplateM3 extends TokenTemplateM3 {
@@ -262,6 +263,149 @@ class $className extends MenuStyle {
 
   @override
   VisualDensity get visualDensity => Theme.of(context).visualDensity;
+}
+''';
+}
+
+class MenuTemplateM3E extends TokenTemplateM3E {
+  const MenuTemplateM3E();
+
+  @override
+  String get name => 'Menu';
+
+  @override
+  String get parentFilePath => 'menu_anchor.dart';
+
+  // Only colors are migrated to Material 3 Expressive so far. Sizes, shapes,
+  // and paddings are inherited from the Material 3 defaults.
+  @override
+  String generateContents(String className) =>
+      '''
+class _MenuButtonDefaultsM3E extends _MenuButtonDefaultsM3 {
+  _MenuButtonDefaultsM3E(super.context);
+
+  @override
+  WidgetStateProperty<Color?>? get backgroundColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.disabled)) {
+          return ${colorWithOpacity(TokenMenusStandard.menuItemSelectedDisabledContainerColor, TokenMenusStandard.menuItemSelectedDisabledContainerOpacity)};
+        }
+        return ${color(TokenMenusStandard.menuItemSelectedContainerColor)};
+      }
+      return Colors.transparent;
+    });
+  }
+
+  @override
+  WidgetStateProperty<Color?>? get foregroundColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.disabled)) {
+          return ${colorWithOpacity(TokenMenusStandard.menuItemSelectedDisabledLabelTextColor, TokenMenusStandard.menuItemSelectedDisabledLabelTextOpacity)};
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return ${color(TokenMenusStandard.menuItemSelectedPressedLabelTextColor)};
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return ${color(TokenMenusStandard.menuItemSelectedHoveredLabelTextColor)};
+        }
+        if (states.contains(WidgetState.focused)) {
+          return ${color(TokenMenusStandard.menuItemSelectedFocusedLabelTextColor)};
+        }
+        return ${color(TokenMenusStandard.menuItemSelectedLabelTextColor)};
+      }
+      if (states.contains(WidgetState.disabled)) {
+        return ${colorWithOpacity(TokenMenusStandard.menuItemDisabledLabelTextColor, TokenMenusStandard.menuItemDisabledLabelTextOpacity)};
+      }
+      if (states.contains(WidgetState.pressed)) {
+        return ${color(TokenMenusStandard.menuItemPressedLabelTextColor)};
+      }
+      if (states.contains(WidgetState.hovered)) {
+        return ${color(TokenMenusStandard.menuItemHoveredLabelTextColor)};
+      }
+      if (states.contains(WidgetState.focused)) {
+        return ${color(TokenMenusStandard.menuItemFocusedLabelTextColor)};
+      }
+      return ${color(TokenMenusStandard.menuItemLabelTextColor)};
+    });
+  }
+
+  @override
+  WidgetStateProperty<Color?>? get iconColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.disabled)) {
+          return ${colorWithOpacity(TokenMenusStandard.menuItemSelectedDisabledLeadingIconColor, TokenMenusStandard.menuItemSelectedDisabledLeadingIconOpacity)};
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return ${color(TokenMenusStandard.menuItemSelectedPressedLeadingIconColor)};
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return ${color(TokenMenusStandard.menuItemSelectedHoveredLeadingIconColor)};
+        }
+        if (states.contains(WidgetState.focused)) {
+          return ${color(TokenMenusStandard.menuItemSelectedFocusedLeadingIconColor)};
+        }
+        return ${color(TokenMenusStandard.menuItemSelectedLeadingIconColor)};
+      }
+      if (states.contains(WidgetState.disabled)) {
+        return ${colorWithOpacity(TokenMenusStandard.menuItemDisabledLeadingIconColor, TokenMenusStandard.menuItemDisabledLeadingIconOpacity)};
+      }
+      if (states.contains(WidgetState.pressed)) {
+        return ${color(TokenMenusStandard.menuItemPressedLeadingIconColor)};
+      }
+      if (states.contains(WidgetState.hovered)) {
+        return ${color(TokenMenusStandard.menuItemHoveredLeadingIconColor)};
+      }
+      if (states.contains(WidgetState.focused)) {
+        return ${color(TokenMenusStandard.menuItemFocusedLeadingIconColor)};
+      }
+      return ${color(TokenMenusStandard.menuItemLeadingIconColor)};
+    });
+  }
+
+  @override
+  WidgetStateProperty<Color?>? get overlayColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.pressed)) {
+          return ${colorWithOpacity(TokenMenusStandard.menuItemSelectedPressedStateLayerColor, TokenMenusStandard.menuItemSelectedPressedStateLayerOpacity)};
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return ${colorWithOpacity(TokenMenusStandard.menuItemSelectedHoveredStateLayerColor, TokenMenusStandard.menuItemSelectedHoveredStateLayerOpacity)};
+        }
+        if (states.contains(WidgetState.focused)) {
+          return ${colorWithOpacity(TokenMenusStandard.menuItemSelectedFocusedStateLayerColor, TokenMenusStandard.menuItemSelectedFocusedStateLayerOpacity)};
+        }
+        return Colors.transparent;
+      }
+      if (states.contains(WidgetState.pressed)) {
+        return ${colorWithOpacity(TokenMenusStandard.menuItemPressedStateLayerColor, TokenMenusStandard.menuItemPressedStateLayerOpacity)};
+      }
+      if (states.contains(WidgetState.hovered)) {
+        return ${colorWithOpacity(TokenMenusStandard.menuItemHoveredStateLayerColor, TokenMenusStandard.menuItemHoveredStateLayerOpacity)};
+      }
+      if (states.contains(WidgetState.focused)) {
+        return ${colorWithOpacity(TokenMenusStandard.menuItemFocusedStateLayerColor, TokenMenusStandard.menuItemFocusedStateLayerOpacity)};
+      }
+      return Colors.transparent;
+    });
+  }
+}
+
+class $className extends _MenuDefaultsM3 {
+  $className(super.context);
+
+  @override
+  WidgetStateProperty<Color?> get backgroundColor {
+    return MaterialStatePropertyAll<Color?>(${color(TokenMenusStandard.containerColor)});
+  }
+
+  @override
+  WidgetStateProperty<Color?>? get shadowColor {
+    return MaterialStatePropertyAll<Color?>(${color(TokenMenusStandard.containerShadowColor)});
+  }
 }
 ''';
 }
