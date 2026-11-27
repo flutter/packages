@@ -147,6 +147,38 @@ void main() {
     expect(findOverflowBackButton(), overflowBackPaintPattern());
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/196649.
+  testWidgets('reports children on other pages as not painted', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          child: CupertinoTextSelectionToolbar(
+            anchorAbove: const Offset(50.0, 100.0),
+            anchorBelow: const Offset(50.0, 200.0),
+            children: List<Widget>.generate(8, (int i) => const TestBox()),
+          ),
+        ),
+      ),
+    );
+
+    bool paintedByToolbarItems(Element element) {
+      RenderObject child = element.renderObject!;
+      RenderObject parent = child.parent!;
+      while ('${parent.runtimeType}' != '_RenderCupertinoTextSelectionToolbarItems') {
+        child = parent;
+        parent = parent.parent!;
+      }
+      return parent.paintsChild(child);
+    }
+
+    final List<bool> painted = find
+        .byType(TestBox, skipOffstage: false)
+        .evaluate()
+        .map(paintedByToolbarItems)
+        .toList();
+    expect(painted, <bool>[...List<bool>.filled(7, true), false]);
+  });
+
   testWidgets('paginates children if they overflow', (WidgetTester tester) async {
     late StateSetter setState;
     final children = List<Widget>.generate(7, (int i) => const TestBox());
