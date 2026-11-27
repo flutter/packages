@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Réduire",
   "expansionTileCollapsedTapHint": "Développer pour en savoir plus",
   "expandedHint": "Réduit",
-  "collapsedHint": "Développé"
+  "collapsedHint": "Développé",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

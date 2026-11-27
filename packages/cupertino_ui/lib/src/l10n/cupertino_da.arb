@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Skjul",
   "expansionTileCollapsedTapHint": "Udvid for at få flere oplysninger",
   "expandedHint": "Skjult",
-  "collapsedHint": "Udvidet"
+  "collapsedHint": "Udvidet",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

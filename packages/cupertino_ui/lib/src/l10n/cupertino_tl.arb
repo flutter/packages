@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "I-collapse",
   "expansionTileCollapsedTapHint": "I-expand para sa higit pang detalye",
   "expandedHint": "Naka-collapse",
-  "collapsedHint": "Naka-expand"
+  "collapsedHint": "Naka-expand",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Ծալել",
   "expansionTileCollapsedTapHint": "ծավալեք՝ մանրամասները տեսնելու համար",
   "expandedHint": "Ծալված է",
-  "collapsedHint": "Ծավալված է"
+  "collapsedHint": "Ծավալված է",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }
