@@ -1,5 +1,7 @@
-## NEXT
+## 0.11.2
 
+* Adds iOS-only `isResponsiveCaptureSupported` and `setResponsiveCaptureEnabled` to
+  `AVFoundationCamera`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.11.1

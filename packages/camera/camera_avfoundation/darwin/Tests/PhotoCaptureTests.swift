@@ -91,6 +91,125 @@ final class PhotoCaptureTests: XCTestCase {
     XCTAssertEqual(commitCount, 2)
   }
 
+  private final class Counter {
+    var value = 0
+  }
+
+  private func createCam(
+    with mockOutput: MockCapturePhotoOutput, beginCount: Counter = Counter()
+  ) -> DefaultCamera {
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    let mockSession = MockCaptureSession()
+    mockSession.beginConfigurationStub = { beginCount.value += 1 }
+    configuration.videoCaptureSession = mockSession
+    let cam = CameraTestUtils.createTestCamera(configuration)
+    cam.capturePhotoOutput = mockOutput
+    return cam
+  }
+
+  private func createResponsiveCaptureOutput() -> MockCapturePhotoOutput {
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.flutterZeroShutterLagSupported = true
+    mockOutput.responsiveCaptureSupportedWhenZslEnabled = true
+    return mockOutput
+  }
+
+  func testIsResponsiveCaptureSupported_returnsValueReportedByPhotoOutput() {
+    let mockOutput = createResponsiveCaptureOutput()
+    let cam = createCam(with: mockOutput)
+
+    XCTAssertFalse(cam.isResponsiveCaptureSupported())
+
+    mockOutput.flutterZeroShutterLagEnabled = true
+    XCTAssertTrue(cam.isResponsiveCaptureSupported())
+  }
+
+  func testSetZeroShutterLagEnabled_doesNotEnableResponsiveCapture() {
+    let mockOutput = createResponsiveCaptureOutput()
+    let cam = createCam(with: mockOutput)
+
+    cam.setZeroShutterLagEnabled(true)
+
+    XCTAssertTrue(mockOutput.flutterZeroShutterLagEnabled)
+    XCTAssertFalse(mockOutput.flutterResponsiveCaptureEnabled)
+  }
+
+  func testSetResponsiveCaptureEnabled_enablesResponsiveCaptureWhenZslEnabled() {
+    let mockOutput = createResponsiveCaptureOutput()
+    mockOutput.flutterZeroShutterLagEnabled = true
+    let beginCount = Counter()
+    let cam = createCam(with: mockOutput, beginCount: beginCount)
+
+    cam.setResponsiveCaptureEnabled(true)
+
+    XCTAssertTrue(mockOutput.flutterResponsiveCaptureEnabled)
+    XCTAssertFalse(mockOutput.setResponsiveWhileUnsupported)
+    XCTAssertEqual(beginCount.value, 1)
+  }
+
+  func testSetResponsiveCaptureEnabled_waitsForZslAndAppliesBothInOneReconfiguration() {
+    let mockOutput = createResponsiveCaptureOutput()
+    let beginCount = Counter()
+    let cam = createCam(with: mockOutput, beginCount: beginCount)
+
+    cam.setResponsiveCaptureEnabled(true)
+
+    XCTAssertFalse(mockOutput.flutterZeroShutterLagEnabled)
+    XCTAssertFalse(mockOutput.flutterResponsiveCaptureEnabled)
+    XCTAssertEqual(beginCount.value, 0)
+
+    cam.setZeroShutterLagEnabled(true)
+
+    XCTAssertTrue(mockOutput.flutterZeroShutterLagEnabled)
+    XCTAssertTrue(mockOutput.flutterResponsiveCaptureEnabled)
+    XCTAssertFalse(mockOutput.setResponsiveWhileUnsupported)
+    XCTAssertEqual(beginCount.value, 1)
+  }
+
+  func testSetResponsiveCaptureEnabled_doesNotEnableOrReconfigureWhenUnsupported() {
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.flutterZeroShutterLagSupported = true
+    mockOutput.flutterZeroShutterLagEnabled = true
+    mockOutput.responsiveCaptureSupportedWhenZslEnabled = false
+    let beginCount = Counter()
+    let cam = createCam(with: mockOutput, beginCount: beginCount)
+
+    cam.setResponsiveCaptureEnabled(true)
+
+    XCTAssertFalse(mockOutput.flutterResponsiveCaptureEnabled)
+    XCTAssertEqual(beginCount.value, 0)
+  }
+
+  func testSetResponsiveCaptureEnabled_disablesResponsiveCaptureOnly() {
+    let mockOutput = createResponsiveCaptureOutput()
+    let cam = createCam(with: mockOutput)
+
+    cam.setZeroShutterLagEnabled(true)
+    cam.setResponsiveCaptureEnabled(true)
+    cam.setResponsiveCaptureEnabled(false)
+
+    XCTAssertTrue(mockOutput.flutterZeroShutterLagEnabled)
+    XCTAssertFalse(mockOutput.flutterResponsiveCaptureEnabled)
+  }
+
+  func testSetZeroShutterLagEnabled_disablesResponsiveCaptureFirstAndRestoresIt() {
+    let mockOutput = createResponsiveCaptureOutput()
+    let cam = createCam(with: mockOutput)
+
+    cam.setZeroShutterLagEnabled(true)
+    cam.setResponsiveCaptureEnabled(true)
+    mockOutput.assignments.removeAll()
+    cam.setZeroShutterLagEnabled(false)
+
+    XCTAssertEqual(mockOutput.assignments.map { $0.0 }, ["responsive", "zsl"])
+    XCTAssertEqual(mockOutput.assignments.map { $0.1 }, [false, false])
+
+    cam.setZeroShutterLagEnabled(true)
+
+    XCTAssertTrue(mockOutput.flutterZeroShutterLagEnabled)
+    XCTAssertTrue(mockOutput.flutterResponsiveCaptureEnabled)
+  }
+
   func testCaptureToFile_mustReportErrorToResultIfSavePhotoDelegateCompletionsWithError() {
     let errorExpectation = expectation(
       description: "Must send error to result if save photo delegate completes with error.")

@@ -26,6 +26,11 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   /// cameras) and is applied to newly created cameras.
   private var zeroShutterLagRequested: Bool?
 
+  /// The responsive capture state last requested via
+  /// `setResponsiveCaptureEnabled`, if any. Kept for the same reason as
+  /// `zeroShutterLagRequested`.
+  private var responsiveCaptureRequested: Bool?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = CameraPlugin(
       registry: registrar.textures(),
@@ -267,9 +272,12 @@ extension CameraPlugin: CameraApi {
       camera?.close()
       camera = newCamera
 
-      // Apply the zero-shutter-lag state requested before this camera existed.
+      // Apply the capture options requested before this camera existed.
       if let zeroShutterLagRequested = zeroShutterLagRequested {
         newCamera.setZeroShutterLagEnabled(zeroShutterLagRequested)
+      }
+      if let responsiveCaptureRequested = responsiveCaptureRequested {
+        newCamera.setResponsiveCaptureEnabled(responsiveCaptureRequested)
       }
 
       ensureToRunOnMainQueue { [weak self] in
@@ -589,6 +597,22 @@ extension CameraPlugin: CameraApi {
     captureSessionQueue.async { [weak self] in
       self?.zeroShutterLagRequested = enabled
       self?.camera?.setZeroShutterLagEnabled(enabled)
+      completion(.success(()))
+    }
+  }
+
+  func isResponsiveCaptureSupported(completion: @escaping (Result<Bool, any Error>) -> Void) {
+    captureSessionQueue.async { [weak self] in
+      completion(.success(self?.camera?.isResponsiveCaptureSupported() ?? false))
+    }
+  }
+
+  func setResponsiveCaptureEnabled(
+    enabled: Bool, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      self?.responsiveCaptureRequested = enabled
+      self?.camera?.setResponsiveCaptureEnabled(enabled)
       completion(.success(()))
     }
   }

@@ -128,6 +128,10 @@ final class DefaultCamera: NSObject, Camera {
   /// `isZeroShutterLagEnabled`, so the requested state is kept here and
   /// reapplied afterwards.
   private var zeroShutterLagRequested: Bool?
+  /// The responsive capture state last requested via [setResponsiveCaptureEnabled],
+  /// if any. Kept for the same reason as `zeroShutterLagRequested`, and because
+  /// responsive capture can only be enabled while zero-shutter-lag is enabled.
+  private var responsiveCaptureRequested: Bool?
   private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = PlatformExposureMode.auto
   private var focusMode = PlatformFocusMode.auto
@@ -961,18 +965,59 @@ final class DefaultCamera: NSObject, Camera {
   /// `beginConfiguration`/`commitConfiguration`.
   func setZeroShutterLagEnabled(_ enabled: Bool) {
     zeroShutterLagRequested = enabled
-    applyZeroShutterLag(enabled)
+    applyCaptureOptions()
   }
 
-  private func applyZeroShutterLag(_ enabled: Bool) {
-    if enabled && !capturePhotoOutput.flutterZeroShutterLagSupported {
+  func isResponsiveCaptureSupported() -> Bool {
+    return capturePhotoOutput.flutterResponsiveCaptureSupported
+  }
+
+  /// Applies the requested responsive capture state to the photo output.
+  ///
+  /// Like zero-shutter-lag, this is best-effort: it is only enabled while
+  /// zero-shutter-lag is enabled and responsive capture is supported, and the
+  /// request is kept so it takes effect once zero-shutter-lag is enabled.
+  func setResponsiveCaptureEnabled(_ enabled: Bool) {
+    responsiveCaptureRequested = enabled
+    applyCaptureOptions()
+  }
+
+  /// Applies the requested zero-shutter-lag and responsive capture states in a
+  /// single pipeline reconfiguration.
+  ///
+  /// Responsive capture depends on zero-shutter-lag, so it is disabled before
+  /// zero-shutter-lag and enabled after it, re-reading support once
+  /// zero-shutter-lag is on.
+  private func applyCaptureOptions() {
+    var zslTarget = capturePhotoOutput.flutterZeroShutterLagEnabled
+    if let requested = zeroShutterLagRequested,
+      !requested || capturePhotoOutput.flutterZeroShutterLagSupported
+    {
+      zslTarget = requested
+    }
+    let responsiveRequested = responsiveCaptureRequested == true
+    let responsiveEnabled = capturePhotoOutput.flutterResponsiveCaptureEnabled
+
+    let zslNeedsChange = capturePhotoOutput.flutterZeroShutterLagEnabled != zslTarget
+    let responsiveNeedsDisable =
+      responsiveEnabled && (responsiveCaptureRequested == false || !zslTarget)
+    let responsiveMayNeedEnable =
+      responsiveRequested && zslTarget && !responsiveEnabled
+      && (zslNeedsChange || capturePhotoOutput.flutterResponsiveCaptureSupported)
+    if !zslNeedsChange && !responsiveNeedsDisable && !responsiveMayNeedEnable {
       return
     }
-    if capturePhotoOutput.flutterZeroShutterLagEnabled == enabled {
-      return
-    }
+
     videoCaptureSession.beginConfiguration()
-    capturePhotoOutput.flutterZeroShutterLagEnabled = enabled
+    if responsiveNeedsDisable {
+      capturePhotoOutput.flutterResponsiveCaptureEnabled = false
+    }
+    if zslNeedsChange {
+      capturePhotoOutput.flutterZeroShutterLagEnabled = zslTarget
+    }
+    if responsiveMayNeedEnable && capturePhotoOutput.flutterResponsiveCaptureSupported {
+      capturePhotoOutput.flutterResponsiveCaptureEnabled = true
+    }
     videoCaptureSession.commitConfiguration()
   }
 
@@ -1338,11 +1383,9 @@ final class DefaultCamera: NSObject, Camera {
 
     configureMaxPhotoDimensions()
 
-    // Reconfiguring the session silently resets `isZeroShutterLagEnabled`;
-    // reapply the state the caller last requested.
-    if let zeroShutterLagRequested = zeroShutterLagRequested {
-      applyZeroShutterLag(zeroShutterLagRequested)
-    }
+    // Reconfiguring the session silently resets `isZeroShutterLagEnabled` and
+    // `isResponsiveCaptureEnabled`; reapply the states the caller last requested.
+    applyCaptureOptions()
 
     completion(.success(()))
   }

@@ -806,5 +806,17 @@ void main() {
 
       verify(mockApi.setZeroShutterLagEnabled(true));
     });
+
+    test('Should report responsive capture support from the host API', () async {
+      when(mockApi.isResponsiveCaptureSupported()).thenAnswer((_) async => true);
+
+      expect(await camera.isResponsiveCaptureSupported(cameraId), isTrue);
+    });
+
+    test('Should set responsive capture enabled', () async {
+      await camera.setResponsiveCaptureEnabled(cameraId, true);
+
+      verify(mockApi.setResponsiveCaptureEnabled(true));
+    });
   });
 }

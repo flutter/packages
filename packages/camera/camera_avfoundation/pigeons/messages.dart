@@ -353,6 +353,16 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setZeroShutterLagEnabled:')
   void setZeroShutterLagEnabled(bool enabled);
+
+  /// Returns whether the current session configuration supports responsive
+  /// capture.
+  @async
+  bool isResponsiveCaptureSupported();
+
+  /// Enables or disables responsive capture.
+  @async
+  @ObjCSelector('setResponsiveCaptureEnabled:')
+  void setResponsiveCaptureEnabled(bool enabled);
 }
 
 @EventChannelApi()
