@@ -91,7 +91,8 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-You can also wrap individual subtrees that contain legacy package widgets:
+You can also wrap individual subtrees that contain inline legacy package widgets
+that do not push routes onto `Navigator`:
 
 ```dart
 Scaffold(
@@ -101,6 +102,17 @@ Scaffold(
   ),
 )
 ```
+
+> **Note:** `MaterialUiCompatibilityBridge` is marked `@Deprecated` to signal
+> that it is a temporary migration utility. If your project runs
+> `flutter analyze --fatal-infos`, add `// ignore: deprecated_member_use` where
+> it is used.
+>
+> Subtree placement does not provide `MaterialLocalizations` to routes pushed
+> onto `Navigator` (such as dialogs, pickers, bottom sheets, or popup menus),
+> because `Navigator` routes only capture `InheritedTheme` widgets and not
+> `Localizations`. Use app-wide placement via `MaterialApp.builder` if legacy
+> widgets push routes onto `Navigator`.
 
 ---
 

@@ -4,6 +4,8 @@
 
 // ignore_for_file: deprecated_member_use
 
+import 'package:cupertino_ui/cupertino_ui.dart' as modern_cupertino;
+import 'package:flutter/cupertino.dart' as legacy_cupertino;
 import 'package:flutter/material.dart' as legacy;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -262,5 +264,60 @@ void main() {
     expect(find.text('Legacy Button'), findsOneWidget);
     expect(find.byType(modern.ElevatedButton), findsOneWidget);
     expect(find.byType(legacy.ElevatedButton), findsOneWidget);
+  });
+
+  testWidgets('MaterialUiCompatibilityBridge maps cupertinoOverrideTheme properties', (
+    WidgetTester tester,
+  ) async {
+    legacy.ThemeData? capturedLegacyTheme;
+    legacy_cupertino.CupertinoThemeData? capturedCupertinoTheme;
+
+    const barBackground = Color(0xFF123456);
+    const primary = Color(0xFF654321);
+    const contrasting = Color(0xFFABCDEF);
+    const scaffoldBackground = Color(0xFF111111);
+    const selectionHandle = Color(0xFF222222);
+    const navTitleStyle = TextStyle(fontSize: 21, fontWeight: FontWeight.w600);
+
+    final modernThemeData = modern.ThemeData(
+      cupertinoOverrideTheme: const modern_cupertino.CupertinoThemeData(
+        brightness: Brightness.dark,
+        primaryColor: primary,
+        primaryContrastingColor: contrasting,
+        barBackgroundColor: barBackground,
+        scaffoldBackgroundColor: scaffoldBackground,
+        selectionHandleColor: selectionHandle,
+        applyThemeToAll: true,
+        textTheme: modern_cupertino.CupertinoTextThemeData(navTitleTextStyle: navTitleStyle),
+      ),
+    );
+
+    await tester.pumpWidget(
+      modern.MaterialApp(
+        theme: modernThemeData,
+        home: modern.MaterialUiCompatibilityBridge(
+          child: Builder(
+            builder: (BuildContext context) {
+              capturedLegacyTheme = legacy.Theme.of(context);
+              capturedCupertinoTheme = legacy_cupertino.CupertinoTheme.of(context);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(capturedLegacyTheme, isNotNull);
+    expect(capturedLegacyTheme!.cupertinoOverrideTheme, isNotNull);
+    expect(capturedLegacyTheme!.cupertinoOverrideTheme!.barBackgroundColor, barBackground);
+    expect(capturedCupertinoTheme, isNotNull);
+    expect(capturedCupertinoTheme!.brightness, Brightness.dark);
+    expect(capturedCupertinoTheme!.barBackgroundColor, barBackground);
+    expect(capturedCupertinoTheme!.primaryColor, primary);
+    expect(capturedCupertinoTheme!.primaryContrastingColor, contrasting);
+    expect(capturedCupertinoTheme!.scaffoldBackgroundColor, scaffoldBackground);
+    expect(capturedCupertinoTheme!.selectionHandleColor, selectionHandle);
+    expect(capturedCupertinoTheme!.applyThemeToAll, isTrue);
+    expect(capturedCupertinoTheme!.textTheme.navTitleTextStyle.fontSize, navTitleStyle.fontSize);
   });
 }
