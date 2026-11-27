@@ -1,3 +1,7 @@
+## 1.0.35
+
+* Converts implementation to Kotlin.
+
 ## 1.0.34
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
