@@ -1,0 +1,3 @@
+changelog: |
+  - Adds an interactive example for `Springs`.
+version: patch

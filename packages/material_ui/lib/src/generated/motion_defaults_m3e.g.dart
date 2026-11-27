@@ -36,6 +36,20 @@ part of '../motion.dart';
 /// Use them with a `SpringSimulation`, for example through
 /// [AnimationController.animateWith].
 ///
+/// <callout-box>
+///
+/// This example compares the standard and expressive spatial springs at each
+/// speed, and compares the fast, default, and slow effects springs side by
+/// side.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/motion/springs.0.dart#body}
+///
+/// </callout-box>
+///
 /// See also:
 ///
 /// * [Durations] and [Easing], which are the Material tokens for curve-based
