@@ -1434,29 +1434,40 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   RouteMatchList? _matchListForBranch(int index) =>
       _branchState[route.branches[index].navigatorKey]?.location.value;
 
-  /// Creates a new RouteMatchList that is scoped to the Navigators of the
-  /// current shell route or it's descendants. This involves removing all the
-  /// trailing imperative matches from the RouterMatchList that are targeted at
-  /// any other (often top-level) Navigator.
+  /// Creates a RouteMatchList scoped to the current shell route's Navigators
+  /// and its descendants, removing other matches and their location metadata.
   RouteMatchList _scopedMatchList(RouteMatchList matchList) {
-    return matchList.copyWith(matches: _scopeMatches(matchList.matches));
+    final RouteMatchBase? nextMatch = _findMatchAfterShell(matchList.matches).nextMatch;
+    if (nextMatch == null) {
+      return matchList;
+    }
+    return matchList.remove(nextMatch);
   }
 
-  List<RouteMatchBase> _scopeMatches(List<RouteMatchBase> matches) {
-    final result = <RouteMatchBase>[];
-    for (final match in matches) {
-      if (match is ShellRouteMatch) {
-        if (match.route == route) {
-          result.add(match);
-          // Discard any other route match after current shell route.
-          break;
-        }
-        result.add(match.copyWith(matches: _scopeMatches(match.matches)));
+  /// Finds the match right after this shell route in tree order, continuing
+  /// into enclosing shell routes, and whether this shell route was found.
+  ({bool foundShell, RouteMatchBase? nextMatch}) _findMatchAfterShell(
+    List<RouteMatchBase> matches,
+  ) {
+    for (var index = 0; index < matches.length; index++) {
+      final RouteMatchBase match = matches[index];
+      if (match is! ShellRouteMatch) {
         continue;
       }
-      result.add(match);
+
+      final RouteMatchBase? nextMatch = index + 1 < matches.length ? matches[index + 1] : null;
+      if (match.route == route) {
+        return (foundShell: true, nextMatch: nextMatch);
+      }
+
+      final ({bool foundShell, RouteMatchBase? nextMatch}) nested = _findMatchAfterShell(
+        match.matches,
+      );
+      if (nested.foundShell) {
+        return (foundShell: true, nextMatch: nested.nextMatch ?? nextMatch);
+      }
     }
-    return result;
+    return (foundShell: false, nextMatch: null);
   }
 
   void _updateCurrentBranchStateFromWidget() {
@@ -1470,9 +1481,12 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     final RouteMatchList previousBranchLocation = branchState.location.value;
     branchState.location.value = currentBranchLocation;
     final hasExistingNavigator = branchState.navigator != null;
+    final RouteMatchList navigatorMatchList = shellRouteContext.routeMatchList;
 
     /// Only update the Navigator of the route match list has changed
-    final locationChanged = previousBranchLocation != currentBranchLocation;
+    final bool locationChanged =
+        previousBranchLocation != currentBranchLocation ||
+        branchState.isNavigatorOutdated(navigatorMatchList);
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
@@ -1480,6 +1494,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         route.notifyRootObserver,
         branch.restorationScopeId,
       );
+      branchState.navigatorMatchList = navigatorMatchList;
     }
 
     _cleanUpObsoleteBranches();
@@ -1517,6 +1532,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
         branchState.location.value = matchList;
         branchState.navigator = navigator;
+        branchState.navigatorMatchList = matchList;
       }
     }
   }
@@ -1581,6 +1597,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         ),
         branch.restorationScopeId,
       );
+      branchState.navigatorMatchList = matchList;
     }
   }
 
@@ -1659,7 +1676,39 @@ class _StatefulShellBranchState {
   _StatefulShellBranchState({required this.location});
 
   Widget? navigator;
+
+  /// The match list that [navigator] was built from.
+  ///
+  /// Pages in [navigator] read it through [GoRouterState]. It can include
+  /// routes on ancestor navigators, so it can change while [location] does not.
+  RouteMatchList? navigatorMatchList;
+
   final _RestorableRouteMatchList location;
+
+  /// Whether [navigator] has to be rebuilt to show [matchList].
+  ///
+  /// Pushing a route onto an ancestor navigator keeps the branch pages. They
+  /// are rebuilt when the URI changes or when the top match [navigator] was
+  /// built from is gone, such as a restored imperative route that was popped.
+  bool isNavigatorOutdated(RouteMatchList matchList) {
+    final RouteMatchList? builtMatchList = navigatorMatchList;
+    if (builtMatchList == null || builtMatchList.uri != matchList.uri) {
+      return true;
+    }
+    final RouteMatch? builtTopMatch = builtMatchList.lastOrNull;
+    if (builtTopMatch == null) {
+      return false;
+    }
+    RouteMatchBase? foundTopMatch;
+    matchList.visitRouteMatches((RouteMatchBase match) {
+      if (match == builtTopMatch) {
+        foundTopMatch = match;
+        return false;
+      }
+      return true;
+    });
+    return foundTopMatch == null;
+  }
 
   void dispose() {
     location.dispose();

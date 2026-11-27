@@ -149,6 +149,47 @@ void main() {
     expect(matches[3].route, isA<GoRoute>().having((GoRoute route) => route.path, 'path', 'd'));
   });
 
+  group('RouteMatchList.remove', () {
+    RouteMatchList matchListFor(GoRoute route, GlobalKey<NavigatorState> root, String location) {
+      final Uri uri = Uri.parse(location);
+      final pathParameters = <String, String>{};
+      final List<RouteMatchBase> matches = RouteMatchBase.match(
+        route: route,
+        pathParameters: pathParameters,
+        uri: uri,
+        rootNavigatorKey: root,
+      );
+      return RouteMatchList(matches: matches, uri: uri, pathParameters: pathParameters);
+    }
+
+    test('removes a redirect-only route before an emptied shell route', () {
+      final root = GlobalKey<NavigatorState>();
+      final route = GoRoute(
+        path: '/home',
+        builder: _builder,
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'flow/:flowId',
+            redirect: (_, _) => null,
+            routes: <RouteBase>[
+              ShellRoute(
+                builder: _shellBuilder,
+                routes: <RouteBase>[GoRoute(path: 'step', builder: _builder)],
+              ),
+            ],
+          ),
+        ],
+      );
+      final RouteMatchList matchList = matchListFor(route, root, '/home/flow/5/step');
+
+      final RouteMatchList newMatchList = matchList.remove(matchList.last);
+
+      expect(newMatchList.routes, <RouteBase>[route]);
+      expect(newMatchList.uri.toString(), '/home');
+      expect(newMatchList.pathParameters, isEmpty);
+    });
+  });
+
   group('ImperativeRouteMatch', () {
     final matchList1 = RouteMatchList(
       matches: <RouteMatch>[

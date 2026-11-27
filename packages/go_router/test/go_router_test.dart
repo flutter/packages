@@ -91,6 +91,44 @@ void main() {
       expect(router.routerDelegate.currentConfiguration.uri.path, '/b');
     });
 
+    testWidgets('pushReplacement removes a redirect-only route before an emptied shell route', (
+      WidgetTester tester,
+    ) async {
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/home',
+          builder: dummy,
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'flow/:flowId',
+              redirect: (BuildContext context, GoRouterState state) => null,
+              routes: <RouteBase>[
+                ShellRoute(
+                  builder: (BuildContext context, GoRouterState state, Widget child) => child,
+                  routes: <RouteBase>[GoRoute(path: 'step', builder: dummy)],
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(path: '/other', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/home/flow/5/step',
+      );
+
+      router.pushReplacement<void>('/other');
+      await tester.pumpAndSettle();
+
+      final RouteMatchList configuration = router.routerDelegate.currentConfiguration;
+      expect(configuration.routes, <RouteBase>[routes.first, routes.last]);
+      expect(configuration.uri.path, '/home');
+      expect(configuration.pathParameters, isEmpty);
+    });
+
     test('empty path', () {
       expect(() {
         GoRoute(path: '');
