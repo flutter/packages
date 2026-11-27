@@ -2534,7 +2534,7 @@ void main() {
       // the left edge (0px).
       expect(
         overlays.first,
-        rectMoreOrLessEquals(const Rect.fromLTRB(-0.0, 132.5, 262.0, 172.5), epsilon: 0.01),
+        rectMoreOrLessEquals(const Rect.fromLTRB(-0.0, 131.5, 262.0, 171.5), epsilon: 0.01),
       );
     });
 
@@ -2570,7 +2570,7 @@ void main() {
       // at the right edge (200px).
       expect(
         overlays.first,
-        rectMoreOrLessEquals(const Rect.fromLTRB(-62.0, 132.5, 200.0, 172.5), epsilon: 0.01),
+        rectMoreOrLessEquals(const Rect.fromLTRB(-62.0, 131.5, 200.0, 171.5), epsilon: 0.01),
       );
     });
 
@@ -2608,7 +2608,7 @@ void main() {
       // The unclipped menu surface will not grow beyond the screen.
       expect(
         overlays.first,
-        rectMoreOrLessEquals(const Rect.fromLTRB(0.0, 132.5, 200.0, 172.5), epsilon: 0.01),
+        rectMoreOrLessEquals(const Rect.fromLTRB(0.0, 131.5, 200.0, 171.5), epsilon: 0.01),
       );
     });
 
@@ -2646,7 +2646,7 @@ void main() {
       // The unclipped menu surface will not grow beyond the screen.
       expect(
         overlays.first,
-        rectMoreOrLessEquals(const Rect.fromLTRB(0.0, 132.5, 200.0, 172.5), epsilon: 0.01),
+        rectMoreOrLessEquals(const Rect.fromLTRB(0.0, 131.5, 200.0, 171.5), epsilon: 0.01),
       );
     });
 

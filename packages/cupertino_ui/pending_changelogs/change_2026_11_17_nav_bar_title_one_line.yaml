@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes a long `CupertinoNavigationBar` title wrapping instead of ending in an ellipsis.
+version: patch
