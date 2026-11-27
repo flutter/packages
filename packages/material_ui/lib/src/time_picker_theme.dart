@@ -337,7 +337,7 @@ class TimePickerThemeData with Diagnosticable {
     ShapeBorder? hourMinuteShape,
     Color? hourMinuteTextColor,
     TextStyle? hourMinuteTextStyle,
-    InputDecorationTheme? inputDecorationTheme,
+    Object? inputDecorationTheme,
     EdgeInsetsGeometry? padding,
     ShapeBorder? shape,
     WidgetStateProperty<Color?>? timeSelectorSeparatorColor,

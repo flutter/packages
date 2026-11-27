@@ -12,6 +12,27 @@ void main() {
     expect(const TimePickerThemeData().hashCode, const TimePickerThemeData().copyWith().hashCode);
   });
 
+  test(
+    'TimePickerThemeData.copyWith accepts an InputDecorationTheme or an InputDecorationThemeData',
+    () {
+      const decorationTheme = InputDecorationTheme(filled: true);
+      const timePickerTheme = TimePickerThemeData();
+      expect(
+        timePickerTheme.copyWith(inputDecorationTheme: decorationTheme).inputDecorationTheme,
+        decorationTheme.data,
+      );
+      expect(
+        timePickerTheme.copyWith(inputDecorationTheme: decorationTheme.data).inputDecorationTheme,
+        decorationTheme.data,
+      );
+
+      // Wrong type throws.
+      expect(() {
+        timePickerTheme.copyWith(inputDecorationTheme: Object());
+      }, throwsAssertionError);
+    },
+  );
+
   test('TimePickerThemeData lerp special cases', () {
     const data = TimePickerThemeData();
     expect(identical(TimePickerThemeData.lerp(data, data, 0.5), data), true);

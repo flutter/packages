@@ -98,6 +98,27 @@ void main() {
     expect(const DatePickerThemeData().hashCode, const DatePickerThemeData().copyWith().hashCode);
   });
 
+  test(
+    'DatePickerThemeData.copyWith accepts an InputDecorationTheme or an InputDecorationThemeData',
+    () {
+      const decorationTheme = InputDecorationTheme(filled: true);
+      const datePickerTheme = DatePickerThemeData();
+      expect(
+        datePickerTheme.copyWith(inputDecorationTheme: decorationTheme).inputDecorationTheme,
+        decorationTheme.data,
+      );
+      expect(
+        datePickerTheme.copyWith(inputDecorationTheme: decorationTheme.data).inputDecorationTheme,
+        decorationTheme.data,
+      );
+
+      // Wrong type throws.
+      expect(() {
+        datePickerTheme.copyWith(inputDecorationTheme: Object());
+      }, throwsAssertionError);
+    },
+  );
+
   test('DatePickerThemeData lerp special cases', () {
     const data = DatePickerThemeData();
     expect(identical(DatePickerThemeData.lerp(data, data, 0.5), data), true);
