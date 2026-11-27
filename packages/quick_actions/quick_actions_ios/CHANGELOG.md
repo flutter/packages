@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
+## 1.3.0
+
+* Adds support for iOS SF symbols icons for quick actions.
+
 ## 1.2.5
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
