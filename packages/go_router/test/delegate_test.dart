@@ -343,6 +343,65 @@ void main() {
       ], tester);
       expect(await goRouter.routerDelegate.popRoute(), isFalse);
     });
+    testWidgets('popRoute returns false on the error screen', (WidgetTester tester) async {
+      final router = GoRouter(
+        errorBuilder: (_, _) => const Text('error screen'),
+        routes: <RouteBase>[GoRoute(path: '/', builder: (_, _) => const SizedBox())],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      router.go('/missing');
+      await tester.pumpAndSettle();
+
+      expect(router.routerDelegate.currentConfiguration.isEmpty, isTrue);
+      expect(await router.routerDelegate.popRoute(), isFalse);
+      expect(find.text('error screen'), findsOneWidget);
+    });
+
+    testWidgets('system back does not throw on the error screen', (WidgetTester tester) async {
+      final router = GoRouter(
+        errorBuilder: (_, _) => const Text('error screen'),
+        routes: <RouteBase>[GoRoute(path: '/', builder: (_, _) => const SizedBox())],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      router.go('/missing');
+      await tester.pumpAndSettle();
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.text('error screen'), findsOneWidget);
+    });
+
+    testWidgets('popRoute closes a dialog shown over the error screen', (
+      WidgetTester tester,
+    ) async {
+      final router = GoRouter(
+        errorBuilder: (_, _) => const Text('error screen'),
+        routes: <RouteBase>[GoRoute(path: '/', builder: (_, _) => const SizedBox())],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      router.go('/missing');
+      await tester.pumpAndSettle();
+
+      showDialog<void>(
+        context: tester.element(find.text('error screen')),
+        builder: (_) => const AlertDialog(content: Text('Dialog')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Dialog'), findsOneWidget);
+
+      expect(await router.routerDelegate.popRoute(), isTrue);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Dialog'), findsNothing);
+      expect(find.text('error screen'), findsOneWidget);
+    });
   });
 
   group('push', () {
