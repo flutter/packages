@@ -538,4 +538,331 @@ void main() {
     expect(defaults.dense, Typography.dense2021);
     expect(defaults.tall, Typography.tall2021);
   });
+
+  group('Typography.material2025', () {
+    const lightScheme = ColorScheme.light(onSurface: Color(0xFF000001), surface: Color(0xFFFFFFF1));
+    const darkScheme = ColorScheme.dark(onSurface: Color(0xFFFFFFF2), surface: Color(0xFF000002));
+
+    for (final TargetPlatform platform in TargetPlatform.values) {
+      for (final colorScheme in <ColorScheme>[lightScheme, darkScheme]) {
+        group('on $platform with ${colorScheme.brightness}', () {
+          // Each pair of corresponding material2021 and material2025 text themes.
+          List<(String, TextTheme, TextTheme)> textThemePairs() {
+            final m3 = Typography.material2021(platform: platform, colorScheme: colorScheme);
+            final m3e = Typography.material2025(platform: platform, colorScheme: colorScheme);
+            return <(String, TextTheme, TextTheme)>[
+              ('black', m3.black, m3e.black),
+              ('white', m3.white, m3e.white),
+              ('englishLike', m3.englishLike, m3e.englishLike),
+              ('dense', m3.dense, m3e.dense),
+              ('tall', m3.tall, m3e.tall),
+            ];
+          }
+
+          test('matches material2021 baseline styles', () {
+            for (final (String name, TextTheme m3Theme, TextTheme m3eTheme) in textThemePairs()) {
+              final List<TextStyle?> m3Baseline = _baselineStyles(m3Theme);
+              final List<TextStyle?> m3eBaseline = _baselineStyles(m3eTheme);
+              for (var i = 0; i < m3Baseline.length; i++) {
+                expect(m3Baseline[i], isNotNull, reason: name);
+                // TextStyle equality ignores debugLabel, which differs between
+                // the two versions.
+                expect(m3eBaseline[i], m3Baseline[i], reason: name);
+              }
+            }
+          });
+
+          test('adds emphasized styles that material2021 does not have', () {
+            for (final (String name, TextTheme m3Theme, TextTheme m3eTheme) in textThemePairs()) {
+              expect(_emphasizedStyles(m3Theme), everyElement(isNull), reason: name);
+              expect(_emphasizedStyles(m3eTheme), everyElement(isNotNull), reason: name);
+            }
+          });
+        });
+      }
+    }
+
+    test('emphasized styles inherit the font of their baseline style', () {
+      for (final TargetPlatform platform in TargetPlatform.values) {
+        final typography = Typography.material2025(platform: platform);
+        for (final theme in <TextTheme>[typography.black, typography.white]) {
+          final List<TextStyle?> baseline = _baselineStyles(theme);
+          final List<TextStyle?> emphasized = _emphasizedStyles(theme);
+          for (var i = 0; i < baseline.length; i++) {
+            expect(emphasized[i], baseline[i], reason: '$platform');
+          }
+        }
+      }
+    });
+
+    test('emphasized geometry matches the baseline geometry with a heavier weight', () {
+      for (final theme in <TextTheme>[
+        Typography.englishLike2025,
+        Typography.dense2025,
+        Typography.tall2025,
+      ]) {
+        final List<TextStyle?> baseline = _baselineStyles(theme);
+        final List<TextStyle?> emphasized = _emphasizedStyles(theme);
+        for (var i = 0; i < baseline.length; i++) {
+          final TextStyle base = baseline[i]!;
+          final TextStyle emph = emphasized[i]!;
+          expect(emph.fontSize, base.fontSize, reason: emph.debugLabel);
+          expect(emph.height, base.height, reason: emph.debugLabel);
+          expect(emph.letterSpacing, base.letterSpacing, reason: emph.debugLabel);
+          expect(emph.textBaseline, base.textBaseline, reason: emph.debugLabel);
+          expect(emph.leadingDistribution, base.leadingDistribution, reason: emph.debugLabel);
+          expect(
+            emph.fontWeight!.value,
+            greaterThan(base.fontWeight!.value),
+            reason: emph.debugLabel,
+          );
+        }
+      }
+    });
+
+    test('englishLike2025 emphasized styles match Material 3 Expressive spec', () {
+      const TextTheme theme = Typography.englishLike2025;
+      expect(theme.displayLargeEmphasized!.fontWeight, FontWeight.w500);
+      expect(theme.headlineMediumEmphasized!.fontWeight, FontWeight.w500);
+      expect(theme.titleLargeEmphasized!.fontWeight, FontWeight.w500);
+      expect(theme.titleMediumEmphasized!.fontWeight, FontWeight.w700);
+      expect(theme.titleSmallEmphasized!.fontWeight, FontWeight.w700);
+      expect(theme.bodyLargeEmphasized!.fontWeight, FontWeight.w500);
+      expect(theme.labelLargeEmphasized!.fontWeight, FontWeight.w700);
+      expect(theme.labelSmallEmphasized!.fontSize, 11.0);
+      expect(theme.labelSmallEmphasized!.height, 1.45);
+    });
+
+    test('colors black and white text themes from the colorScheme', () {
+      void expectUniform(TextTheme theme, Color color) {
+        for (final style in <TextStyle?>[..._baselineStyles(theme), ..._emphasizedStyles(theme)]) {
+          expect(style!.color, color);
+          expect(style.decorationColor, color);
+        }
+      }
+
+      final light = Typography.material2025(colorScheme: lightScheme);
+      expectUniform(light.black, lightScheme.onSurface);
+      expectUniform(light.white, lightScheme.surface);
+
+      final dark = Typography.material2025(colorScheme: darkScheme);
+      expectUniform(dark.black, darkScheme.surface);
+      expectUniform(dark.white, darkScheme.onSurface);
+    });
+
+    test('defaults the typeface based on the platform', () {
+      final expected = <TargetPlatform, TextTheme>{
+        TargetPlatform.android: Typography.mountainView,
+        TargetPlatform.fuchsia: Typography.mountainView,
+        TargetPlatform.iOS: Typography.cupertino,
+        TargetPlatform.linux: Typography.helsinki,
+        TargetPlatform.macOS: Typography.redwoodCity,
+        TargetPlatform.windows: Typography.redmond,
+      };
+      for (final TargetPlatform platform in TargetPlatform.values) {
+        final typography = Typography.material2025(platform: platform);
+        final List<TextStyle?> actual = _baselineStyles(typography.black);
+        final List<TextStyle?> typeface = _baselineStyles(expected[platform]!);
+        for (var i = 0; i < actual.length; i++) {
+          expect(actual[i]!.fontFamily, typeface[i]!.fontFamily, reason: '$platform');
+          expect(
+            actual[i]!.fontFamilyFallback,
+            typeface[i]!.fontFamilyFallback,
+            reason: '$platform',
+          );
+        }
+      }
+    });
+
+    test('uses the provided typeface for non-color properties', () {
+      const typeface = TextTheme(
+        bodyMedium: TextStyle(
+          fontFamily: 'Custom',
+          color: Color(0xFFFF0000),
+          decorationColor: Color(0xFF00FF00),
+        ),
+        titleMediumEmphasized: TextStyle(fontFamily: 'CustomEmphasized'),
+      );
+      // The typeface is used even when platform is null.
+      final typography = Typography.material2025(
+        platform: null,
+        colorScheme: lightScheme,
+        typeface: typeface,
+      );
+
+      expect(typography.black.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.black.bodyMedium!.color, lightScheme.onSurface);
+      expect(typography.black.bodyMedium!.decorationColor, lightScheme.onSurface);
+      expect(typography.white.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.white.bodyMedium!.color, lightScheme.surface);
+      expect(typography.white.bodyMedium!.decorationColor, lightScheme.surface);
+
+      // A null emphasized style falls back to its baseline style.
+      expect(typography.black.bodyMediumEmphasized!.fontFamily, 'Custom');
+      expect(typography.black.bodyMediumEmphasized!.color, lightScheme.onSurface);
+      // A provided emphasized style is kept.
+      expect(typography.black.titleMediumEmphasized!.fontFamily, 'CustomEmphasized');
+      expect(typography.black.titleMediumEmphasized!.color, lightScheme.onSurface);
+      // Styles that are null in both the baseline and emphasized variants stay null.
+      expect(typography.black.bodyLarge, isNull);
+      expect(typography.black.bodyLargeEmphasized, isNull);
+    });
+
+    test('uses the provided geometry text themes', () {
+      const englishLike = TextTheme(bodyMedium: TextStyle(fontSize: 1.0));
+      const dense = TextTheme(bodyMedium: TextStyle(fontSize: 2.0));
+      const tall = TextTheme(bodyMedium: TextStyle(fontSize: 3.0));
+
+      final typography = Typography.material2025(
+        englishLike: englishLike,
+        dense: dense,
+        tall: tall,
+      );
+      expect(typography.englishLike, englishLike);
+      expect(typography.dense, dense);
+      expect(typography.tall, tall);
+
+      final defaults = Typography.material2025();
+      expect(defaults.englishLike, Typography.englishLike2025);
+      expect(defaults.dense, Typography.dense2025);
+      expect(defaults.tall, Typography.tall2025);
+    });
+
+    test('is the default ThemeData typography and provides emphasized styles', () {
+      final theme = ThemeData();
+      expect(theme.typography, Typography.material2025(colorScheme: theme.colorScheme));
+
+      // Geometry is merged into the text theme when it is localized.
+      final TextTheme textTheme = ThemeData.localize(theme, theme.typography.englishLike).textTheme;
+      for (final TextStyle? style in _emphasizedStyles(textTheme)) {
+        expect(style, isNotNull);
+        expect(style!.color, theme.colorScheme.onSurface);
+        expect(style.fontFamily, 'Roboto');
+      }
+      expect(textTheme.titleMediumEmphasized!.fontSize, 16.0);
+      expect(textTheme.titleMediumEmphasized!.fontWeight, FontWeight.w700);
+
+      final m3Theme = ThemeData(typography: Typography.material2021());
+      expect(_emphasizedStyles(m3Theme.textTheme), everyElement(isNull));
+    });
+
+    test('lerps to and from material2021', () {
+      final m3 = Typography.material2021(colorScheme: lightScheme);
+      final m3e = Typography.material2025(colorScheme: lightScheme);
+
+      for (final t in <double>[0.0, 0.25, 0.5, 0.75, 1.0]) {
+        for (final (Typography a, Typography b) in <(Typography, Typography)>[
+          (m3, m3e),
+          (m3e, m3),
+        ]) {
+          final Typography lerped = Typography.lerp(a, b, t);
+          for (final (TextTheme lerpedTheme, TextTheme m3Theme) in <(TextTheme, TextTheme)>[
+            (lerped.black, m3.black),
+            (lerped.white, m3.white),
+            (lerped.englishLike, m3.englishLike),
+          ]) {
+            // The baseline styles are identical, so they are unchanged by lerping.
+            expect(_baselineStyles(lerpedTheme), _baselineStyles(m3Theme), reason: 't = $t');
+          }
+        }
+      }
+
+      // Emphasized styles animate between null and the material2025 styles.
+      expect(
+        _emphasizedStyles(Typography.lerp(m3, m3e, 1.0).englishLike),
+        _emphasizedStyles(m3e.englishLike),
+      );
+      expect(
+        _emphasizedStyles(Typography.lerp(m3e, m3, 0.0).englishLike),
+        _emphasizedStyles(m3e.englishLike),
+      );
+    });
+
+    test('ThemeData lerps to and from material2021', () {
+      final m3Theme = ThemeData(typography: Typography.material2021());
+      final m3eTheme = ThemeData(typography: Typography.material2025());
+
+      for (final t in <double>[0.0, 0.25, 0.5, 0.75, 1.0]) {
+        final ThemeData lerped = ThemeData.lerp(m3Theme, m3eTheme, t);
+        expect(
+          _baselineStyles(lerped.textTheme),
+          _baselineStyles(m3Theme.textTheme),
+          reason: 't = $t',
+        );
+      }
+      expect(
+        _emphasizedStyles(ThemeData.lerp(m3Theme, m3eTheme, 1.0).textTheme),
+        _emphasizedStyles(m3eTheme.textTheme),
+      );
+    });
+
+    test('ThemeData.textTheme overrides do not apply to emphasized styles', () {
+      // ThemeData merges a custom text theme field by field, so overriding a
+      // baseline style does not change its emphasized variant.
+      final customTextTheme = ThemeData(
+        textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Custom')),
+      );
+      expect(customTextTheme.textTheme.bodyMedium!.fontFamily, 'Custom');
+      expect(customTextTheme.textTheme.bodyMediumEmphasized!.fontFamily, 'Roboto');
+    });
+
+    test('ThemeData fontFamily and fontFamilyFallback apply to emphasized styles', () {
+      const fontFamilyFallback = <String>['CustomFallback1', 'CustomFallback2'];
+      for (final TargetPlatform platform in TargetPlatform.values) {
+        final theme = ThemeData(
+          platform: platform,
+          fontFamily: 'Custom',
+          fontFamilyFallback: fontFamilyFallback,
+        );
+        final List<TextStyle?> baseline = _baselineStyles(theme.textTheme);
+        final List<TextStyle?> emphasized = _emphasizedStyles(theme.textTheme);
+        for (var i = 0; i < baseline.length; i++) {
+          expect(baseline[i]!.fontFamily, 'Custom', reason: '$platform');
+          expect(baseline[i]!.fontFamilyFallback, fontFamilyFallback, reason: '$platform');
+          expect(emphasized[i]!.fontFamily, baseline[i]!.fontFamily, reason: '$platform');
+          expect(
+            emphasized[i]!.fontFamilyFallback,
+            baseline[i]!.fontFamilyFallback,
+            reason: '$platform',
+          );
+        }
+      }
+    });
+  });
 }
+
+List<TextStyle?> _baselineStyles(TextTheme theme) => <TextStyle?>[
+  theme.displayLarge,
+  theme.displayMedium,
+  theme.displaySmall,
+  theme.headlineLarge,
+  theme.headlineMedium,
+  theme.headlineSmall,
+  theme.titleLarge,
+  theme.titleMedium,
+  theme.titleSmall,
+  theme.bodyLarge,
+  theme.bodyMedium,
+  theme.bodySmall,
+  theme.labelLarge,
+  theme.labelMedium,
+  theme.labelSmall,
+];
+
+List<TextStyle?> _emphasizedStyles(TextTheme theme) => <TextStyle?>[
+  theme.displayLargeEmphasized,
+  theme.displayMediumEmphasized,
+  theme.displaySmallEmphasized,
+  theme.headlineLargeEmphasized,
+  theme.headlineMediumEmphasized,
+  theme.headlineSmallEmphasized,
+  theme.titleLargeEmphasized,
+  theme.titleMediumEmphasized,
+  theme.titleSmallEmphasized,
+  theme.bodyLargeEmphasized,
+  theme.bodyMediumEmphasized,
+  theme.bodySmallEmphasized,
+  theme.labelLargeEmphasized,
+  theme.labelMediumEmphasized,
+  theme.labelSmallEmphasized,
+];
