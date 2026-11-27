@@ -1,5 +1,6 @@
-## NEXT
+## 3.1.7
 
+* Fixes an issue where in-place unescaping of `file:` URLs retains trailing bytes after the null terminator.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 3.1.6
