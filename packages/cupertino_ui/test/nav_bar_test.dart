@@ -3441,6 +3441,84 @@ void main() {
     );
     expect(tester.getSize(find.byType(CupertinoNavigationBar)), Size.zero);
   });
+
+  testWidgets(
+    'Back button semantics label includes previous page title, or only "Back" when the title is too long',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
+
+      unawaited(
+        tester
+            .state<NavigatorState>(find.byType(Navigator))
+            .push(
+              CupertinoPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const CupertinoPageScaffold(
+                    navigationBar: CupertinoNavigationBar(
+                      previousPageTitle: 'Notification Settings',
+                    ),
+                    child: Placeholder(),
+                  );
+                },
+              ),
+            ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify that a long previous title is set only to back also as semantic label.
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Back')),
+        containsSemantics(label: 'Back', isButton: true),
+      );
+
+      unawaited(
+        tester
+            .state<NavigatorState>(find.byType(Navigator))
+            .push(
+              CupertinoPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const CupertinoPageScaffold(
+                    navigationBar: CupertinoNavigationBar(previousPageTitle: 'Dashboard'),
+                    child: Placeholder(),
+                  );
+                },
+              ),
+            ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify that a short previous title is set to back with the previous title as semantic label.
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Dashboard Back')),
+        containsSemantics(label: 'Dashboard Back', isButton: true),
+      );
+
+      unawaited(
+        tester
+            .state<NavigatorState>(find.byType(Navigator))
+            .push(
+              CupertinoPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const CupertinoPageScaffold(
+                    navigationBar: CupertinoNavigationBar(),
+                    child: Placeholder(),
+                  );
+                },
+              ),
+            ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify that when no previous title is set, the back button semantic label is only "Back".
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Back')),
+        containsSemantics(label: 'Back', isButton: true),
+      );
+    },
+  );
 }
 
 class _ExpectStyles extends StatelessWidget {
