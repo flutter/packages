@@ -11,6 +11,28 @@ import '../../store_kit_wrappers.dart';
 import '../in_app_purchase_apis.dart';
 import '../sk2_pigeon.g.dart';
 
+/// Dart wrapper around StoreKit2's [Transaction.RevocationReason](https://developer.apple.com/documentation/storekit/transaction/revocationreason-swift.struct).
+///
+/// The reason that the App Store refunded a transaction or revoked it from
+/// Family Sharing.
+enum SK2RevocationReason {
+  /// The customer canceled the transaction due to an actual or perceived issue
+  /// within the app.
+  developerIssue,
+
+  /// The customer canceled the transaction for other reasons.
+  other,
+}
+
+extension on SK2RevocationReasonMessage {
+  SK2RevocationReason convertFromPigeon() {
+    return switch (this) {
+      SK2RevocationReasonMessage.developerIssue => SK2RevocationReason.developerIssue,
+      SK2RevocationReasonMessage.other => SK2RevocationReason.other,
+    };
+  }
+}
+
 /// Dart wrapper around StoreKit2's [Transaction](https://developer.apple.com/documentation/storekit/transaction)
 /// Note that in StoreKit2, a Transaction encompasses the data contained by
 /// SKPayment and SKTransaction in StoreKit1
@@ -22,6 +44,8 @@ class SK2Transaction {
     required this.productId,
     required this.purchaseDate,
     this.expirationDate,
+    this.revocationDate,
+    this.revocationReason,
     this.quantity = 1,
     required this.appAccountToken,
     this.subscriptionGroupID,
@@ -52,6 +76,18 @@ class SK2Transaction {
   ///
   /// Milliseconds since epoch.
   final String? expirationDate;
+
+  /// The date that the App Store refunded the transaction or revoked it from
+  /// Family Sharing.
+  ///
+  /// Milliseconds since epoch. Null if the transaction has not been revoked.
+  final String? revocationDate;
+
+  /// The reason that the App Store refunded the transaction or revoked it from
+  /// Family Sharing.
+  ///
+  /// Null if the transaction has not been revoked.
+  final SK2RevocationReason? revocationReason;
 
   /// The number of consumable products purchased.
   final int quantity;
@@ -141,6 +177,8 @@ extension on SK2TransactionMessage {
       productId: productId,
       purchaseDate: _secondsToMillisecondsSinceEpochString(purchaseDate) ?? '',
       expirationDate: _secondsToMillisecondsSinceEpochString(expirationDate),
+      revocationDate: _secondsToMillisecondsSinceEpochString(revocationDate),
+      revocationReason: revocationReason?.convertFromPigeon(),
       quantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       receiptData: receiptData,

@@ -362,6 +362,15 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
         purchasedQuantity: 2,
         status: SK2PurchaseStatusMessage.purchased,
       ),
+      SK2TransactionMessage(
+        id: 124,
+        originalId: 124,
+        productId: 'revoked_product_id',
+        purchaseDate: 123123.121,
+        revocationDate: 456456.45,
+        revocationReason: SK2RevocationReasonMessage.developerIssue,
+        status: SK2PurchaseStatusMessage.purchased,
+      ),
     ];
     unfinishedTransactionsList = <SK2TransactionMessage>[
       SK2TransactionMessage(

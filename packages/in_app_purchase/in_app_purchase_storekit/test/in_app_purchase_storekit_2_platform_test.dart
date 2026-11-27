@@ -773,6 +773,23 @@ void main() {
       expect(transactions.first.productId, 'product_id');
       expect(transactions.first.quantity, 2);
     });
+
+    test('should not report a revocation for a transaction that was not revoked', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.transactions();
+
+      expect(transactions.first.revocationDate, isNull);
+      expect(transactions.first.revocationReason, isNull);
+    });
+
+    test('should return the revocation date and reason of a revoked transaction', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.transactions();
+
+      final SK2Transaction revoked = transactions.singleWhere(
+        (SK2Transaction transaction) => transaction.productId == 'revoked_product_id',
+      );
+      expect(revoked.revocationDate, (456456.45 * 1000).round().toString());
+      expect(revoked.revocationReason, SK2RevocationReason.developerIssue);
+    });
   });
 
   group('current entitlements', () {

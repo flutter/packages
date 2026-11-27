@@ -170,6 +170,17 @@ class SK2ProductPurchaseOptionsMessage {
   final String? introductoryOfferEligibilityCompactJWS;
 }
 
+/// The reason that the App Store refunded a transaction or revoked it from
+/// Family Sharing.
+enum SK2RevocationReasonMessage {
+  /// The customer canceled the transaction due to an actual or perceived issue
+  /// within the app.
+  developerIssue,
+
+  /// The customer canceled the transaction for other reasons.
+  other,
+}
+
 class SK2TransactionMessage {
   SK2TransactionMessage({
     required this.id,
@@ -177,6 +188,8 @@ class SK2TransactionMessage {
     required this.productId,
     this.purchaseDate,
     this.expirationDate,
+    this.revocationDate,
+    this.revocationReason,
     this.purchasedQuantity = 1,
     this.appAccountToken,
     this.error,
@@ -189,6 +202,8 @@ class SK2TransactionMessage {
   final String productId;
   final double? purchaseDate;
   final double? expirationDate;
+  final double? revocationDate;
+  final SK2RevocationReasonMessage? revocationReason;
   final int purchasedQuantity;
   final String? appAccountToken;
   final String? receiptData;
