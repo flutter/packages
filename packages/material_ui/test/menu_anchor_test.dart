@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
@@ -4012,6 +4014,176 @@ void main() {
       },
     );
 
+    Widget buildPositionedMenuApp({
+      required Rect anchorRect,
+      Size menuSize = const Size(150, 100),
+      Offset alignmentOffset = Offset.zero,
+      List<DisplayFeature> displayFeatures = const <DisplayFeature>[],
+    }) {
+      return MaterialApp(
+        builder: (BuildContext context, Widget? child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(displayFeatures: displayFeatures),
+            child: child!,
+          );
+        },
+        home: Stack(
+          children: <Widget>[
+            Positioned.fromRect(
+              rect: anchorRect,
+              child: MenuAnchor(
+                controller: controller,
+                alignmentOffset: alignmentOffset,
+                style: const MenuStyle(
+                  padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
+                ),
+                menuChildren: <Widget>[SizedBox.fromSize(size: menuSize)],
+                child: const SizedBox.expand(),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Regression test for https://github.com/flutter/flutter/issues/146086.
+    testWidgets('positioned menus open above the position when there is no room below it', (
+      WidgetTester tester,
+    ) async {
+      await changeSurfaceSize(tester, const Size(800, 600));
+      // The anchor covers the bottom half of the screen.
+      await tester.pumpWidget(
+        buildPositionedMenuApp(anchorRect: const Rect.fromLTRB(0, 300, 800, 600)),
+      );
+
+      // Open the menu at (200, 550), where it doesn't fit below the position.
+      controller.open(position: const Offset(200, 250));
+      await tester.pump();
+
+      // The menu opens just above the position, rather than above the anchor.
+      expect(tester.getRect(findMenuPanels()), const Rect.fromLTRB(200, 450, 350, 550));
+    });
+
+    testWidgets('positioned menus do not apply alignmentOffset', (WidgetTester tester) async {
+      await changeSurfaceSize(tester, const Size(800, 600));
+      await tester.pumpWidget(
+        buildPositionedMenuApp(
+          anchorRect: const Rect.fromLTRB(0, 300, 800, 600),
+          alignmentOffset: const Offset(30, 50),
+        ),
+      );
+
+      // There is room below the position.
+      controller.open(position: const Offset(200, 20));
+      await tester.pump();
+      expect(tester.getRect(findMenuPanels()), const Rect.fromLTRB(200, 320, 350, 420));
+
+      // There is no room below the position, so the menu opens above it.
+      controller.open(position: const Offset(200, 250));
+      await tester.pump();
+      expect(tester.getRect(findMenuPanels()), const Rect.fromLTRB(200, 450, 350, 550));
+    });
+
+    testWidgets(
+      'positioned menus are moved to fit when there is no room above or below the position',
+      (WidgetTester tester) async {
+        await changeSurfaceSize(tester, const Size(800, 600));
+        await tester.pumpWidget(
+          buildPositionedMenuApp(
+            anchorRect: const Rect.fromLTRB(0, 0, 800, 600),
+            menuSize: const Size(150, 400),
+          ),
+        );
+
+        controller.open(position: const Offset(200, 300));
+        await tester.pump();
+
+        // The menu is moved up just enough to fit on the screen.
+        expect(tester.getRect(findMenuPanels()), const Rect.fromLTRB(200, 200, 350, 600));
+      },
+    );
+
+    testWidgets('positioned menus stay in the display area that contains the position', (
+      WidgetTester tester,
+    ) async {
+      await changeSurfaceSize(tester, const Size(800, 600));
+      await tester.pumpWidget(
+        buildPositionedMenuApp(
+          anchorRect: const Rect.fromLTRB(0, 0, 800, 600),
+          // A hinge splits the screen into a left area (x from 0 to 290) and a
+          // right area (x from 310 to 800). The center of the anchor is in the
+          // right area.
+          displayFeatures: const <DisplayFeature>[
+            DisplayFeature(
+              bounds: Rect.fromLTRB(290, 0, 310, 600),
+              type: DisplayFeatureType.hinge,
+              state: DisplayFeatureState.unknown,
+            ),
+          ],
+        ),
+      );
+
+      controller.open(position: const Offset(100, 100));
+      await tester.pump();
+
+      // The menu opens at the position in the left area, rather than being
+      // moved to the right area.
+      expect(tester.getRect(findMenuPanels()), const Rect.fromLTRB(100, 100, 250, 200));
+    });
+
+    testWidgets(
+      'positioned menus inside a menu open left of the position when there is no room on the right',
+      (WidgetTester tester) async {
+        await changeSurfaceSize(tester, const Size(800, 600));
+        final outerController = MenuController();
+        const innerAnchorKey = Key('innerAnchor');
+        const innerMenuKey = Key('innerMenu');
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Stack(
+              children: <Widget>[
+                Positioned.fromRect(
+                  rect: const Rect.fromLTRB(500, 0, 800, 50),
+                  child: MenuAnchor(
+                    controller: outerController,
+                    style: const MenuStyle(
+                      padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
+                    ),
+                    menuChildren: <Widget>[
+                      MenuAnchor(
+                        controller: controller,
+                        style: const MenuStyle(
+                          padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
+                        ),
+                        menuChildren: const <Widget>[
+                          SizedBox(key: innerMenuKey, width: 150, height: 100),
+                        ],
+                        child: const SizedBox(key: innerAnchorKey, width: 300, height: 100),
+                      ),
+                    ],
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        outerController.open();
+        await tester.pump();
+        expect(tester.getRect(find.byKey(innerAnchorKey)), const Rect.fromLTRB(500, 50, 800, 150));
+
+        // Open the inner menu at (750, 100), where it doesn't fit right of the
+        // position.
+        controller.open(position: const Offset(250, 50));
+        await tester.pump();
+
+        // The inner menu opens just left of the position, rather than left of
+        // the inner anchor.
+        expect(tester.getRect(find.byKey(innerMenuKey)), const Rect.fromLTRB(600, 100, 750, 200));
+      },
+    );
+
     Future<void> buildDensityPaddingApp(
       WidgetTester tester, {
       required TextDirection textDirection,
@@ -6999,6 +7171,42 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.getTopLeft(panel), targetPosition);
+    });
+
+    testWidgets('Positioned menus that open above the position grow upward from the position', (
+      WidgetTester tester,
+    ) async {
+      final controller = MenuController();
+      const position = Offset(200.0, 550.0);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: MenuAnchor(
+              style: const MenuStyle(
+                padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
+              ),
+              controller: controller,
+              animated: true,
+              menuChildren: const <Widget>[SizedBox(height: 160)],
+            ),
+          ),
+        ),
+      );
+
+      // There is no room below the position, so the menu opens above it.
+      controller.open(position: position);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // While the menu animates, its bottom edge stays at the position.
+      expect(tester.getRect(findMenuPanels()).height, lessThan(160.0));
+      expect(tester.getBottomLeft(findMenuPanels()), offsetMoreOrLessEquals(position));
+
+      await tester.pumpAndSettle();
+
+      expect(tester.getRect(findMenuPanels()).height, 160.0);
+      expect(tester.getBottomLeft(findMenuPanels()), position);
     });
   });
 
