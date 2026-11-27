@@ -43,6 +43,7 @@ part 'generated/popup_menu_defaults_m3.g.dart';
 
 const Duration _kMenuDuration = Duration(milliseconds: 300);
 const double _kMenuCloseIntervalEnd = 2.0 / 3.0;
+const Curve _kMenuCloseCurve = Interval(0.0, _kMenuCloseIntervalEnd);
 const double _kMenuDividerHeight = 16.0;
 const double _kMenuMaxWidth = 5.0 * _kMenuWidthStep;
 const double _kMenuMinWidth = 2.0 * _kMenuWidthStep;
@@ -986,7 +987,7 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
   final CapturedThemes capturedThemes;
   final BoxConstraints? constraints;
   final Clip clipBehavior;
-  final AnimationStyle? popUpAnimationStyle;
+  AnimationStyle? popUpAnimationStyle;
 
   CurvedAnimation? _animation;
 
@@ -996,11 +997,42 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
       return _animation ??= CurvedAnimation(
         parent: super.createAnimation(),
         curve: popUpAnimationStyle?.curve ?? Curves.linear,
-        reverseCurve:
-            popUpAnimationStyle?.reverseCurve ?? const Interval(0.0, _kMenuCloseIntervalEnd),
+        reverseCurve: popUpAnimationStyle?.reverseCurve ?? _kMenuCloseCurve,
       );
     }
     return super.createAnimation();
+  }
+
+  void updatePopUpAnimationStyle(AnimationStyle? style) {
+    popUpAnimationStyle = style;
+
+    final AnimationController? animationController = controller;
+    if (animationController == null) {
+      return;
+    }
+
+    animationController.duration = transitionDuration;
+    animationController.reverseDuration = reverseTransitionDuration;
+
+    final CurvedAnimation? animation = _animation;
+    if (animation != null) {
+      animation.curve = popUpAnimationStyle?.curve ?? Curves.linear;
+      animation.reverseCurve = popUpAnimationStyle?.reverseCurve ?? _kMenuCloseCurve;
+    }
+
+    switch (animationController.status) {
+      case AnimationStatus.forward:
+        if (animationController.duration == Duration.zero) {
+          animationController.forward();
+        }
+      case AnimationStatus.reverse:
+        if (animationController.reverseDuration == Duration.zero) {
+          animationController.reverse();
+        }
+      case AnimationStatus.completed:
+      case AnimationStatus.dismissed:
+        break;
+    }
   }
 
   void scrollTo(int selectedItemIndex) {
@@ -1197,6 +1229,49 @@ Future<T?> showMenu<T>({
   AnimationStyle? popUpAnimationStyle,
   bool? requestFocus,
 }) {
+  return _showMenu<T>(
+    context: context,
+    position: position,
+    positionBuilder: positionBuilder,
+    items: items,
+    initialValue: initialValue,
+    elevation: elevation,
+    shadowColor: shadowColor,
+    surfaceTintColor: surfaceTintColor,
+    semanticLabel: semanticLabel,
+    shape: shape,
+    menuPadding: menuPadding,
+    color: color,
+    useRootNavigator: useRootNavigator,
+    constraints: constraints,
+    clipBehavior: clipBehavior,
+    routeSettings: routeSettings,
+    popUpAnimationStyle: popUpAnimationStyle,
+    requestFocus: requestFocus,
+  );
+}
+
+Future<T?> _showMenu<T>({
+  required BuildContext context,
+  RelativeRect? position,
+  PopupMenuPositionBuilder? positionBuilder,
+  required List<PopupMenuEntry<T>> items,
+  T? initialValue,
+  double? elevation,
+  Color? shadowColor,
+  Color? surfaceTintColor,
+  String? semanticLabel,
+  ShapeBorder? shape,
+  EdgeInsetsGeometry? menuPadding,
+  Color? color,
+  bool useRootNavigator = false,
+  BoxConstraints? constraints,
+  Clip clipBehavior = Clip.none,
+  RouteSettings? routeSettings,
+  AnimationStyle? popUpAnimationStyle,
+  bool? requestFocus,
+  void Function(_PopupMenuRoute<T>)? onRouteCreated,
+}) {
   assert(items.isNotEmpty);
   assert(debugCheckHasMaterialLocalizations(context));
   assert(
@@ -1217,29 +1292,31 @@ Future<T?> showMenu<T>({
 
   final menuItemKeys = List<GlobalKey>.generate(items.length, (int index) => GlobalKey());
   final NavigatorState navigator = Navigator.of(context, rootNavigator: useRootNavigator);
-  return navigator.push(
-    _PopupMenuRoute<T>(
-      position: position,
-      positionBuilder: positionBuilder,
-      items: items,
-      itemKeys: menuItemKeys,
-      initialValue: initialValue,
-      elevation: elevation,
-      shadowColor: shadowColor,
-      surfaceTintColor: surfaceTintColor,
-      semanticLabel: semanticLabel,
-      barrierLabel: MaterialLocalizations.of(context).menuDismissLabel,
-      shape: shape,
-      menuPadding: menuPadding,
-      color: color,
-      capturedThemes: InheritedTheme.capture(from: context, to: navigator.context),
-      constraints: constraints,
-      clipBehavior: clipBehavior,
-      settings: routeSettings,
-      popUpAnimationStyle: popUpAnimationStyle,
-      requestFocus: requestFocus,
-    ),
+
+  final route = _PopupMenuRoute<T>(
+    position: position,
+    positionBuilder: positionBuilder,
+    items: items,
+    itemKeys: menuItemKeys,
+    initialValue: initialValue,
+    elevation: elevation,
+    shadowColor: shadowColor,
+    surfaceTintColor: surfaceTintColor,
+    semanticLabel: semanticLabel,
+    barrierLabel: MaterialLocalizations.of(context).menuDismissLabel,
+    shape: shape,
+    menuPadding: menuPadding,
+    color: color,
+    capturedThemes: InheritedTheme.capture(from: context, to: navigator.context),
+    constraints: constraints,
+    clipBehavior: clipBehavior,
+    settings: routeSettings,
+    popUpAnimationStyle: popUpAnimationStyle,
+    requestFocus: requestFocus,
   );
+
+  onRouteCreated?.call(route);
+  return navigator.push(route);
 }
 
 /// Signature for the callback invoked when a menu item is selected. The
@@ -1630,6 +1707,7 @@ class PopupMenuButton<T> extends StatefulWidget {
 /// of your button state.
 class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
   bool _isMenuExpanded = false;
+  _PopupMenuRoute<T?>? _menuRoute;
   RelativeRect? _lastPosition;
   late PopupMenuThemeData _popupMenuTheme;
   RenderBox? _cachedButtonRenderBox;
@@ -1639,6 +1717,22 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _updateCachedObjects();
+  }
+
+  @override
+  void didUpdateWidget(covariant PopupMenuButton<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.popUpAnimationStyle != widget.popUpAnimationStyle) {
+      final _PopupMenuRoute<T?>? menuRoute = _menuRoute;
+      if (menuRoute != null) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (mounted && identical(_menuRoute, menuRoute)) {
+            menuRoute.updatePopUpAnimationStyle(widget.popUpAnimationStyle);
+          }
+        });
+      }
+    }
   }
 
   /// Caches some objects relying on context used in _positionBuilder()
@@ -1734,7 +1828,8 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       setState(() {
         _isMenuExpanded = true;
       });
-      showMenu<T?>(
+
+      _showMenu<T?>(
         context: context,
         elevation: widget.elevation,
         shadowColor: widget.shadowColor,
@@ -1751,6 +1846,14 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
         popUpAnimationStyle: widget.popUpAnimationStyle,
         routeSettings: widget.routeSettings,
         requestFocus: widget.requestFocus,
+        onRouteCreated: (_PopupMenuRoute<T?> createdRoute) {
+          _menuRoute = createdRoute;
+          createdRoute.completed.then<void>((_) {
+            if (mounted && identical(_menuRoute, createdRoute)) {
+              _menuRoute = null;
+            }
+          });
+        },
       ).then<void>((T? newValue) {
         if (!mounted) {
           return null;
@@ -1774,6 +1877,12 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       NavigationMode.traditional => widget.enabled,
       NavigationMode.directional => true,
     };
+  }
+
+  @override
+  void dispose() {
+    _menuRoute = null;
+    super.dispose();
   }
 
   @protected

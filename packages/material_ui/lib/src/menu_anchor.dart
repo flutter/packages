@@ -578,6 +578,18 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 
     if (oldWidget.animated != widget.animated) {
       _resolveAnimationController();
+
+      if (!widget.animated) {
+        switch (_animationController.status) {
+          case AnimationStatus.forward:
+            _animationController.forward();
+          case AnimationStatus.reverse:
+            _animationController.reverse();
+          case AnimationStatus.completed:
+          case AnimationStatus.dismissed:
+            break;
+        }
+      }
     }
   }
 
