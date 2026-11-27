@@ -1,3 +1,7 @@
+## 2.21.2
+
+* Rebuilds cluster spatial index after marker removals to prevent ghost clusters.
+
 ## 2.21.1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

@@ -11,6 +11,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.Cluster
+import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm
 import com.google.maps.android.clustering.algo.StaticCluster
 import com.google.maps.android.collections.MarkerManager
 import io.flutter.plugin.common.BinaryMessenger
@@ -176,6 +178,43 @@ class ClusterManagersControllerTest {
     assertThrows(FlutterError::class.java) {
       controller.getClustersWithClusterManagerId(clusterManagerId)
     }
+  }
+
+  @Test
+  fun rebuildClusterIndexRemovesGhostOfMovedMarker() {
+    val algorithm = NonHierarchicalDistanceBasedAlgorithm<MarkerBuilder>()
+    var moved: MarkerBuilder? = null
+    for (i in 0 until 100) {
+      val item = MarkerBuilder("marker-$i", "vehicles", PlatformMarkerType.MARKER)
+      item.position = LatLng(27.0 + i * 0.00001, 85.0 + i * 0.00001)
+      algorithm.addItem(item)
+      if (i == 0) moved = item
+    }
+
+    // Mutate position in place and remove it.
+    moved!!.position = LatLng(-27.0, -85.0)
+    algorithm.removeItem(moved)
+
+    // The item was removed from the algorithm's items list, but the internal QuadTree still holds
+    // the phantom item because PointQuadTree.remove looked up the mutated coordinates.
+    assertEquals(99, algorithm.items.size)
+    assertEquals(100, algorithm.getClusters(8f).sumOf { it.size })
+
+    val manager: ClusterManager<MarkerBuilder> = mock()
+    whenever(manager.algorithm).thenReturn(algorithm)
+    whenever(manager.clearItems()).thenAnswer {
+      algorithm.clearItems()
+      null
+    }
+    whenever(manager.addItems(org.mockito.kotlin.any())).thenAnswer { invocation ->
+      algorithm.addItems(invocation.getArgument(0))
+    }
+
+    ClusterManagersController.rebuildClusterIndex(manager)
+
+    // Both collection and QuadTree cluster count are now synchronized.
+    assertEquals(99, algorithm.items.size)
+    assertEquals(99, algorithm.getClusters(8f).sumOf { it.size })
   }
 
   private fun createPlatformMarker(

@@ -19,6 +19,7 @@ import com.google.maps.android.clustering.view.ClusterRenderer;
 import com.google.maps.android.clustering.view.DefaultAdvancedMarkersClusterRenderer;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.collections.MarkerManager;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -184,6 +185,7 @@ class ClusterManagersController
         clusterManagerIdToManager.get(item.clusterManagerId());
     if (clusterManager != null) {
       clusterManager.removeItem(item);
+      rebuildClusterIndex(clusterManager);
       clusterManager.cluster();
     }
   }
@@ -193,8 +195,16 @@ class ClusterManagersController
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager != null) {
       clusterManager.removeItems(items);
+      rebuildClusterIndex(clusterManager);
       clusterManager.cluster();
     }
+  }
+
+  @VisibleForTesting
+  static void rebuildClusterIndex(ClusterManager<MarkerBuilder> clusterManager) {
+    final List<MarkerBuilder> remaining = new ArrayList<>(clusterManager.getAlgorithm().getItems());
+    clusterManager.clearItems();
+    clusterManager.addItems(remaining);
   }
 
   /** Called when ClusterRenderer has rendered new visible marker to the map. */
