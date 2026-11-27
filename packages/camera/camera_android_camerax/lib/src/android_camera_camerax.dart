@@ -9,11 +9,12 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
+import 'package:flutter/widgets.dart' show Texture, ValueKey, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'camerax_library.dart';
-import 'rotated_preview_delegate.dart';
+import 'rotated_preview.dart';
+import 'rotated_preview_utils.dart' show computePreviewTargetRotation;
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
@@ -86,6 +87,29 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     },
   );
+
+  /// Receives the [TransformationInfo] of every `SurfaceRequest` made for the
+  /// current [preview].
+  ///
+  /// A new listener is created for every [preview] so that updates still sent
+  /// for a previous [preview] can be ignored. This is held by the plugin so that
+  /// it stays alive as long as the `SurfaceProvider` it was given to.
+  TransformationInfoListener? _transformationInfoListener;
+
+  /// Stream that emits the [TransformationInfo] of [preview] whenever it becomes
+  /// available or changes like when CameraX starts or stops stream sharing.
+  final StreamController<TransformationInfo> _transformationInfoStreamController =
+      StreamController<TransformationInfo>.broadcast();
+
+  /// The most recent [TransformationInfo] of [preview], if any has been received.
+  TransformationInfo? _latestTransformationInfo;
+
+  /// The target rotation of [preview], as a [Surface] rotation constant (see
+  /// [computePreviewTargetRotation]).
+  ///
+  /// This is never changed after [preview] is configured, so the
+  /// [TransformationInfo.rotationDegrees] of [preview] is always relative to it.
+  late int _previewTargetRotation;
 
   /// Stream that emits an event when the corresponding video recording is finalized.
   static final StreamController<VideoRecordEvent> videoRecordingEventStreamController =
@@ -273,6 +297,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// correcting the rotation of camera previews for the device this plugin runs on.
   late bool _handlesCropAndRotation;
 
+  /// Whether or not CameraX mirroring is turned off for the [preview], in which
+  /// case the front camera preview is mirrored by [RotatedPreview] instead.
+  late bool _previewMirroringDisabled;
+
   /// The initial orientation of the device when the camera is created.
   late DeviceOrientation _initialDeviceOrientation;
 
@@ -417,19 +445,26 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     unawaited(processCameraProvider!.unbindAll());
 
-    // Configure Preview instance.
+    // Configure Preview instance. Its target rotation is pinned below and never
+    // changed, so the preview rotation can be derived from its TransformationInfo
+    // (see RotatedPreview).
+    _latestTransformationInfo = null;
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
     );
-    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(systemServicesManager);
+    _transformationInfoListener = _createTransformationInfoListener();
+    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
+      systemServicesManager,
+      _transformationInfoListener,
+    );
 
     // Configure ImageCapture instance.
     _appliedFlashMode = null;
+    final int defaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
-          .getDefaultDisplayRotation(),
+      /* use CameraX default target rotation */ targetRotation: defaultDisplayRotation,
       jpegQuality: _jpegQuality,
       zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );
@@ -445,10 +480,20 @@ class AndroidCameraCameraX extends CameraPlatform {
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
     _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
+    _previewMirroringDisabled = await preview!.isMirroringDisabled();
+
+    // Pin the Preview target rotation so that buffers CameraX copies for stream
+    // sharing look the same as buffers from the camera directly.
+    _previewTargetRotation = computePreviewTargetRotation(
+      handlesCropAndRotation: _handlesCropAndRotation,
+      cameraIsFrontFacing: cameraIsFrontFacing,
+      sensorOrientationDegrees: sensorOrientationDegrees.toInt(),
+    );
+    await preview!.setTargetRotation(_previewTargetRotation);
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );
-    _initialDefaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
+    _initialDefaultDisplayRotation = defaultDisplayRotation;
 
     return _flutterSurfaceTextureId;
   }
@@ -542,6 +587,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     recording = null;
     pendingRecording = null;
     videoOutputPath = null;
+
+    // The TransformationInfo belongs to the released preview surface.
+    _transformationInfoListener = null;
+    _latestTransformationInfo = null;
   }
 
   /// The camera with ID [cameraId] has been initialized.
@@ -579,6 +628,25 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<VideoRecordedEvent> onVideoRecordedEvent(int cameraId) {
     return _cameraEvents(cameraId).whereType<VideoRecordedEvent>();
+  }
+
+  /// Creates a listener that forwards [TransformationInfo] updates to
+  /// [_transformationInfoStreamController] while it is the current
+  /// [_transformationInfoListener].
+  TransformationInfoListener _createTransformationInfoListener() {
+    final weakThis = WeakReference<AndroidCameraCameraX>(this);
+    return TransformationInfoListener(
+      onTransformationInfoUpdate:
+          (TransformationInfoListener listener, TransformationInfo transformationInfo) {
+            final AndroidCameraCameraX? self = weakThis.target;
+            if (self == null || !identical(listener, self._transformationInfoListener)) {
+              return;
+            }
+
+            self._latestTransformationInfo = transformationInfo;
+            self._transformationInfoStreamController.add(transformationInfo);
+          },
+    );
   }
 
   /// Locks the capture orientation of camera with ID [cameraId].
@@ -986,6 +1054,23 @@ class AndroidCameraCameraX extends CameraPlatform {
       useCases.add(imageAnalysis!);
     }
     await processCameraProvider?.unbindAll();
+
+    // The Preview target rotation is pinned per camera (see
+    // computePreviewTargetRotation), so re-pin it if the new camera needs a
+    // different one; otherwise buffers CameraX copies for stream sharing no
+    // longer look like buffers from the new camera directly.
+    final int newPreviewTargetRotation = computePreviewTargetRotation(
+      handlesCropAndRotation: _handlesCropAndRotation,
+      cameraIsFrontFacing: cameraIsFrontFacing,
+      sensorOrientationDegrees: description.sensorOrientation,
+    );
+    if (newPreviewTargetRotation != _previewTargetRotation) {
+      _previewTargetRotation = newPreviewTargetRotation;
+      await preview!.setTargetRotation(_previewTargetRotation);
+      // TransformationInfo is relative to the target rotation it was reported for.
+      _latestTransformationInfo = null;
+    }
+
     camera = await processCameraProvider?.bindToLifecycle(cameraSelector!, useCases);
 
     // Retrieve info required for correcting the rotation of the camera preview
@@ -1022,11 +1107,16 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     final Widget preview = Texture(textureId: cameraId);
 
-    return RotatedPreviewDelegate(
+    return RotatedPreview(
+      key: ValueKey<int>(cameraId),
       handlesCropAndRotation: _handlesCropAndRotation,
+      previewMirroringDisabled: _previewMirroringDisabled,
       initialDeviceOrientation: _initialDeviceOrientation,
       initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
       deviceOrientationStream: deviceOrientationStream,
+      initialTransformationInfo: _latestTransformationInfo,
+      transformationInfoStream: _transformationInfoStreamController.stream,
+      previewTargetRotation: _previewTargetRotation,
       sensorOrientationDegrees: sensorOrientationDegrees,
       cameraIsFrontFacing: cameraIsFrontFacing,
       deviceOrientationManager: deviceOrientationManager,
@@ -1219,6 +1309,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       // See https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
       // for details.
       await _unbindUseCaseFromLifecycle(imageAnalysis!);
+    } else {
+      // Bind imageAnalysis before videoCapture and before the recording starts.
+      // Binding it during a recording makes CameraX switch the preview and video
+      // to stream sharing mid-recording, which can fail and leave the camera
+      // session broken.
+      await _bindUseCaseToLifecycle(imageAnalysis!, options.cameraId);
     }
 
     await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);

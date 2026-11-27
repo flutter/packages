@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
+import android.os.Build;
 import android.util.Range;
 import android.view.Surface;
 import androidx.annotation.NonNull;
@@ -12,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
+import androidx.camera.core.ExperimentalMirrorMode;
+import androidx.camera.core.MirrorMode;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
@@ -27,7 +30,7 @@ import java.util.concurrent.Executors;
  * class or an instance of that class.
  */
 class PreviewProxyApi extends PigeonApiPreview {
-  // Stores the SurfaceProducer when it is used as a SurfaceProvider for a Preview.
+  // Stores the SurfaceProducer of each Preview, which is used as its SurfaceProvider.
   private final Map<Preview, TextureRegistry.SurfaceProducer> surfaceProducers = new HashMap<>();
 
   PreviewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -42,7 +45,7 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   // Range<?> is defined as Range<Integer> in pigeon.
   @SuppressWarnings("unchecked")
-  @OptIn(markerClass = ExperimentalCamera2Interop.class)
+  @OptIn(markerClass = {ExperimentalCamera2Interop.class, ExperimentalMirrorMode.class})
   @NonNull
   @Override
   public Preview pigeon_defaultConstructor(
@@ -50,6 +53,18 @@ class PreviewProxyApi extends PigeonApiPreview {
       @Nullable Long targetRotation,
       @Nullable Range<?> targetFpsRange) {
     final Preview.Builder builder = new Preview.Builder();
+
+    // Create the SurfaceProducer here rather than in setSurfaceProvider because the
+    // mirror mode of the Preview can only be set before it is built and depends on it.
+    final TextureRegistry.SurfaceProducer surfaceProducer =
+        getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+    if (shouldDisableMirroring(surfaceProducer)) {
+      // An ImageReader backed SurfaceProducer ignores the camera transform, so buffers from the
+      // camera are never mirrored. Turning off mirroring makes CameraX not mirror the buffers it
+      // copies for stream sharing either, so both look the same while CameraX switches between
+      // them. The front camera preview is mirrored on the Dart side instead.
+      builder.setMirrorMode(MirrorMode.MIRROR_MODE_OFF);
+    }
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
@@ -63,19 +78,28 @@ class PreviewProxyApi extends PigeonApiPreview {
           CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
-    return builder.build();
+    final Preview preview = builder.build();
+    surfaceProducers.put(preview, surfaceProducer);
+    return preview;
   }
 
   @Override
   public long setSurfaceProvider(
-      @NonNull Preview pigeonInstance, @NonNull SystemServicesManager systemServicesManager) {
-    final TextureRegistry.SurfaceProducer surfaceProducer =
-        getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+      @NonNull Preview pigeonInstance,
+      @NonNull SystemServicesManager systemServicesManager,
+      @Nullable SurfaceRequest.TransformationInfoListener transformationInfoListener) {
+    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeonInstance);
+    if (surfaceProducer == null) {
+      // The SurfaceProducer of a Preview is created with it because the mirror mode of the
+      // Preview depends on it, so using a different one could display the preview incorrectly.
+      throw new IllegalStateException(
+          "setSurfaceProvider() cannot be called for a Preview that was not created by this"
+              + " ProxyApi or whose surface provider was already released.");
+    }
     final Preview.SurfaceProvider surfaceProvider =
-        createSurfaceProvider(surfaceProducer, systemServicesManager);
+        createSurfaceProvider(surfaceProducer, systemServicesManager, transformationInfoListener);
 
     pigeonInstance.setSurfaceProvider(surfaceProvider);
-    surfaceProducers.put(pigeonInstance, surfaceProducer);
 
     return surfaceProducer.id();
   }
@@ -103,6 +127,17 @@ class PreviewProxyApi extends PigeonApiPreview {
             + " the camera preview has not yet been initialized.");
   }
 
+  @Override
+  public boolean isMirroringDisabled(@NonNull Preview pigeonInstance) {
+    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeonInstance);
+    if (surfaceProducer != null) {
+      return shouldDisableMirroring(surfaceProducer);
+    }
+    throw new IllegalStateException(
+        "isMirroringDisabled() cannot be called if the flutterSurfaceProducer for the camera"
+            + " preview has not yet been initialized.");
+  }
+
   @Nullable
   @Override
   public ResolutionInfo getResolutionInfo(Preview pigeonInstance) {
@@ -114,11 +149,26 @@ class PreviewProxyApi extends PigeonApiPreview {
     pigeonInstance.setTargetRotation((int) rotation);
   }
 
+  // Preview.Builder.setMirrorMode has no effect below API 33, where CameraX keeps mirroring front
+  // camera previews.
+  private boolean shouldDisableMirroring(@NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
+    return !surfaceProducer.handlesCropAndRotation()
+        && getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.TIRAMISU);
+  }
+
   @NonNull
   Preview.SurfaceProvider createSurfaceProvider(
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
-      @NonNull SystemServicesManager systemServicesManager) {
+      @NonNull SystemServicesManager systemServicesManager,
+      @Nullable SurfaceRequest.TransformationInfoListener transformationInfoListener) {
     return request -> {
+      if (transformationInfoListener != null) {
+        // Each SurfaceRequest carries its own TransformationInfo, so the listener is set on
+        // every request. The listener posts to the main thread itself, so it can run directly
+        // on the thread CameraX calls it from.
+        request.setTransformationInfoListener(Runnable::run, transformationInfoListener);
+      }
+
       // Set callback for surfaceProducer to invalidate Surfaces that it produces when they
       // get destroyed.
       surfaceProducer.setCallback(

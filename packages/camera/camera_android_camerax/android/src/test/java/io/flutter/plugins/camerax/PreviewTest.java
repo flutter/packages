@@ -5,20 +5,29 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import android.hardware.camera2.CaptureRequest;
+import android.os.Build;
 import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.camera.camera2.interop.Camera2Interop;
+import androidx.camera.core.MirrorMode;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
@@ -41,7 +50,17 @@ public class PreviewTest {
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   public void pigeon_defaultConstructor_createsPreviewWithCorrectConfiguration() {
-    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    when(mockTextureRegistry.createSurfaceProducer())
+        .thenReturn(mock(TextureRegistry.SurfaceProducer.class));
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
@@ -61,6 +80,158 @@ public class PreviewTest {
       assertEquals(mockResolutionSelector, instance.getResolutionSelector());
       assertEquals(Surface.ROTATION_0, instance.getTargetRotation());
       assertEquals(1, mockCamera2InteropExtender.constructed().size());
+    }
+  }
+
+  @Test
+  public void
+      pigeon_defaultConstructor_turnsOffMirroringWhenSurfaceProducerIgnoresCameraTransform() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(false);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      createPreviewWithSurfaceProducer(mockSurfaceProducer);
+
+      verify(mockBuilders.constructed().get(0)).setMirrorMode(MirrorMode.MIRROR_MODE_OFF);
+    }
+  }
+
+  @Test
+  public void
+      pigeon_defaultConstructor_keepsDefaultMirroringWhenSurfaceProducerHandlesCameraTransform() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      createPreviewWithSurfaceProducer(mockSurfaceProducer);
+
+      verify(mockBuilders.constructed().get(0), never()).setMirrorMode(anyInt());
+    }
+  }
+
+  @Test
+  public void pigeon_defaultConstructor_keepsDefaultMirroringBelowApi33() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(false);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      createPreviewApi(mockSurfaceProducer, Build.VERSION_CODES.S_V2)
+          .pigeon_defaultConstructor(null, null, null);
+
+      // Preview.Builder.setMirrorMode has no effect below API 33.
+      verify(mockBuilders.constructed().get(0), never()).setMirrorMode(anyInt());
+    }
+  }
+
+  @Test
+  public void isMirroringDisabled_returnsTrueIfMirroringWasTurnedOff() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(false);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      final PigeonApiPreview api =
+          createPreviewApi(mockSurfaceProducer, Build.VERSION_CODES.TIRAMISU);
+      final Preview preview = api.pigeon_defaultConstructor(null, null, null);
+
+      assertTrue(api.isMirroringDisabled(preview));
+      verify(mockBuilders.constructed().get(0)).setMirrorMode(MirrorMode.MIRROR_MODE_OFF);
+    }
+  }
+
+  @Test
+  public void isMirroringDisabled_returnsFalseIfSurfaceProducerHandlesCameraTransform() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      final PigeonApiPreview api =
+          createPreviewApi(mockSurfaceProducer, Build.VERSION_CODES.TIRAMISU);
+      final Preview preview = api.pigeon_defaultConstructor(null, null, null);
+
+      assertFalse(api.isMirroringDisabled(preview));
+      verify(mockBuilders.constructed().get(0), never()).setMirrorMode(anyInt());
+    }
+  }
+
+  @Test
+  public void isMirroringDisabled_returnsFalseBelowApi33() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(false);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      final PigeonApiPreview api = createPreviewApi(mockSurfaceProducer, Build.VERSION_CODES.S_V2);
+      final Preview preview = api.pigeon_defaultConstructor(null, null, null);
+
+      assertFalse(api.isMirroringDisabled(preview));
+      verify(mockBuilders.constructed().get(0), never()).setMirrorMode(anyInt());
+    }
+  }
+
+  @Test
+  public void isMirroringDisabled_throwsForPreviewNotCreatedByProxyApi() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    assertThrows(IllegalStateException.class, () -> api.isMirroringDisabled(mock(Preview.class)));
+  }
+
+  @Test
+  public void setSurfaceProvider_usesSurfaceProducerCreatedWithEachPreview() {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    final TextureRegistry.SurfaceProducer imageReaderSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(imageReaderSurfaceProducer.id()).thenReturn(1L);
+    when(imageReaderSurfaceProducer.handlesCropAndRotation()).thenReturn(false);
+    when(imageReaderSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
+    final TextureRegistry.SurfaceProducer surfaceTextureSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(surfaceTextureSurfaceProducer.id()).thenReturn(2L);
+    when(surfaceTextureSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+    when(surfaceTextureSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
+    when(mockTextureRegistry.createSurfaceProducer())
+        .thenReturn(imageReaderSurfaceProducer, surfaceTextureSurfaceProducer);
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      final Preview imageReaderPreview = api.pigeon_defaultConstructor(null, null, null);
+      final Preview surfaceTexturePreview = api.pigeon_defaultConstructor(null, null, null);
+
+      // Each Preview's mirror mode is set from the SurfaceProducer created with it.
+      verify(mockBuilders.constructed().get(0)).setMirrorMode(MirrorMode.MIRROR_MODE_OFF);
+      verify(mockBuilders.constructed().get(1), never()).setMirrorMode(anyInt());
+
+      // Set the surface providers in the opposite order the Previews were created in, so that this
+      // fails if setSurfaceProvider uses the most recently created SurfaceProducer instead of the
+      // one created with the Preview.
+      assertEquals(
+          2L,
+          api.setSurfaceProvider(surfaceTexturePreview, mock(SystemServicesManager.class), null));
+      assertEquals(
+          1L, api.setSurfaceProvider(imageReaderPreview, mock(SystemServicesManager.class), null));
+      verify(mockTextureRegistry, times(2)).createSurfaceProducer();
+
+      // The SurfaceProvider set on each Preview provides surfaces from its own SurfaceProducer.
+      final ArgumentCaptor<Preview.SurfaceProvider> surfaceProviderCaptor =
+          ArgumentCaptor.forClass(Preview.SurfaceProvider.class);
+      verify(surfaceTexturePreview).setSurfaceProvider(surfaceProviderCaptor.capture());
+      final SurfaceRequest mockSurfaceRequest = mock(SurfaceRequest.class);
+      when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
+      surfaceProviderCaptor.getValue().onSurfaceRequested(mockSurfaceRequest);
+
+      verify(surfaceTextureSurfaceProducer).getForcedNewSurface();
+      verify(imageReaderSurfaceProducer, never()).getForcedNewSurface();
     }
   }
 
@@ -93,11 +264,96 @@ public class PreviewTest {
           }
         }.getPigeonApiPreview();
 
-    final Preview instance = mock(Preview.class);
+    final Preview instance = createPreview(api);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
 
-    assertEquals(textureId, api.setSurfaceProvider(instance, systemServicesManager));
+    assertEquals(textureId, api.setSurfaceProvider(instance, systemServicesManager, null));
     verify(instance).setSurfaceProvider(any(Preview.SurfaceProvider.class));
+  }
+
+  @Test
+  public void setSurfaceProvider_setsTransformationInfoListenerOnSurfaceRequests() {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.id()).thenReturn(0L);
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
+    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
+
+    final Preview instance = createPreview(api);
+    final SurfaceRequest.TransformationInfoListener mockListener =
+        mock(SurfaceRequest.TransformationInfoListener.class);
+    final ArgumentCaptor<Preview.SurfaceProvider> surfaceProviderCaptor =
+        ArgumentCaptor.forClass(Preview.SurfaceProvider.class);
+
+    api.setSurfaceProvider(instance, mock(SystemServicesManager.class), mockListener);
+    verify(instance).setSurfaceProvider(surfaceProviderCaptor.capture());
+
+    final SurfaceRequest mockSurfaceRequest = mock(SurfaceRequest.class);
+    when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
+    surfaceProviderCaptor.getValue().onSurfaceRequested(mockSurfaceRequest);
+
+    verify(mockSurfaceRequest).setTransformationInfoListener(any(Executor.class), eq(mockListener));
+  }
+
+  @Test
+  public void createSurfaceProvider_setsTransformationInfoListenerOnEachSurfaceRequest() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
+    final PreviewProxyApi api = (PreviewProxyApi) new TestProxyApiRegistrar().getPigeonApiPreview();
+    final SurfaceRequest.TransformationInfoListener mockListener =
+        mock(SurfaceRequest.TransformationInfoListener.class);
+
+    final Preview.SurfaceProvider previewSurfaceProvider =
+        api.createSurfaceProvider(
+            mockSurfaceProducer, mock(SystemServicesManager.class), mockListener);
+
+    // CameraX makes a new SurfaceRequest when stream sharing starts, so each request must
+    // receive the listener.
+    final SurfaceRequest firstSurfaceRequest = mock(SurfaceRequest.class);
+    when(firstSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
+    final SurfaceRequest secondSurfaceRequest = mock(SurfaceRequest.class);
+    when(secondSurfaceRequest.getResolution()).thenReturn(new Size(7, 8));
+    previewSurfaceProvider.onSurfaceRequested(firstSurfaceRequest);
+    previewSurfaceProvider.onSurfaceRequested(secondSurfaceRequest);
+
+    final ArgumentCaptor<Executor> executorCaptor = ArgumentCaptor.forClass(Executor.class);
+    verify(firstSurfaceRequest)
+        .setTransformationInfoListener(executorCaptor.capture(), eq(mockListener));
+    verify(secondSurfaceRequest)
+        .setTransformationInfoListener(any(Executor.class), eq(mockListener));
+
+    // The listener posts to the main thread itself, so the executor runs it directly.
+    final Runnable mockRunnable = mock(Runnable.class);
+    executorCaptor.getValue().execute(mockRunnable);
+    verify(mockRunnable).run();
+  }
+
+  @Test
+  public void createSurfaceProvider_doesNotSetTransformationInfoListenerWhenNull() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
+    final PreviewProxyApi api = (PreviewProxyApi) new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    final Preview.SurfaceProvider previewSurfaceProvider =
+        api.createSurfaceProvider(mockSurfaceProducer, mock(SystemServicesManager.class), null);
+    final SurfaceRequest mockSurfaceRequest = mock(SurfaceRequest.class);
+    when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
+    previewSurfaceProvider.onSurfaceRequested(mockSurfaceRequest);
+
+    verify(mockSurfaceRequest, never())
+        .setTransformationInfoListener(
+            any(Executor.class), any(SurfaceRequest.TransformationInfoListener.class));
   }
 
   @Test
@@ -127,7 +383,7 @@ public class PreviewTest {
     when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
 
     final Preview.SurfaceProvider previewSurfaceProvider =
-        api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
+        api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager, null);
     previewSurfaceProvider.onSurfaceRequested(mockSurfaceRequest);
 
     verify(mockSurfaceProducer).setCallback(callbackCaptor.capture());
@@ -183,7 +439,7 @@ public class PreviewTest {
         ArgumentCaptor.forClass(Consumer.class);
 
     final Preview.SurfaceProvider previewSurfaceProvider =
-        api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
+        api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager, null);
     previewSurfaceProvider.onSurfaceRequested(mockSurfaceRequest);
 
     verify(mockSurfaceProducer).setSize(resolutionWidth, resolutionHeight);
@@ -248,12 +504,44 @@ public class PreviewTest {
           }
         }.getPigeonApiPreview();
 
-    final Preview instance = mock(Preview.class);
+    final Preview instance = createPreview(api);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
-    api.setSurfaceProvider(instance, systemServicesManager);
+    api.setSurfaceProvider(instance, systemServicesManager, null);
     api.releaseSurfaceProvider(instance);
 
     verify(mockSurfaceProducer).release();
+  }
+
+  @Test
+  public void setSurfaceProvider_throwsForPreviewNotCreatedByProxyApi() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    assertThrows(
+        IllegalStateException.class,
+        () -> api.setSurfaceProvider(mock(Preview.class), mock(SystemServicesManager.class), null));
+  }
+
+  @Test
+  public void setSurfaceProvider_throwsAfterSurfaceProviderIsReleased() {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    when(mockTextureRegistry.createSurfaceProducer())
+        .thenReturn(mock(TextureRegistry.SurfaceProducer.class));
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
+    final Preview instance = createPreview(api);
+    final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
+    api.setSurfaceProvider(instance, systemServicesManager, null);
+    api.releaseSurfaceProvider(instance);
+
+    assertThrows(
+        IllegalStateException.class,
+        () -> api.setSurfaceProvider(instance, systemServicesManager, null));
   }
 
   @Test
@@ -295,12 +583,12 @@ public class PreviewTest {
           }
         }.getPigeonApiPreview();
 
-    final Preview instance = mock(Preview.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+    final Preview instance = createPreview(api);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
-    api.setSurfaceProvider(instance, systemServicesManager);
-    api.surfaceProducerHandlesCropAndRotation(instance);
+    api.setSurfaceProvider(instance, systemServicesManager, null);
 
-    verify(mockSurfaceProducer).handlesCropAndRotation();
+    assertTrue(api.surfaceProducerHandlesCropAndRotation(instance));
   }
 
   // TODO(bparrishMines): Replace with inline calls to onSurfaceCleanup once available on stable;
@@ -309,5 +597,53 @@ public class PreviewTest {
   @SuppressWarnings({"deprecation", "removal"})
   void simulateSurfaceCleanup(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
     producerLifecycle.onSurfaceCleanup();
+  }
+
+  private static MockedConstruction<Preview.Builder> mockPreviewBuilderConstruction() {
+    return Mockito.mockConstruction(
+        Preview.Builder.class,
+        (mock, context) -> {
+          when(mock.setMirrorMode(anyInt())).thenReturn(mock);
+          when(mock.build()).thenReturn(mock(Preview.class));
+        });
+  }
+
+  @NonNull
+  private static Preview createPreview(@NonNull PigeonApiPreview api) {
+    final MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction();
+    try {
+      return api.pigeon_defaultConstructor(null, null, null);
+    } finally {
+      mockBuilders.close();
+    }
+  }
+
+  private static void createPreviewWithSurfaceProducer(
+      @NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
+    createPreviewApi(surfaceProducer, Build.VERSION_CODES.TIRAMISU)
+        .pigeon_defaultConstructor(null, null, null);
+  }
+
+  /**
+   * Creates a {@link PigeonApiPreview} that creates Previews with {@code surfaceProducer} on a
+   * device running {@code sdkVersion}.
+   */
+  @NonNull
+  private static PigeonApiPreview createPreviewApi(
+      @NonNull TextureRegistry.SurfaceProducer surfaceProducer, int sdkVersion) {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(surfaceProducer);
+    return new TestProxyApiRegistrar() {
+      @NonNull
+      @Override
+      TextureRegistry getTextureRegistry() {
+        return mockTextureRegistry;
+      }
+
+      @Override
+      boolean sdkIsAtLeast(int version) {
+        return sdkVersion >= version;
+      }
+    }.getPigeonApiPreview();
   }
 }

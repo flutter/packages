@@ -6,7 +6,7 @@ import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/camerax_library.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart' show MatrixUtils, RotatedBox, Texture, Transform;
+import 'package:flutter/widgets.dart' show MatrixUtils, RotatedBox, SizedBox, Texture, Transform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -40,6 +40,7 @@ void main() {
   setUp(() {
     PigeonOverrides.pigeon_reset();
     GenericsPigeonOverrides.reset();
+    PigeonOverrides.transformationInfoListener_new = TransformationInfoListener.pigeon_detached;
   });
 
   /// Sets up mock CameraSelector and mock ProcessCameraProvider used to
@@ -82,12 +83,16 @@ void main() {
   /// a DeviceORientationManager specified.
   ///
   /// Useful for tests that need a reference to a DeviceOrientationManager.
+  ///
+  /// [previewMirroringDisabled] defaults to whether CameraX mirroring is
+  /// turned off for the `Preview` on API 33+, where it can be.
   void setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
     DeviceOrientationManager deviceOrientationManager, {
     required MockProcessCameraProvider mockProcessCameraProvider,
     required CameraSelector Function({LensFacing? requireLensFacing, dynamic cameraInfoForFilter})
     createCameraSelector,
     required bool handlesCropAndRotation,
+    bool? previewMirroringDisabled,
   }) {
     PigeonOverrides.processCameraProvider_getInstance = () async => mockProcessCameraProvider;
     PigeonOverrides.cameraSelector_new = createCameraSelector;
@@ -101,6 +106,9 @@ void main() {
           when(
             preview.surfaceProducerHandlesCropAndRotation(),
           ).thenAnswer((_) async => handlesCropAndRotation);
+          when(
+            preview.isMirroringDisabled(),
+          ).thenAnswer((_) async => previewMirroringDisabled ?? !handlesCropAndRotation);
           when(
             preview.getResolutionInfo(),
           ).thenAnswer((_) async => ResolutionInfo.pigeon_detached(resolution: MockCameraSize()));
@@ -1073,9 +1081,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
             expect(
               rotatedBox.quarterTurns,
@@ -1183,9 +1191,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
             expect(
               rotatedBox.quarterTurns,
@@ -1279,9 +1287,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
             expect(
               rotatedBox.quarterTurns,
@@ -1391,9 +1399,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
 
             final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
@@ -1557,9 +1565,15 @@ void main() {
           final transformedPreview = rotatedBox.child! as Transform;
           final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-          // Since the front camera is in landscape mode, we expect the camera
-          // preview to be mirrored across the x-axis.
-          checkXAxisIsMirrored(transformedPreviewMatrix);
+          // The buffer is rotated (270 + clockwiseDefaultDisplayRotation) % 360
+          // degrees in total, so the preview is mirrored with scaleY when that is
+          // 90 or 270 degrees and with scaleX otherwise.
+          if (currentDefaultDisplayRotation == Surface.rotation0 ||
+              currentDefaultDisplayRotation == Surface.rotation180) {
+            checkYAxisIsMirrored(transformedPreviewMatrix);
+          } else {
+            checkXAxisIsMirrored(transformedPreviewMatrix);
+          }
           expect((transformedPreview.child! as Texture).textureId, cameraId);
 
           final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
@@ -1656,16 +1670,10 @@ void main() {
           final transformedPreview = rotatedBox.child! as Transform;
           final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-          // When the front camera is in landscape mode, we expect the camera
-          // preview to be mirrored across the x-axis. When the front camera
-          // is in portrait mode, we expect the camera preview to be mirrored
-          // across the y-axis.
-          if (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
-              currentDeviceOrientation == DeviceOrientation.landscapeRight) {
-            checkXAxisIsMirrored(transformedPreviewMatrix);
-          } else {
-            checkYAxisIsMirrored(transformedPreviewMatrix);
-          }
+          // The buffer is always rotated (90 + 90) % 360 = 180 degrees in total,
+          // regardless of the device orientation, so the preview is mirrored
+          // with scaleX.
+          checkXAxisIsMirrored(transformedPreviewMatrix);
           expect((transformedPreview.child! as Texture).textureId, cameraId);
           final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
               ? rotatedBox.quarterTurns + 4
@@ -1989,5 +1997,532 @@ void main() {
         );
       },
     );
+  });
+
+  group('when TransformationInfo is received,', () {
+    late TransformationInfoListener transformationInfoListener;
+
+    setUp(() {
+      // Capture the listener the camera creates so that tests can send it
+      // TransformationInfo updates, as CameraX would.
+      PigeonOverrides.transformationInfoListener_new =
+          ({
+            required void Function(TransformationInfoListener, TransformationInfo)
+            onTransformationInfoUpdate,
+          }) {
+            transformationInfoListener = TransformationInfoListener.pigeon_detached(
+              onTransformationInfoUpdate: onTransformationInfoUpdate,
+            );
+            return transformationInfoListener;
+          };
+    });
+
+    void sendTransformationInfo({
+      required int rotationDegrees,
+      required bool hasCameraTransform,
+      required bool isMirroring,
+    }) {
+      transformationInfoListener.onTransformationInfoUpdate(
+        transformationInfoListener,
+        TransformationInfo.pigeon_detached(
+          rotationDegrees: rotationDegrees,
+          hasCameraTransform: hasCameraTransform,
+          isMirroring: isMirroring,
+        ),
+      );
+    }
+
+    /// Creates and initializes a test camera, then puts its preview in the
+    /// widget tree.
+    Future<AndroidCameraCameraX> createCameraAndBuildPreview(
+      WidgetTester tester, {
+      required int cameraId,
+      required bool handlesCropAndRotation,
+      required bool isCameraFrontFacing,
+      required int sensorRotationDegrees,
+      required MockDeviceOrientationManager mockDeviceOrientationManager,
+      bool? previewMirroringDisabled,
+    }) async {
+      final camera = AndroidCameraCameraX();
+      final mockCameraSelector = MockCameraSelector();
+      final MockProcessCameraProvider mockProcessCameraProvider =
+          setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
+            mockCameraSelector: mockCameraSelector,
+            sensorRotationDegrees: sensorRotationDegrees,
+            isCameraFrontFacing: isCameraFrontFacing,
+          );
+      setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
+        mockDeviceOrientationManager,
+        mockProcessCameraProvider: mockProcessCameraProvider,
+        createCameraSelector: isCameraFrontFacing
+            ? createCameraSelectorForFrontCamera(mockCameraSelector)
+            : createCameraSelectorForBackCamera(mockCameraSelector),
+        handlesCropAndRotation: handlesCropAndRotation,
+        previewMirroringDisabled: previewMirroringDisabled,
+      );
+
+      final List<CameraDescription> availableCameras = await camera.availableCameras();
+      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
+        availableCameras.first,
+        const MediaSettings(),
+      );
+      await camera.initializeCamera(flutterSurfaceTextureId);
+
+      // Put camera preview in widget tree and pump one frame so that Future to retrieve
+      // the initial default display rotation completes.
+      await tester.pumpWidget(camera.buildPreview(cameraId));
+      await tester.pump();
+
+      return camera;
+    }
+
+    MockDeviceOrientationManager createMockDeviceOrientationManager({
+      required DeviceOrientation uiOrientation,
+      required int defaultDisplayRotation,
+    }) {
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      when(
+        mockDeviceOrientationManager.getUiOrientation(),
+      ).thenAnswer((_) async => _serializeDeviceOrientation(uiOrientation));
+      when(
+        mockDeviceOrientationManager.getDefaultDisplayRotation(),
+      ).thenAnswer((_) async => defaultDisplayRotation);
+      return mockDeviceOrientationManager;
+    }
+
+    group('the Preview target rotation is pinned', () {
+      Future<void> testPinnedTargetRotation({
+        required bool handlesCropAndRotation,
+        required bool isCameraFrontFacing,
+        required int sensorRotationDegrees,
+        required int expectedTargetRotation,
+      }) async {
+        int? constructorTargetRotation;
+        final MockDeviceOrientationManager mockDeviceOrientationManager =
+            createMockDeviceOrientationManager(
+              uiOrientation: DeviceOrientation.landscapeRight,
+              defaultDisplayRotation: Surface.rotation270,
+            );
+        final camera = AndroidCameraCameraX();
+        final mockCameraSelector = MockCameraSelector();
+        setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
+          mockDeviceOrientationManager,
+          mockProcessCameraProvider:
+              setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
+                mockCameraSelector: mockCameraSelector,
+                sensorRotationDegrees: sensorRotationDegrees,
+                isCameraFrontFacing: isCameraFrontFacing,
+              ),
+          createCameraSelector: isCameraFrontFacing
+              ? createCameraSelectorForFrontCamera(mockCameraSelector)
+              : createCameraSelectorForBackCamera(mockCameraSelector),
+          handlesCropAndRotation: handlesCropAndRotation,
+        );
+        final mockPreview = MockPreview();
+        when(
+          mockPreview.surfaceProducerHandlesCropAndRotation(),
+        ).thenAnswer((_) async => handlesCropAndRotation);
+        when(
+          mockPreview.getResolutionInfo(),
+        ).thenAnswer((_) async => ResolutionInfo.pigeon_detached(resolution: MockCameraSize()));
+        PigeonOverrides.preview_new =
+            ({
+              int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
+              ResolutionSelector? resolutionSelector,
+            }) {
+              constructorTargetRotation = targetRotation;
+              return mockPreview;
+            };
+
+        final List<CameraDescription> availableCameras = await camera.availableCameras();
+        await camera.createCameraWithSettings(availableCameras.first, const MediaSettings());
+
+        // The Preview is created without a target rotation, which is pinned once
+        // it is known whether the surface handles crop and rotation.
+        expect(constructorTargetRotation, isNull);
+        verifyInOrder(<Object?>[
+          mockPreview.setSurfaceProvider(any, transformationInfoListener),
+          mockPreview.surfaceProducerHandlesCropAndRotation(),
+          mockPreview.setTargetRotation(expectedTargetRotation),
+        ]);
+        verifyNever(mockPreview.setTargetRotation(argThat(isNot(expectedTargetRotation))));
+      }
+
+      testWidgets('to 0 degrees if the surface handles crop and rotation', (
+        WidgetTester tester,
+      ) async {
+        await testPinnedTargetRotation(
+          handlesCropAndRotation: true,
+          isCameraFrontFacing: false,
+          sensorRotationDegrees: 90,
+          expectedTargetRotation: Surface.rotation0,
+        );
+      });
+
+      testWidgets('to the sensor orientation for back cameras if the surface does not handle '
+          'crop and rotation', (WidgetTester tester) async {
+        await testPinnedTargetRotation(
+          handlesCropAndRotation: false,
+          isCameraFrontFacing: false,
+          sensorRotationDegrees: 90,
+          expectedTargetRotation: Surface.rotation90,
+        );
+      });
+
+      testWidgets('to the inverse of the sensor orientation for front cameras if the surface does '
+          'not handle crop and rotation', (WidgetTester tester) async {
+        await testPinnedTargetRotation(
+          handlesCropAndRotation: false,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          expectedTargetRotation: Surface.rotation90,
+        );
+      });
+    });
+
+    group('and handlesCropAndRotation is false,', () {
+      testWidgets('the preview keeps the sensor-based rotation and mirroring if the surface has '
+          'the camera transform', (WidgetTester tester) async {
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 46,
+          handlesCropAndRotation: false,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+        );
+
+        // Before any TransformationInfo is received: 270 + 0 = 270 degrees, mirrored.
+        RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+
+        // rotationDegrees and isMirroring are deliberately inconsistent with the
+        // sensor orientation and camera facing to show they are ignored.
+        sendTransformationInfo(rotationDegrees: 90, hasCameraTransform: true, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+      });
+      testWidgets(
+        'the preview is rotated by TransformationInfo.rotationDegrees instead of the sensor orientation',
+        (WidgetTester tester) async {
+          const cameraId = 41;
+          await createCameraAndBuildPreview(
+            tester,
+            cameraId: cameraId,
+            handlesCropAndRotation: false,
+            isCameraFrontFacing: false,
+            sensorRotationDegrees: 90,
+            mockDeviceOrientationManager: createMockDeviceOrientationManager(
+              uiOrientation: DeviceOrientation.portraitUp,
+              defaultDisplayRotation: Surface.rotation0,
+            ),
+          );
+
+          // Before any TransformationInfo is received, the preview is rotated
+          // by the sensor orientation: 90 - 0 = 90 degrees.
+          RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+          expect(rotatedBox.quarterTurns, _90DegreesClockwise);
+
+          // Simulate CameraX starting stream sharing. Because the Preview target
+          // rotation is pinned to the sensor orientation (90 degrees), the copied
+          // buffer has a relative rotation of 0 degrees, so the preview does not
+          // change: 0 - (0 - 90) = 90 degrees.
+          sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+          await tester.pumpAndSettle();
+
+          rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+          expect(rotatedBox.quarterTurns, _90DegreesClockwise);
+
+          // A different rotationDegrees changes the preview, showing it is used:
+          // 90 - (0 - 90) = 180 degrees.
+          sendTransformationInfo(
+            rotationDegrees: 90,
+            hasCameraTransform: false,
+            isMirroring: false,
+          );
+          await tester.pumpAndSettle();
+
+          rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+          expect(rotatedBox.quarterTurns, _180DegreesClockwise);
+          expect(rotatedBox.child, isA<Texture>());
+          expect((rotatedBox.child! as Texture).textureId, cameraId);
+        },
+      );
+
+      testWidgets('front camera previews copied by CameraX are mirrored and rotated like previews '
+          'from the camera directly, because CameraX mirroring is disabled', (
+        WidgetTester tester,
+      ) async {
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 42,
+          handlesCropAndRotation: false,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+        );
+
+        // Before any TransformationInfo is received: 270 + 0 = 270 degrees, mirrored.
+        RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+
+        // With the Preview target rotation pinned to 90 degrees and CameraX
+        // mirroring disabled, CameraX copies the buffer without rotating or
+        // mirroring it and reports that it does not need mirroring. It still
+        // needs to be mirrored like a buffer from the camera directly:
+        // 0 + (0 - 90) = -90 = 270 degrees.
+        sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+      });
+
+      testWidgets('front camera previews copied by CameraX follow TransformationInfo.isMirroring '
+          'if CameraX mirroring could not be disabled', (WidgetTester tester) async {
+        // CameraX mirroring cannot be turned off below API 33.
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 50,
+          handlesCropAndRotation: false,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+          previewMirroringDisabled: false,
+        );
+
+        // Before any TransformationInfo is received: 270 + 0 = 270 degrees, mirrored.
+        RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+
+        // CameraX mirrors the buffer it copies and reports that it does not need
+        // mirroring, so it is rotated the opposite way and not mirrored again:
+        // 0 - (0 - 90) = 90 degrees.
+        sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _90DegreesClockwise);
+        expect(rotatedBox.child, isA<Texture>());
+      });
+    });
+
+    group('and handlesCropAndRotation is true,', () {
+      testWidgets('the preview is only rotated by the display rotation if the surface has the '
+          'camera transform', (WidgetTester tester) async {
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 43,
+          handlesCropAndRotation: true,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+        );
+
+        sendTransformationInfo(rotationDegrees: 270, hasCameraTransform: true, isMirroring: true);
+        await tester.pumpAndSettle();
+
+        // The SurfaceTexture applies the sensor rotation and mirroring, so only
+        // the display rotation (0 degrees) is applied.
+        final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _0DegreesClockwise);
+        expect(rotatedBox.child, isA<Texture>());
+      });
+
+      testWidgets('front camera previews copied by CameraX follow TransformationInfo.isMirroring', (
+        WidgetTester tester,
+      ) async {
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 49,
+          handlesCropAndRotation: true,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+        );
+
+        // CameraX mirroring is not disabled for SurfaceTexture backed previews,
+        // so CameraX mirrors the buffers it copies and reports that they do not
+        // need mirroring.
+        sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _0DegreesClockwise);
+        expect(rotatedBox.child, isA<Texture>());
+      });
+
+      testWidgets('the preview switches to the TransformationInfo rotation when the surface loses '
+          'the camera transform, using the current device orientation and display rotation', (
+        WidgetTester tester,
+      ) async {
+        final MockDeviceOrientationManager mockDeviceOrientationManager =
+            createMockDeviceOrientationManager(
+              uiOrientation: DeviceOrientation.portraitUp,
+              defaultDisplayRotation: Surface.rotation0,
+            );
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 44,
+          handlesCropAndRotation: true,
+          isCameraFrontFacing: false,
+          sensorRotationDegrees: 90,
+          mockDeviceOrientationManager: mockDeviceOrientationManager,
+        );
+        sendTransformationInfo(rotationDegrees: 90, hasCameraTransform: true, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        // Change the device orientation and default display rotation after the
+        // camera was created.
+        when(
+          mockDeviceOrientationManager.getDefaultDisplayRotation(),
+        ).thenAnswer((_) async => Surface.rotation90);
+        AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
+          const DeviceOrientationChangedEvent(DeviceOrientation.landscapeRight),
+        );
+        await tester.pumpAndSettle();
+
+        // Simulate CameraX starting stream sharing, which removes the camera
+        // transform from the surface.
+        sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        // Calculated according to: rotationDegrees - (currentDisplayRotation - previewTargetRotation)
+        // - cameraPreviewPreAppliedRotation = 0 - (90 - 0) - 90 = -180 = 180 degrees clockwise.
+        // Using the initial portraitUp orientation and 0 degree display rotation
+        // instead would give 0 degrees.
+        final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns % 4, _180DegreesClockwise);
+        expect(rotatedBox.child, isA<Texture>());
+      });
+    });
+
+    testWidgets('a preview built after the camera is disposed does not use the old '
+        'TransformationInfo', (WidgetTester tester) async {
+      const cameraId = 45;
+      final AndroidCameraCameraX camera = await createCameraAndBuildPreview(
+        tester,
+        cameraId: cameraId,
+        handlesCropAndRotation: false,
+        isCameraFrontFacing: false,
+        sensorRotationDegrees: 90,
+        mockDeviceOrientationManager: createMockDeviceOrientationManager(
+          uiOrientation: DeviceOrientation.portraitUp,
+          defaultDisplayRotation: Surface.rotation0,
+        ),
+      );
+      // 90 - (0 - 90) = 180 degrees, unlike the sensor-based 90 degrees.
+      sendTransformationInfo(rotationDegrees: 90, hasCameraTransform: false, isMirroring: false);
+      await tester.pumpAndSettle();
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _180DegreesClockwise);
+
+      await tester.pumpWidget(const SizedBox());
+      await camera.dispose(cameraId);
+      await tester.pumpWidget(camera.buildPreview(cameraId));
+      await tester.pump();
+
+      // Falls back to the sensor orientation: 90 - 0 = 90 degrees.
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _90DegreesClockwise);
+    });
+
+    testWidgets('updates sent to the listener of a previous preview are ignored', (
+      WidgetTester tester,
+    ) async {
+      const cameraId = 46;
+      final AndroidCameraCameraX camera = await createCameraAndBuildPreview(
+        tester,
+        cameraId: cameraId,
+        handlesCropAndRotation: false,
+        isCameraFrontFacing: false,
+        sensorRotationDegrees: 90,
+        mockDeviceOrientationManager: createMockDeviceOrientationManager(
+          uiOrientation: DeviceOrientation.portraitUp,
+          defaultDisplayRotation: Surface.rotation0,
+        ),
+      );
+      final previousListener = transformationInfoListener;
+
+      await tester.pumpWidget(const SizedBox());
+      await camera.createCameraWithSettings(
+        (await camera.availableCameras()).first,
+        const MediaSettings(),
+      );
+      expect(transformationInfoListener, isNot(same(previousListener)));
+      await tester.pumpWidget(camera.buildPreview(cameraId));
+      await tester.pump();
+
+      previousListener.onTransformationInfoUpdate(
+        previousListener,
+        TransformationInfo.pigeon_detached(
+          rotationDegrees: 90,
+          hasCameraTransform: false,
+          isMirroring: false,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Still uses the sensor orientation: 90 - 0 = 90 degrees.
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _90DegreesClockwise);
+
+      // 90 - (0 - 90) = 180 degrees.
+      sendTransformationInfo(rotationDegrees: 90, hasCameraTransform: false, isMirroring: false);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _180DegreesClockwise);
+    });
+
+    testWidgets('a preview of a new camera that replaces the preview of a previous camera in the '
+        'widget tree does not use the TransformationInfo of the previous camera', (
+      WidgetTester tester,
+    ) async {
+      final AndroidCameraCameraX camera = await createCameraAndBuildPreview(
+        tester,
+        cameraId: 47,
+        handlesCropAndRotation: false,
+        isCameraFrontFacing: false,
+        sensorRotationDegrees: 90,
+        mockDeviceOrientationManager: createMockDeviceOrientationManager(
+          uiOrientation: DeviceOrientation.portraitUp,
+          defaultDisplayRotation: Surface.rotation0,
+        ),
+      );
+      // 90 - (0 - 90) = 180 degrees, unlike the sensor-based 90 degrees.
+      sendTransformationInfo(rotationDegrees: 90, hasCameraTransform: false, isMirroring: false);
+      await tester.pumpAndSettle();
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _180DegreesClockwise);
+
+      await camera.createCameraWithSettings(
+        (await camera.availableCameras()).first,
+        const MediaSettings(),
+      );
+      await tester.pumpWidget(camera.buildPreview(48));
+      await tester.pump();
+
+      // Falls back to the sensor orientation: 90 - 0 = 90 degrees.
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _90DegreesClockwise);
+    });
   });
 }
