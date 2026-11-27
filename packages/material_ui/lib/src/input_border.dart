@@ -484,13 +484,27 @@ class OutlineInputBorder extends InputBorder {
 
     // Draw top border from top left corner to gap start.
     if (start > scaledRRect.tlRadiusX) {
-      path.lineTo(start, scaledRRect.top);
+      path.lineTo(math.min(start, scaledRRect.right - scaledRRect.trRadiusX), scaledRRect.top);
     }
 
     // Draw top border from gap end to top right corner and draw top right corner.
     const double trCornerArcStart = (3 * math.pi) / 2.0;
     const trCornerArcSweep = cornerArcSweep;
-    if (start + extent < outerWidth - scaledRRect.trRadiusX) {
+    if (start >= outerWidth - scaledRRect.trRadiusX && scaledRRect.trRadius != Radius.zero) {
+      final double dx = outerWidth - start;
+      final double sweep = math.asin(clampDouble(1 - dx / scaledRRect.trRadiusX, 0.0, 1.0));
+      path.addArc(trCorner, trCornerArcStart, sweep);
+    }
+    if (start + extent < scaledRRect.tlRadiusX) {
+      final double tlGapEndSweep = math.acos(
+        clampDouble(1 - (start + extent) / scaledRRect.tlRadiusX, 0.0, 1.0),
+      );
+      path.addArc(tlCorner, math.pi + tlGapEndSweep, cornerArcSweep - tlGapEndSweep);
+      path.lineTo(scaledRRect.right - scaledRRect.trRadiusX, scaledRRect.top);
+      if (scaledRRect.trRadius != Radius.zero) {
+        path.addArc(trCorner, trCornerArcStart, trCornerArcSweep);
+      }
+    } else if (start + extent < outerWidth - scaledRRect.trRadiusX) {
       path.moveTo(start + extent, scaledRRect.top);
       path.lineTo(scaledRRect.right - scaledRRect.trRadiusX, scaledRRect.top);
       if (scaledRRect.trRadius != Radius.zero) {

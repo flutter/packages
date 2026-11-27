@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes `OutlineInputBorder` drawing a straight top border inside the corner radius during floating label animation when the gap lies within the top-left or top-right corner radius.
+version: patch
+
