@@ -1,5 +1,6 @@
-## NEXT
+## 2.14.2
 
+* Applies video rotation when the platform reports it after the widget first builds.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed iOS and macOS platform implementations.
   * Applications built with older versions of Flutter will continue to

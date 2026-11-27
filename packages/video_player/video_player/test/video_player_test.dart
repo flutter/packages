@@ -251,7 +251,9 @@ void main() {
   });
 
   testWidgets('update controller', (WidgetTester tester) async {
-    final controller1 = FakeController();
+    final controller1 = FakeController.value(
+      const VideoPlayerValue(duration: Duration.zero, rotationCorrection: 180),
+    );
     addTearDown(controller1.dispose);
     controller1.playerId = 101;
     await tester.pumpWidget(VideoPlayer(controller1));
@@ -259,6 +261,7 @@ void main() {
       find.byWidgetPredicate((Widget widget) => widget is Texture && widget.textureId == 101),
       findsOneWidget,
     );
+    expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, 2);
 
     final controller2 = FakeController();
     addTearDown(controller2.dispose);
@@ -268,6 +271,7 @@ void main() {
       find.byWidgetPredicate((Widget widget) => widget is Texture && widget.textureId == 102),
       findsOneWidget,
     );
+    expect(find.byType(RotatedBox), findsNothing);
   });
 
   testWidgets('VideoPlayer still listens for controller changes when reparented', (
@@ -345,6 +349,22 @@ void main() {
     final actualRotationCorrection = find.byType(RotatedBox).evaluate().single.widget as RotatedBox;
     final int actualQuarterTurns = actualRotationCorrection.quarterTurns;
     expect(actualQuarterTurns, equals(2));
+  });
+
+  testWidgets('applies rotation reported after the first build', (WidgetTester tester) async {
+    final controller = FakeController()..playerId = 1;
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(VideoPlayer(controller));
+    expect(find.byType(Texture), findsOneWidget);
+    final Finder rotation = find.byType(RotatedBox);
+    expect(rotation, findsNothing);
+
+    // Initialization can report the rotation without assigning a new player ID.
+    controller.value = controller.value.copyWith(isInitialized: true, rotationCorrection: 90);
+    await tester.pump();
+
+    expect(rotation, findsOneWidget);
+    expect(tester.widget<RotatedBox>(rotation).quarterTurns, 1);
   });
 
   testWidgets('no RotatedBox when rotationCorrection is zero', (WidgetTester tester) async {
