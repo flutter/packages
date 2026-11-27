@@ -26,6 +26,7 @@ import 'checkbox.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'focus_ring_theme.dart';
 import 'icons.dart';
 import 'ink_well.dart';
 import 'material.dart';
@@ -1326,6 +1327,10 @@ class _MenuItemButtonState extends State<MenuItemButton> {
       ),
     );
 
+    // md.comp.menus.menu-item.focus.indicator.outline.offset is -3, and the
+    // menu clips its items.
+    child = FocusRingInsetScope(child: child);
+
     if (_platformSupportsAccelerators && widget.enabled) {
       child = MenuAcceleratorCallbackBinding(onInvoke: _handleSelect, child: child);
     }
@@ -2285,19 +2290,23 @@ class _SubmenuButtonState extends State<SubmenuButton> {
           child = MergeSemantics(
             child: Semantics(
               expanded: _enabled && _animationStatus.isForwardOrCompleted,
-              child: TextButton(
-                style: mergedStyle,
-                focusNode: _buttonFocusNode,
-                onFocusChange: _enabled ? widget.onFocusChange : null,
-                onPressed: _enabled ? toggleShowMenu : null,
-                isSemanticButton: kIsWeb ? true : null,
-                child: _MenuItemLabel(
-                  leadingIcon: widget.leadingIcon,
-                  trailingIcon: widget.trailingIcon,
-                  hasSubmenu: true,
-                  showDecoration: (_parent?._orientation ?? Axis.horizontal) == Axis.vertical,
-                  submenuIcon: submenuIcon,
-                  child: child,
+              // md.comp.menus.menu-item.focus.indicator.outline.offset is -3,
+              // and the menu clips its items.
+              child: FocusRingInsetScope(
+                child: TextButton(
+                  style: mergedStyle,
+                  focusNode: _buttonFocusNode,
+                  onFocusChange: _enabled ? widget.onFocusChange : null,
+                  onPressed: _enabled ? toggleShowMenu : null,
+                  isSemanticButton: kIsWeb ? true : null,
+                  child: _MenuItemLabel(
+                    leadingIcon: widget.leadingIcon,
+                    trailingIcon: widget.trailingIcon,
+                    hasSubmenu: true,
+                    showDecoration: (_parent?._orientation ?? Axis.horizontal) == Axis.vertical,
+                    submenuIcon: submenuIcon,
+                    child: child,
+                  ),
                 ),
               ),
             ),

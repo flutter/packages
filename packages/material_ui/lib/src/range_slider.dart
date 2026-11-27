@@ -5,6 +5,7 @@
 /// @docImport 'app.dart';
 /// @docImport 'checkbox.dart';
 /// @docImport 'color_scheme.dart';
+/// @docImport 'focus_ring_theme.dart';
 /// @docImport 'material.dart';
 /// @docImport 'radio.dart';
 /// @docImport 'scaffold.dart';
@@ -27,6 +28,7 @@ import 'package:flutter/widgets.dart';
 import 'color_scheme.dart';
 import 'constants.dart';
 import 'debug.dart';
+import 'focus_ring_painting.dart';
 import 'range_slider_parts.dart';
 import 'slider_theme.dart';
 import 'slider_value_indicator_shape.dart';
@@ -881,6 +883,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
           hovering: _showHoverHighlight,
           startThumbShowFocusHighlight: _showStartFocusHighlight,
           endThumbShowFocusHighlight: _showEndFocusHighlight,
+          focusRing: FocusRingStyle.maybeOf(context),
         ),
       ),
     );
@@ -947,6 +950,9 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   }
 }
 
+// md.sys.state.focus-indicator.outer-offset, as for the slider.
+const double _kFocusRingOffset = 2.0;
+
 class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   const _RangeSliderRenderObjectWidget({
     super.key,
@@ -964,6 +970,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
     required this.hovering,
     required this.startThumbShowFocusHighlight,
     required this.endThumbShowFocusHighlight,
+    required this.focusRing,
   });
 
   final RangeValues values;
@@ -980,6 +987,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final bool hovering;
   final bool startThumbShowFocusHighlight;
   final bool endThumbShowFocusHighlight;
+  final FocusRingStyle? focusRing;
 
   @override
   _RenderRangeSlider createRenderObject(BuildContext context) {
@@ -1002,6 +1010,7 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       startThumbShowFocusHighlight: startThumbShowFocusHighlight,
       endThumbShowFocusHighlight: endThumbShowFocusHighlight,
       gestureSettings: MediaQuery.gestureSettingsOf(context),
+      focusRing: focusRing,
     );
   }
 
@@ -1026,7 +1035,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..hovering = hovering
       ..startThumbShowFocusHighlight = startThumbShowFocusHighlight
       ..endThumbShowFocusHighlight = endThumbShowFocusHighlight
-      ..gestureSettings = MediaQuery.gestureSettingsOf(context);
+      ..gestureSettings = MediaQuery.gestureSettingsOf(context)
+      ..focusRing = focusRing;
   }
 }
 
@@ -1050,6 +1060,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     required this._startThumbShowFocusHighlight,
     required this._endThumbShowFocusHighlight,
     required DeviceGestureSettings gestureSettings,
+    required this._focusRing,
   }) : assert(_values.start >= 0.0 && _values.start <= 1.0),
        assert(_values.end >= 0.0 && _values.end <= 1.0) {
     _updateLabelPainters();
@@ -1326,6 +1337,18 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       return;
     }
     _endThumbShowFocusHighlight = value;
+    markNeedsPaint();
+  }
+
+  /// The keyboard focus ring drawn around a thumb while it shows the focus
+  /// highlight, or null when [FocusRingThemeData.visible] is not true.
+  FocusRingStyle? get focusRing => _focusRing;
+  FocusRingStyle? _focusRing;
+  set focusRing(FocusRingStyle? value) {
+    if (value == _focusRing) {
+      return;
+    }
+    _focusRing = value;
     markNeedsPaint();
   }
 
@@ -2043,6 +2066,34 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       thumb: topThumb,
       isPressed: topThumb == Thumb.start ? startThumbSelected : endThumbSelected,
     );
+
+    // The keyboard focus ring goes around the focused thumb, after both thumbs
+    // so that neither covers it.
+    final FocusRingStyle? ring = focusRing;
+    if (ring != null && (startThumbShowFocusHighlight || endThumbShowFocusHighlight)) {
+      // thumbWidth and thumbHeight describe the handle thumb only. Other thumb
+      // shapes report their own size.
+      final Size thumbSize =
+          thumbWidth != null &&
+              thumbHeight != null &&
+              _sliderTheme.rangeThumbShape is HandleRangeSliderThumbShape
+          ? Size(thumbWidth, thumbHeight)
+          : _sliderTheme.rangeThumbShape!.getPreferredSize(isEnabled, isDiscrete);
+      void paintRing(Offset center) {
+        final thumbRRect = RRect.fromRectAndRadius(
+          Rect.fromCenter(center: center, width: thumbSize.width, height: thumbSize.height),
+          Radius.circular(thumbSize.shortestSide / 2),
+        );
+        ring.paintRRect(context.canvas, thumbRRect, _kFocusRingOffset);
+      }
+
+      if (startThumbShowFocusHighlight) {
+        paintRing(_startThumbCenter);
+      }
+      if (endThumbShowFocusHighlight) {
+        paintRing(_endThumbCenter);
+      }
+    }
   }
 
   /// Describe the semantics of the start thumb.

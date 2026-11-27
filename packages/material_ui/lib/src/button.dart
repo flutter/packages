@@ -407,6 +407,10 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
           enableFeedback: widget.enableFeedback,
           customBorder: effectiveShape,
           mouseCursor: effectiveMouseCursor,
+          // md.comp.fab.surface.focus.indicator.outline.offset, which matches
+          // the other buttons. A ring outside the button would be cut off when
+          // the Material clips, so draw it inside.
+          focusRingOffset: widget.clipBehavior == Clip.none ? 2.0 : null,
           child: IconTheme.merge(
             data: IconThemeData(color: effectiveTextColor),
             child: Padding(
