@@ -47,12 +47,19 @@ constructor(
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   init {
-    exoPlayer.setMediaItem(mediaItem)
-    exoPlayer.prepare()
-    val listener = createExoPlayerEventListener(exoPlayer, surfaceProducer)
-    exoPlayerEventListener = listener
-    exoPlayer.addListener(listener)
-    setAudioAttributes(exoPlayer, options.mixWithOthers)
+    try {
+      exoPlayer.setMediaItem(mediaItem)
+      exoPlayer.prepare()
+      val listener = createExoPlayerEventListener(exoPlayer, surfaceProducer)
+      exoPlayerEventListener = listener
+      exoPlayer.addListener(listener)
+      setAudioAttributes(exoPlayer, options.mixWithOthers)
+    } catch (e: Throwable) {
+      // The player is never handed out if construction fails, so nothing else would release it and
+      // its playback thread.
+      exoPlayer.release()
+      throw e
+    }
   }
 
   fun setDisposeHandler(handler: (() -> Unit)?) {

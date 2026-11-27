@@ -7,7 +7,6 @@ import android.content.Context
 import androidx.annotation.OptIn
 import androidx.annotation.VisibleForTesting
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
@@ -24,13 +23,7 @@ internal class HttpVideoAsset(
   override val mediaItem: MediaItem
     get() {
       val builder = MediaItem.Builder().setUri(assetUrl)
-      val mimeType: String? =
-          when (streamingFormat) {
-            StreamingFormat.SMOOTH -> MimeTypes.APPLICATION_SS
-            StreamingFormat.DYNAMIC_ADAPTIVE -> MimeTypes.APPLICATION_MPD
-            StreamingFormat.HTTP_LIVE -> MimeTypes.APPLICATION_M3U8
-            else -> null
-          }
+      val mimeType = streamingFormat.mimeType
       if (mimeType != null) {
         builder.setMimeType(mimeType)
       }
