@@ -387,6 +387,7 @@ void main() {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       const scopes = <String>['scope1', 'scope2'];
+      const nonce = 'nonce';
       when(mockPlatform.authenticate(any)).thenAnswer(
         (_) async => const AuthenticationResults(
           user: defaultUser,
@@ -395,11 +396,12 @@ void main() {
       );
 
       await googleSignIn.initialize();
-      await googleSignIn.authenticate(scopeHint: scopes);
+      await googleSignIn.authenticate(scopeHint: scopes, nonce: nonce);
 
       final VerificationResult verification = verify(mockPlatform.authenticate(captureAny));
       final params = verification.captured[0] as AuthenticateParameters;
       expect(params.scopeHint, scopes);
+      expect(params.nonce, nonce);
     });
 
     test('returns successful authentication', () async {

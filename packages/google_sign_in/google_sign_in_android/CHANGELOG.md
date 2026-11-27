@@ -1,3 +1,8 @@
+## 7.3.0
+
+* Uses the `nonce` from `AuthenticateParameters`, when provided, instead of
+  the nonce passed to `init`.
+
 ## 7.2.19
 
 * Renames keep.xml to google_sign_in_keep.xml to avoid collisions with app-level keep rules during resource shrinking.

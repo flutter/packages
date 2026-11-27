@@ -283,7 +283,8 @@ class GoogleSignIn {
   /// over any value in a configuration file.
   ///
   /// If provided, [nonce] will be passed as part of any authentication
-  /// requests, to allow additional validation of the resulting ID token.
+  /// requests, to allow additional validation of the resulting ID token. A
+  /// nonce passed to [authenticate] takes precedence over this value.
   ///
   /// If provided, [hostedDomain] restricts account selection to accounts in
   /// that domain.
@@ -502,10 +503,17 @@ class GoogleSignIn {
   /// that do not will ignore [scopeHint]. You should always assume that
   /// [GoogleSignInAuthorizationClient.authorizationForScopes] could return null
   /// even if you pass a [scopeHint] here.
-  Future<GoogleSignInAccount> authenticate({List<String> scopeHint = const <String>[]}) async {
+  ///
+  /// If provided, [nonce] is passed as part of this authentication request
+  /// instead of the nonce passed to [initialize], so that each request can use
+  /// a new nonce.
+  Future<GoogleSignInAccount> authenticate({
+    List<String> scopeHint = const <String>[],
+    String? nonce,
+  }) async {
     try {
       final AuthenticationResults result = await GoogleSignInPlatform.instance.authenticate(
-        AuthenticateParameters(scopeHint: scopeHint),
+        AuthenticateParameters(scopeHint: scopeHint, nonce: nonce),
       );
       final account = GoogleSignInAccount._(result.user, result.authenticationTokens);
       if (_createAuthenticationStreamEvents) {
