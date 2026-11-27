@@ -33,7 +33,9 @@ public class ImageAnalysisTest {
   // Due to Java's Type Erasure, we cannot get a class literal (e.g., Extender<T>.class) for a
   // parameterized type. We must use the raw type (Extender.class) which forces the 'unchecked' and
   // 'rawtypes' warnings. The runtime logic handles the type safely.
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  // TODO(shalevmoyal-fs): Migrate to Camera2Interop V2; V1 is deprecated in CameraX 1.7.0.
+  // https://github.com/flutter/flutter/issues/197317
+  @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
   @Test
   public void pigeon_defaultConstructor_createsExpectedImageAnalysisInstance() {
     final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();

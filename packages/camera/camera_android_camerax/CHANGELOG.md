@@ -1,3 +1,12 @@
+## 0.7.7
+
+* Bumps `cameraxVersion` from 1.6.2 to 1.7.0.
+* Raises the minimum supported Android SDK version to 24, as required by CameraX 1.7.0. Apps with
+  a lower `minSdkVersion` will fail to merge the manifest; Flutter's own minimum is already 24.
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13, so that apps
+  resolve this version only with a Flutter release that requires Kotlin 2.2.20 or newer
+  (CameraX 1.7.0 requires Kotlin 2.1.0 or newer).
+
 ## 0.7.6+2
 
 * Reduces `takePicture` latency by not setting the `ImageCapture` flash mode
