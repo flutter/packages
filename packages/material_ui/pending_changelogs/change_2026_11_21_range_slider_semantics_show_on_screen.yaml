@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `RangeSlider` thumb semantics nodes missing `showOnScreen` callback and `isHidden` flag when clipped in a scrollable viewport.
+version: patch
