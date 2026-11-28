@@ -1628,13 +1628,13 @@ void main() {
       expect(find.text(label), findsOneWidget);
       await tester.longPress(find.text(label));
       expect(find.text(label), findsNWidgets(2));
-      expect(tester.getSize(find.text(label).last), equals(const Size(42.0, 14.0)));
+      expect(tester.getSize(find.text(label).last), const Size(42.75, 14.0));
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       await tester.pumpWidget(buildApp(textScaleFactor: 4.0));
       expect(find.text(label), findsOneWidget);
       await tester.longPress(find.text(label));
-      expect(tester.getSize(find.text(label).last), equals(const Size(168.0, 56.0)));
+      expect(tester.getSize(find.text(label).last), const Size(168.75, 56.0));
     },
   );
 
@@ -2631,7 +2631,7 @@ void main() {
     // 800 - (200 * 2) / 4 = 100
     // The layout of the unselected item's label is slightly different; not
     // checking that here.
-    expect(tester.getRect(find.text('Title0')), const Rect.fromLTRB(158.0, 570.0, 242.0, 584.0));
+    expect(tester.getRect(find.text('Title0')), const Rect.fromLTRB(157.25, 570.0, 242.75, 584.0));
     expect(tester.getRect(find.byKey(icon0)), const Rect.fromLTRB(100.0, 560.0, 300.0, 570.0));
     expect(tester.getRect(find.byKey(icon1)), const Rect.fromLTRB(500.0, 560.0, 700.0, 570.0));
   });
@@ -2767,7 +2767,7 @@ void main() {
     // 800 - 150 = 650
     // The layout of the unselected item's label is slightly different; not
     // checking that here.
-    expect(tester.getRect(find.text('Title0')), const Rect.fromLTRB(208.0, 570.0, 292.0, 584.0));
+    expect(tester.getRect(find.text('Title0')), const Rect.fromLTRB(207.25, 570.0, 292.75, 584.0));
     expect(tester.getRect(find.byKey(icon0)), const Rect.fromLTRB(150.0, 560.0, 350.0, 570.0));
     expect(tester.getRect(find.byKey(icon1)), const Rect.fromLTRB(450.0, 560.0, 650.0, 570.0));
   });
@@ -2906,9 +2906,9 @@ void main() {
     // item's icon/label is arranged in a row, with 8 pixels in
     // between the icon and label.  The layout of the unselected
     // item's label is slightly different; not checking that here.
-    expect(tester.getRect(find.text('Title0')), const Rect.fromLTRB(212.0, 565.0, 296.0, 579.0));
-    expect(tester.getRect(find.byKey(icon0)), const Rect.fromLTRB(104.0, 562.0, 204.0, 582.0));
-    expect(tester.getRect(find.byKey(icon1)), const Rect.fromLTRB(504.0, 562.0, 604.0, 582.0));
+    expect(tester.getRect(find.text('Title0')), const Rect.fromLTRB(211.25, 565.0, 296.75, 579.0));
+    expect(tester.getRect(find.byKey(icon0)), const Rect.fromLTRB(103.25, 562.0, 203.25, 582.0));
+    expect(tester.getRect(find.byKey(icon1)), const Rect.fromLTRB(503.25, 562.0, 603.25, 582.0));
   });
 
   testWidgets('Material3 - BottomNavigationBar linear landscape layout', (

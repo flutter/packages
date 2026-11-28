@@ -4741,7 +4741,7 @@ void main() {
 
       // The rail and destinations sizes grow to fit the larger text labels.
       final RenderBox renderBox = tester.renderObject(find.byType(NavigationRail));
-      expect(renderBox.size.width, 142.0);
+      expect(renderBox.size.width, 161.5);
 
       // The first destination is 8 from the top because of the default vertical
       // padding at the to of the rail.
@@ -4749,7 +4749,12 @@ void main() {
       final RenderBox firstIconRenderBox = _iconRenderBox(tester, Icons.favorite);
       expect(
         firstIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - firstIconRenderBox.size.width) / 2.0, nextDestinationY + 16.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - firstIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 16.0,
+          ),
+        ),
       );
 
       // The first label sits right below the first icon.
@@ -4758,7 +4763,7 @@ void main() {
         firstLabelRenderBox.localToGlobal(Offset.zero),
         equals(
           Offset(
-            (142.0 - firstLabelRenderBox.size.width) / 2.0,
+            (renderBox.size.width - firstLabelRenderBox.size.width) / 2.0,
             nextDestinationY + 16.0 + firstIconRenderBox.size.height,
           ),
         ),
@@ -4769,21 +4774,36 @@ void main() {
       final RenderBox secondIconRenderBox = _iconRenderBox(tester, Icons.bookmark_border);
       expect(
         secondIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - secondIconRenderBox.size.width) / 2.0, nextDestinationY + 24.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - secondIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 24.0,
+          ),
+        ),
       );
 
       nextDestinationY += 72.0;
       final RenderBox thirdIconRenderBox = _iconRenderBox(tester, Icons.star_border);
       expect(
         thirdIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - thirdIconRenderBox.size.width) / 2.0, nextDestinationY + 24.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - thirdIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 24.0,
+          ),
+        ),
       );
 
       nextDestinationY += 72.0;
       final RenderBox fourthIconRenderBox = _iconRenderBox(tester, Icons.hotel);
       expect(
         fourthIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - fourthIconRenderBox.size.width) / 2.0, nextDestinationY + 24.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - fourthIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 24.0,
+          ),
+        ),
       );
     });
 
@@ -4979,7 +4999,7 @@ void main() {
 
       // The rail and destinations sizes grow to fit the larger text labels.
       final RenderBox renderBox = tester.renderObject(find.byType(NavigationRail));
-      expect(renderBox.size.width, 142.0);
+      expect(renderBox.size.width, 161.5);
 
       // The first destination is 8 from the top because of the default vertical
       // padding at the to of the rail.
@@ -4988,13 +5008,18 @@ void main() {
       final RenderBox firstLabelRenderBox = _labelRenderBox(tester, 'Abc');
       expect(
         firstIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - firstIconRenderBox.size.width) / 2.0, nextDestinationY + 16.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - firstIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 16.0,
+          ),
+        ),
       );
       expect(
         firstLabelRenderBox.localToGlobal(Offset.zero),
         equals(
           Offset(
-            (142.0 - firstLabelRenderBox.size.width) / 2.0,
+            (renderBox.size.width - firstLabelRenderBox.size.width) / 2.0,
             nextDestinationY + 16.0 + firstIconRenderBox.size.height,
           ),
         ),
@@ -5006,13 +5031,18 @@ void main() {
       final RenderBox secondLabelRenderBox = _labelRenderBox(tester, 'Def');
       expect(
         secondIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - secondIconRenderBox.size.width) / 2.0, nextDestinationY + 16.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - secondIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 16.0,
+          ),
+        ),
       );
       expect(
         secondLabelRenderBox.localToGlobal(Offset.zero),
         equals(
           Offset(
-            (142.0 - secondLabelRenderBox.size.width) / 2.0,
+            (renderBox.size.width - secondLabelRenderBox.size.width) / 2.0,
             nextDestinationY + 16.0 + secondIconRenderBox.size.height,
           ),
         ),
@@ -5024,13 +5054,18 @@ void main() {
       final RenderBox thirdLabelRenderBox = _labelRenderBox(tester, 'Ghi');
       expect(
         thirdIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - thirdIconRenderBox.size.width) / 2.0, nextDestinationY + 16.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - thirdIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 16.0,
+          ),
+        ),
       );
       expect(
         thirdLabelRenderBox.localToGlobal(Offset.zero),
         equals(
           Offset(
-            (142.0 - thirdLabelRenderBox.size.width) / 2.0,
+            (renderBox.size.width - thirdLabelRenderBox.size.width) / 2.0,
             nextDestinationY + 16.0 + thirdIconRenderBox.size.height,
           ),
         ),
@@ -5042,13 +5077,18 @@ void main() {
       final RenderBox fourthLabelRenderBox = _labelRenderBox(tester, 'Jkl');
       expect(
         fourthIconRenderBox.localToGlobal(Offset.zero),
-        equals(Offset((142.0 - fourthIconRenderBox.size.width) / 2.0, nextDestinationY + 16.0)),
+        equals(
+          Offset(
+            (renderBox.size.width - fourthIconRenderBox.size.width) / 2.0,
+            nextDestinationY + 16.0,
+          ),
+        ),
       );
       expect(
         fourthLabelRenderBox.localToGlobal(Offset.zero),
         equals(
           Offset(
-            (142.0 - fourthLabelRenderBox.size.width) / 2.0,
+            (renderBox.size.width - fourthLabelRenderBox.size.width) / 2.0,
             nextDestinationY + 16.0 + fourthIconRenderBox.size.height,
           ),
         ),
@@ -5894,10 +5934,10 @@ void main() {
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      expect(rail.size.width, equals(328.0));
+      expect(rail.size.width, 367.0);
 
       await tester.pumpAndSettle();
-      expect(rail.size.width, equals(584.0));
+      expect(rail.size.width, 662.0);
     });
 
     testWidgets('Extended rail final width can be changed', (WidgetTester tester) async {

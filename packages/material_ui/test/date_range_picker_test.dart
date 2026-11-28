@@ -691,15 +691,15 @@ void main() {
     }
 
     await showOkCancelDialog(TextDirection.ltr);
-    expect(tester.getBottomRight(find.text('OK')).dx, 622);
-    expect(tester.getBottomLeft(find.text('OK')).dx, 594);
+    expect(tester.getBottomRight(find.text('OK')).dx, 623.25);
+    expect(tester.getBottomLeft(find.text('OK')).dx, 592.75);
     expect(tester.getBottomRight(find.text('CANCEL')).dx, 560);
     await dismissOkCancelDialog();
 
     await showOkCancelDialog(TextDirection.rtl);
-    expect(tester.getBottomRight(find.text('OK')).dx, 206);
-    expect(tester.getBottomLeft(find.text('OK')).dx, 178);
-    expect(tester.getBottomRight(find.text('CANCEL')).dx, 324);
+    expect(tester.getBottomRight(find.text('OK')).dx, 207.25);
+    expect(tester.getBottomLeft(find.text('OK')).dx, 176.75);
+    expect(tester.getBottomRight(find.text('CANCEL')).dx, 331.5);
     await dismissOkCancelDialog();
   });
 
@@ -1721,7 +1721,7 @@ void main() {
         final Offset entryButtonBottomLeft = tester.getBottomLeft(
           find.widgetWithIcon(IconButton, Icons.edit),
         );
-        expect(saveButtonBottomLeft.dx, 800 - 80.0);
+        expect(saveButtonBottomLeft.dx, 800 - 85.0);
         expect(saveButtonBottomLeft.dy, helpTextTopLeft.dy - 6.0);
         expect(entryButtonBottomLeft.dx, saveButtonBottomLeft.dx - 48.0);
         expect(entryButtonBottomLeft.dy, helpTextTopLeft.dy - 6.0);

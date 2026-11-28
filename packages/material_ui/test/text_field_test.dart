@@ -5551,7 +5551,7 @@ void main() {
     );
     final Text helperText = tester.widget(find.text('helper text'));
     expect(helperText.style!.color, themeData.hintColor);
-    expect(helperText.style!.fontSize, Typography.englishLike2014.bodySmall!.fontSize);
+    expect(helperText.style!.fontSize, Typography.englishLike2018.bodySmall!.fontSize);
   });
 
   testWidgets('TextField with specified helperStyle', (WidgetTester tester) async {
@@ -6348,7 +6348,7 @@ void main() {
 
     scrollableState = tester.firstState(find.byType(Scrollable));
     // For a horizontal input, scrolls to the exact position of the caret.
-    expect(scrollableState.position.pixels, equals(222.0));
+    expect(scrollableState.position.pixels, 225.0);
   });
 
   testWidgets('Multiline text field scrolls the caret into view', (WidgetTester tester) async {
@@ -9310,7 +9310,7 @@ void main() {
       editable.getLocalRectForCaret(const TextPosition(offset: 10)).topLeft,
     );
 
-    expect(topLeft.dx, equals(701));
+    expect(topLeft.dx, moreOrLessEquals(700.333, epsilon: 0.001));
 
     await tester.pumpWidget(
       MaterialApp(
@@ -9327,7 +9327,7 @@ void main() {
       editable.getLocalRectForCaret(const TextPosition(offset: 10)).topLeft,
     );
 
-    expect(topLeft.dx, equals(160.0));
+    expect(topLeft.dx, moreOrLessEquals(161.667, epsilon: 0.001));
   });
 
   testWidgets('TextField semantics', (WidgetTester tester) async {
@@ -9940,7 +9940,7 @@ void main() {
     // A null stepWidth causes the TextField to perfectly wrap the text plus
     // the cursor regardless of alignment.
     stepWidth = null;
-    const WIDTH_OF_CHAR = 16.0;
+    const WIDTH_OF_CHAR = 16.15;
     const CARET_GAP = 1.0;
     await tester.pumpWidget(
       buildFrame(stepWidth: stepWidth, cursorWidth: 18.0, textAlign: TextAlign.left),
@@ -9949,7 +9949,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.getSize(find.byType(TextField)).width,
-      WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP,
+      moreOrLessEquals(WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP, epsilon: 0.001),
     );
     await tester.pumpWidget(
       buildFrame(stepWidth: stepWidth, cursorWidth: 18.0, textAlign: TextAlign.right),
@@ -9958,7 +9958,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.getSize(find.byType(TextField)).width,
-      WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP,
+      moreOrLessEquals(WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP, epsilon: 0.001),
     );
   });
 
@@ -12880,7 +12880,13 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
@@ -12967,7 +12973,13 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
@@ -13052,7 +13064,14 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(autofocus: true, controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                autofocus: true,
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
@@ -13195,7 +13214,13 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
@@ -14384,7 +14409,7 @@ void main() {
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 1)).topLeft,
     );
-    expect(topLeft.dx, equals(383));
+    expect(topLeft.dx, 382);
   });
 
   testWidgets('Caret indexes into trailing whitespace center align', (WidgetTester tester) async {
@@ -14433,7 +14458,7 @@ void main() {
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 1)).topLeft,
     );
-    expect(topLeft.dx, equals(383)); // Should be same as equivalent in 'Caret center position'
+    expect(topLeft.dx, 382); // Should be same as equivalent in 'Caret center position'
   });
 
   testWidgets('selection handles are rendered and not faded away', (WidgetTester tester) async {
@@ -14919,7 +14944,7 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle(); // Text scroll animation.
 
-      expect(textFieldScrollController.offset, 1602.0);
+      expect(textFieldScrollController.offset, moreOrLessEquals(1624.667, epsilon: 0.001));
     },
   );
 

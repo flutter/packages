@@ -475,11 +475,11 @@ void main() {
       expect(material.elevation, 0.0);
 
       final RenderParagraph content = _getTextRenderObjectFromDialog(tester, contentText);
-      // Default value for ThemeData.typography is Typography.material2014()
+      // Default value for ThemeData.typography is Typography.material2018()
       expect(
         content.text.style,
-        Typography.material2014().englishLike.bodyMedium!.merge(
-          Typography.material2014().black.bodyMedium,
+        Typography.material2018().englishLike.bodyMedium!.merge(
+          Typography.material2018().black.bodyMedium,
         ),
       );
 
@@ -538,11 +538,11 @@ void main() {
         expect(material.elevation, 0.0);
 
         final RenderParagraph content = _getTextRenderObjectFromDialog(tester, contentText);
-        // Default value for ThemeData.typography is Typography.material2014()
+        // Default value for ThemeData.typography is Typography.material2018()
         expect(
           content.text.style,
-          Typography.material2014().englishLike.bodyMedium!.merge(
-            Typography.material2014().black.bodyMedium,
+          Typography.material2018().englishLike.bodyMedium!.merge(
+            Typography.material2018().black.bodyMedium,
           ),
         );
 

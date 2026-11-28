@@ -139,7 +139,10 @@ void main() {
     );
 
     // Test default chip size.
-    expect(tester.getSize(find.byType(FilterChip)), const Size(178.0, 48.0));
+    expect(
+      tester.getSize(find.byType(FilterChip)),
+      within(distance: 0.001, from: const Size(204.357, 48.0)),
+    );
 
     // Test default label style.
     expect(
@@ -869,7 +872,10 @@ void main() {
 
     // Test the chip size with delete button.
     expect(find.text('FilterChip'), findsOneWidget);
-    expect(tester.getSize(find.byType(FilterChip)), const Size(188.0, 48.0));
+    expect(
+      tester.getSize(find.byType(FilterChip)),
+      within(distance: 0.001, from: const Size(211.857, 48.0)),
+    );
 
     // Test the delete button icon.
     expect(tester.getSize(find.byIcon(Icons.cancel)), const Size(18.0, 18.0));
@@ -892,7 +898,10 @@ void main() {
 
     // Test the elevated chip size with delete button.
     expect(find.text('Elevated FilterChip'), findsOneWidget);
-    expect(tester.getSize(find.byType(FilterChip)), const Size(314.0, 48.0));
+    expect(
+      tester.getSize(find.byType(FilterChip)),
+      within(distance: 0.001, from: const Size(360.357, 48.0)),
+    );
 
     // Test the delete button icon.
     expect(tester.getSize(find.byIcon(Icons.cancel)), const Size(18.0, 18.0));

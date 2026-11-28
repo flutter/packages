@@ -1134,8 +1134,8 @@ void main() {
           tester.getBottomRight(find.text(selectTimeString)),
           equals(const Offset(280.5, 165)),
         );
-        expect(tester.getBottomRight(find.text(okString)).dx, 644);
-        expect(tester.getBottomLeft(find.text(okString)).dx, 616);
+        expect(tester.getBottomRight(find.text(okString)).dx, 645.25);
+        expect(tester.getBottomLeft(find.text(okString)).dx, 614.75);
         expect(tester.getBottomRight(find.text(cancelString)).dx, 582);
 
         await tester.tap(find.text(okString));
@@ -1147,8 +1147,8 @@ void main() {
 
         expect(tester.getTopLeft(find.text(selectTimeString)), equals(const Offset(519.5, 155)));
         expect(tester.getBottomRight(find.text(selectTimeString)), equals(const Offset(646, 165)));
-        expect(tester.getBottomLeft(find.text(okString)).dx, 156);
-        expect(tester.getBottomRight(find.text(okString)).dx, 184);
+        expect(tester.getBottomLeft(find.text(okString)).dx, 154.75);
+        expect(tester.getBottomRight(find.text(okString)).dx, 185.25);
         expect(tester.getBottomLeft(find.text(cancelString)).dx, 218);
 
         await tester.tap(find.text(okString));
@@ -2572,7 +2572,7 @@ void main() {
 
     final RenderParagraph paragraph = tester.renderObject(find.text(':'));
     expect(paragraph.text.style!.color, theme.colorScheme.onSurface);
-    expect(paragraph.text.style!.fontSize, 56.0);
+    expect(paragraph.text.style!.fontSize, 60.0);
   });
 
   testWidgets('provides semantics information for hour/minute mode announcement', (

@@ -1331,7 +1331,7 @@ void main() {
     );
 
     expect(tester.getSize(find.byType(OutlinedButton)), equals(const Size(88.0, 48.0)));
-    expect(tester.getSize(find.byType(Text)), equals(const Size(42.0, 14.0)));
+    expect(tester.getSize(find.byType(Text)), const Size(45.75, 14.0));
 
     // textScaleFactor expands text, but not button.
     await tester.pumpWidget(
@@ -1361,7 +1361,7 @@ void main() {
     );
 
     expect(tester.getSize(find.byType(OutlinedButton)), equals(const Size(88.0, 48.0)));
-    expect(tester.getSize(find.byType(Text)), const Size(52.5, 18.0));
+    expect(tester.getSize(find.byType(Text)), const Size(56.25, 18.0));
 
     // Set text scale large enough to expand text and button.
     await tester.pumpWidget(
@@ -1380,8 +1380,8 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.byType(OutlinedButton)), const Size(134.0, 48.0));
-    expect(tester.getSize(find.byType(Text)), const Size(126.0, 42.0));
+    expect(tester.getSize(find.byType(OutlinedButton)), const Size(137.75, 48.0));
+    expect(tester.getSize(find.byType(Text)), const Size(129.75, 42.0));
   });
 
   testWidgets('OutlinedButton onPressed and onLongPress callbacks are distinctly recognized', (
@@ -1472,20 +1472,20 @@ void main() {
     await buildTest(VisualDensity.standard, useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(88, 48)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(93.0, 48.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: 3.0, vertical: 3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(112, 60)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(117.0, 60.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: -3.0, vertical: -3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(88, 36)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(93.0, 36.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
   });
 
   group('Default OutlinedButton padding for textScaleFactor, textDirection', () {

@@ -76,15 +76,9 @@ enum ScriptCategory {
 /// feature different font sizes, font weights, and letter spacing values. The
 /// 2021 themes correspond to the Material Design 3 specification.
 ///
-/// By default, [ThemeData.typography] is `Typography.material2021(platform:
-/// platform, colorScheme: colorScheme)` (or `Typography.material2014(platform:
-/// platform)` when [ThemeData.useMaterial3] is false). To use the 2018 text
-/// theme geometries, specify a value using the [Typography.material2018]
-/// constructor:
-///
-/// ```dart
-/// typography: Typography.material2018(platform: platform)
-/// ```
+/// [ThemeData.typography] defaults to [Typography.material2021] for Material 3
+/// and [Typography.material2018] for Material 2. To use the 2014 text styles,
+/// set [ThemeData.typography] to [Typography.material2014].
 ///
 /// See also:
 ///

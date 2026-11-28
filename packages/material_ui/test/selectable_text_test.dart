@@ -446,12 +446,12 @@ void main() {
     RenderBox findSelectableTextBox() => tester.renderObject(find.byType(SelectableText));
 
     final RenderBox textBox = findSelectableTextBox();
-    expect(textBox.size, const Size(17.0, 14.0));
+    expect(textBox.size, const Size(17.25, 14.0));
 
     await tester.pumpWidget(boilerplate(child: const SelectableText('very very long')));
 
     final RenderBox longtextBox = findSelectableTextBox();
-    expect(longtextBox.size, const Size(199.0, 14.0));
+    expect(longtextBox.size, const Size(202.5, 14.0));
   });
 
   testWidgets('can scale with textScaleFactor', (WidgetTester tester) async {
@@ -481,7 +481,7 @@ void main() {
       boilerplate(child: const SelectableText(text, textWidthBasis: TextWidthBasis.longestLine)),
     );
     textBox = findTextBox();
-    expect(textBox.size, const Size(633.0, 28.0));
+    expect(textBox.size, const Size(644.25, 28.0));
   });
 
   testWidgets('can switch between textHeightBehavior', (WidgetTester tester) async {
@@ -1125,10 +1125,10 @@ void main() {
     final Offset thirdPos = textOffsetToPosition(tester, testValue.indexOf('Third'));
     final Offset middleStringPos = textOffsetToPosition(tester, testValue.indexOf('irst'));
 
-    expect(firstPos.dx, 24.5);
-    expect(secondPos.dx, 24.5);
-    expect(thirdPos.dx, 24.5);
-    expect(middleStringPos.dx, 58.5);
+    expect(firstPos.dx, 21.875);
+    expect(secondPos.dx, 21.875);
+    expect(thirdPos.dx, 21.875);
+    expect(middleStringPos.dx, 56.125);
     expect(firstPos.dx, secondPos.dx);
     expect(firstPos.dx, thirdPos.dx);
     expect(firstPos.dy, lessThan(secondPos.dy));
@@ -1207,8 +1207,8 @@ void main() {
     // Check that the last line of text is not displayed.
     final Offset firstPos = textOffsetToPosition(tester, kMoreThanFourLines.indexOf('First'));
     final Offset fourthPos = textOffsetToPosition(tester, kMoreThanFourLines.indexOf('Fourth'));
-    expect(firstPos.dx, 0.0);
-    expect(fourthPos.dx, 0.0);
+    expect(firstPos.dx, 0.125);
+    expect(fourthPos.dx, 0.125);
     expect(firstPos.dx, fourthPos.dx);
     expect(firstPos.dy, lessThan(fourthPos.dy));
     expect(
@@ -4353,7 +4353,7 @@ void main() {
       tester.getSize(find.byType(SelectableText)),
       // This is the height of the decoration (24) plus the metrics from the default
       // TextStyle of the theme (16).
-      const Size(129.0, 14.0),
+      const Size(131.25, 14.0),
     );
   });
 
@@ -4371,7 +4371,7 @@ void main() {
       tester.getSize(find.byType(SelectableText)),
       // Strut should inherit the TextStyle.fontSize by default and produce the
       // same height as if it were disabled.
-      const Size(183.0, 20.0),
+      const Size(185.25, 20.0),
     );
 
     await tester.pumpWidget(
@@ -4392,7 +4392,7 @@ void main() {
     expect(
       tester.getSize(find.byType(SelectableText)),
       // The height here should match the previous version with strut enabled.
-      const Size(183.0, 20.0),
+      const Size(185.25, 20.0),
     );
   });
 
@@ -4404,7 +4404,7 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.byType(SelectableText)), const Size(129.0, 84.0));
+    expect(tester.getSize(find.byType(SelectableText)), const Size(131.25, 84.0));
   });
 
   testWidgets('strut no force small strut', (WidgetTester tester) async {
@@ -4432,7 +4432,7 @@ void main() {
       // When the strut's height is smaller than TextStyle's and forceStrutHeight
       // is disabled, then the TextStyle takes precedence. Should be the same height
       // as 'strut basic multi line'.
-      const Size(129.0, 84.0),
+      const Size(131.25, 84.0),
     );
   });
 
@@ -4452,7 +4452,7 @@ void main() {
       tester.getSize(find.byType(SelectableText)),
       // When the strut's height is larger than TextStyle's and forceStrutHeight
       // is disabled, then the StrutStyle takes precedence.
-      const Size(129.0, 150.0),
+      const Size(131.25, 150.0),
     );
   });
 
@@ -4475,7 +4475,7 @@ void main() {
     expect(
       tester.getSize(find.byType(SelectableText)),
       // The smaller font size of strut make the field shorter than normal.
-      const Size(129.0, 24.0),
+      const Size(131.25, 24.0),
     );
   });
 
@@ -4500,7 +4500,7 @@ void main() {
       tester.getSize(find.byType(SelectableText)),
       // When the strut fontSize is larger than a provided TextStyle, the
       // strut's height takes precedence.
-      const Size(93.0, 54.0),
+      const Size(95.25, 54.0),
     );
   });
 
@@ -4534,7 +4534,7 @@ void main() {
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 1)).topLeft,
     );
-    expect(topLeft.dx, equals(385));
+    expect(topLeft.dx, 384);
   });
 
   testWidgets('Caret indexes into trailing whitespace center align', (WidgetTester tester) async {
@@ -4552,12 +4552,12 @@ void main() {
     Offset topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 7)).topLeft,
     );
-    expect(topLeft.dx, equals(469));
+    expect(topLeft.dx, 470);
 
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 8)).topLeft,
     );
-    expect(topLeft.dx, equals(483));
+    expect(topLeft.dx, 484);
 
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 4)).topLeft,
@@ -4577,7 +4577,7 @@ void main() {
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 1)).topLeft,
     );
-    expect(topLeft.dx, equals(385));
+    expect(topLeft.dx, 384);
   });
 
   testWidgets('selection handles are rendered and not faded away', (WidgetTester tester) async {
@@ -5430,7 +5430,7 @@ void main() {
 
       final selection = TextSelection(
         baseOffset: testValue.indexOf('d'),
-        extentOffset: testValue.indexOf('f'),
+        extentOffset: testValue.indexOf('f') + 1,
       );
 
       final RenderEditable renderEditable = findRenderEditable(tester);
