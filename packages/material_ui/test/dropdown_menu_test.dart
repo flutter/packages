@@ -822,6 +822,177 @@ void main() {
     expect(width, labelWidth + labelPadding + leadingWidth + trailingWidth);
   });
 
+  // Regression tests for https://github.com/flutter/flutter/issues/170780.
+  group('The width is large enough to display the longest entry label in the text field', () {
+    const longLabel = 'Longer Longer Longer Text';
+    const entries = <DropdownMenuEntry<int>>[
+      DropdownMenuEntry<int>(value: 0, label: 'Short'),
+      DropdownMenuEntry<int>(value: 1, label: longLabel),
+    ];
+
+    void expectSelectedLabelIsNotClipped(WidgetTester tester) {
+      expect(find.widgetWithText(TextField, longLabel), findsOneWidget);
+      final RenderEditable renderEditable = tester
+          .state<EditableTextState>(find.byType(EditableText))
+          .renderEditable;
+      // A positive scroll extent means that the selected label overflows the text field.
+      expect(renderEditable.maxScrollExtent, 0.0);
+    }
+
+    testWidgets('with default configuration', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: DropdownMenu<int>(initialSelection: 1, dropdownMenuEntries: entries),
+          ),
+        ),
+      );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('when the entry is selected from the menu', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: DropdownMenu<int>(dropdownMenuEntries: entries)),
+        ),
+      );
+
+      await tester.tap(find.byType(DropdownMenu<int>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(MenuItemButton, longLabel).last);
+      await tester.pumpAndSettle();
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('with a leading icon', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: DropdownMenu<int>(
+              initialSelection: 1,
+              leadingIcon: Icon(Icons.search),
+              dropdownMenuEntries: entries,
+            ),
+          ),
+        ),
+      );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('without a trailing icon', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: DropdownMenu<int>(
+              initialSelection: 1,
+              showTrailingIcon: false,
+              dropdownMenuEntries: entries,
+            ),
+          ),
+        ),
+      );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('with a leading icon and without a trailing icon', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: DropdownMenu<int>(
+              initialSelection: 1,
+              leadingIcon: Icon(Icons.search),
+              showTrailingIcon: false,
+              dropdownMenuEntries: entries,
+            ),
+          ),
+        ),
+      );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('with a custom text style', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: DropdownMenu<int>(
+              initialSelection: 1,
+              textStyle: TextStyle(fontSize: 20.0),
+              dropdownMenuEntries: entries,
+            ),
+          ),
+        ),
+      );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('with text scaling', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(textScaler: TextScaler.linear(1.5)),
+            child: Scaffold(
+              body: DropdownMenu<int>(initialSelection: 1, dropdownMenuEntries: entries),
+            ),
+          ),
+        ),
+      );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('with Material 2 and a text style without a font size', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: const Scaffold(
+            body: DropdownMenu<int>(
+              initialSelection: 1,
+              // In Material 2, the text field merges this style with TextTheme.titleMedium,
+              // which is larger than the text style of the menu items.
+              textStyle: TextStyle(color: Colors.red),
+              dropdownMenuEntries: entries,
+            ),
+          ),
+        ),
+      );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('when dropdownMenuEntries is updated from empty to non-empty', (
+      WidgetTester tester,
+    ) async {
+      Widget buildDropdownMenu(List<DropdownMenuEntry<int>> dropdownMenuEntries) {
+        return MaterialApp(
+          home: Scaffold(body: DropdownMenu<int>(dropdownMenuEntries: dropdownMenuEntries)),
+        );
+      }
+
+      await tester.pumpWidget(buildDropdownMenu(const <DropdownMenuEntry<int>>[]));
+      await tester.pumpWidget(buildDropdownMenu(entries));
+
+      expect(
+        tester.getSize(find.byType(DropdownMenu<int>)).width,
+        tester.getSize(find.byType(TextField)).width,
+      );
+
+      await tester.tap(find.byType(DropdownMenu<int>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(MenuItemButton, longLabel).last);
+      await tester.pumpAndSettle();
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+  });
+
   testWidgets('The width of MenuAnchor respects MenuAnchor.expandedInsets', (
     WidgetTester tester,
   ) async {

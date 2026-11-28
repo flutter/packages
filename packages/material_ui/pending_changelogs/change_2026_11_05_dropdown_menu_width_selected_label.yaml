@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `DropdownMenu` default width being too narrow to display the selected entry label.
+version: patch
