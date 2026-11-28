@@ -1307,7 +1307,7 @@ void main() {
     expect(widget, isA<PlatformViewLink>());
   });
 
-  testWidgets('Defaults to AndroidView', (WidgetTester tester) async {
+  testWidgets('Defaults to PlatformViewLink', (WidgetTester tester) async {
     final maps = GoogleMapsFlutterAndroid();
 
     final Widget widget = maps.buildViewWithConfiguration(
@@ -1319,7 +1319,7 @@ void main() {
       ),
     );
 
-    expect(widget, isA<AndroidView>());
+    expect(widget, isA<PlatformViewLink>());
   });
 
   testWidgets('mapId is passed', (WidgetTester tester) async {
@@ -1372,6 +1372,7 @@ void main() {
 
   test('Correct marker type is passed to platform view', () async {
     final maps = GoogleMapsFlutterAndroid();
+    maps.useAndroidViewSurface = false;
     final Widget widget = maps.buildViewWithConfiguration(
       1,
       (int _) {},
@@ -1410,6 +1411,7 @@ void main() {
 
   test('marker type defaults to legacy if unset', () async {
     final maps = GoogleMapsFlutterAndroid();
+    maps.useAndroidViewSurface = false;
     final Widget widget = maps.buildViewWithConfiguration(
       1,
       (int _) {},
@@ -1426,5 +1428,91 @@ void main() {
       (creationParams as PlatformMapViewCreationParams).mapConfiguration.markerType,
       PlatformMarkerType.marker,
     );
+  });
+
+  Future<PlatformMapViewCreationParams> capturePlatformViewCreationParams(
+    WidgetTester tester,
+    GoogleMapsFlutterAndroid maps, {
+    int viewId = 1,
+    MapConfiguration mapConfiguration = const MapConfiguration(),
+  }) async {
+    final completer = Completer<PlatformMapViewCreationParams>();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform_views,
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'create') {
+          final args = Map<String, dynamic>.from(methodCall.arguments as Map<dynamic, dynamic>);
+          if (args.containsKey('params')) {
+            final paramsUint8List = args['params'] as Uint8List;
+            final byteData = ByteData.sublistView(paramsUint8List);
+            final creationParams =
+                MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                    as PlatformMapViewCreationParams?;
+            if (creationParams != null && !completer.isCompleted) {
+              completer.complete(creationParams);
+            }
+          }
+        }
+        return 0;
+      },
+    );
+    addTearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform_views,
+        null,
+      );
+    });
+
+    await tester.pumpWidget(
+      KeyedSubtree(
+        key: ValueKey<int>(viewId),
+        child: maps.buildViewWithConfiguration(
+          viewId,
+          (int id) {},
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
+            textDirection: TextDirection.ltr,
+          ),
+          mapConfiguration: mapConfiguration,
+        ),
+      ),
+    );
+
+    return completer.future;
+  }
+
+  testWidgets('Correct marker type is passed to platform view (PlatformViewLink)', (
+    WidgetTester tester,
+  ) async {
+    final maps = GoogleMapsFlutterAndroid();
+    expect(maps.useAndroidViewSurface, isTrue);
+
+    final PlatformMapViewCreationParams advancedParams = await capturePlatformViewCreationParams(
+      tester,
+      maps,
+      mapConfiguration: const MapConfiguration(markerType: MarkerType.advancedMarker),
+    );
+    expect(advancedParams.mapConfiguration.markerType, PlatformMarkerType.advancedMarker);
+
+    final PlatformMapViewCreationParams markerParams = await capturePlatformViewCreationParams(
+      tester,
+      maps,
+      viewId: 2,
+      mapConfiguration: const MapConfiguration(markerType: MarkerType.marker),
+    );
+    expect(markerParams.mapConfiguration.markerType, PlatformMarkerType.marker);
+  });
+
+  testWidgets('marker type defaults to legacy if unset (PlatformViewLink)', (
+    WidgetTester tester,
+  ) async {
+    final maps = GoogleMapsFlutterAndroid();
+    expect(maps.useAndroidViewSurface, isTrue);
+
+    final PlatformMapViewCreationParams params = await capturePlatformViewCreationParams(
+      tester,
+      maps,
+    );
+    expect(params.mapConfiguration.markerType, PlatformMarkerType.marker);
   });
 }

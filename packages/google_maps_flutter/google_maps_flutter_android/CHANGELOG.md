@@ -1,3 +1,9 @@
+## 2.21.2
+
+* Switches the default for `useAndroidViewSurface` to `true` to use Hybrid
+  Composition by default and avoid blank `TextureView` rendering on affected
+  Android devices such as Huawei EMUI.
+
 ## 2.21.1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
