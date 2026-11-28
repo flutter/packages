@@ -198,17 +198,34 @@ class Camera
     @Nullable public final Integer videoBitrate;
     @Nullable public final Integer audioBitrate;
 
+    /**
+     * The requested {@link android.media.MediaRecorder.VideoEncoder}, or null to use the encoder
+     * from the recording profile.
+     */
+    @Nullable public final Integer videoEncoder;
+
     public VideoCaptureSettings(
         @NonNull ResolutionPreset resolutionPreset,
         boolean enableAudio,
         @Nullable Integer fps,
         @Nullable Integer videoBitrate,
         @Nullable Integer audioBitrate) {
+      this(resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate, null);
+    }
+
+    public VideoCaptureSettings(
+        @NonNull ResolutionPreset resolutionPreset,
+        boolean enableAudio,
+        @Nullable Integer fps,
+        @Nullable Integer videoBitrate,
+        @Nullable Integer audioBitrate,
+        @Nullable Integer videoEncoder) {
       this.resolutionPreset = resolutionPreset;
       this.enableAudio = enableAudio;
       this.fps = fps;
       this.videoBitrate = videoBitrate;
       this.audioBitrate = audioBitrate;
+      this.videoEncoder = videoEncoder;
     }
 
     public VideoCaptureSettings(@NonNull ResolutionPreset resolutionPreset, boolean enableAudio) {
@@ -298,7 +315,8 @@ class Camera
                   outputFilePath,
                   videoCaptureSettings.fps,
                   videoCaptureSettings.videoBitrate,
-                  videoCaptureSettings.audioBitrate));
+                  videoCaptureSettings.audioBitrate,
+                  videoCaptureSettings.videoEncoder));
     } else {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
@@ -307,7 +325,8 @@ class Camera
                   outputFilePath,
                   videoCaptureSettings.fps,
                   videoCaptureSettings.videoBitrate,
-                  videoCaptureSettings.audioBitrate));
+                  videoCaptureSettings.audioBitrate,
+                  videoCaptureSettings.videoEncoder));
     }
 
     mediaRecorder =

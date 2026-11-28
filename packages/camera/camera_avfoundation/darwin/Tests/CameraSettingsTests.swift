@@ -109,7 +109,135 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 }
 
+private final class VideoCodecMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
+  let videoInputExpectation: XCTestExpectation
+  let availableVideoCodecTypes: [AVVideoCodecType]
+  let hasCodecSpecificSettings: Bool
+  var requestedVideoCodecType: AVVideoCodecType?
+  var videoOutputSettings: [String: Any]?
+
+  init(
+    test: XCTestCase, availableVideoCodecTypes: [AVVideoCodecType], hasCodecSpecificSettings: Bool
+  ) {
+    videoInputExpectation = test.expectation(description: "videoInputExpectation")
+    self.availableVideoCodecTypes = availableVideoCodecTypes
+    self.hasCodecSpecificSettings = hasCodecSpecificSettings
+  }
+
+  override func availableVideoCodecTypesForAssetWriter(
+    withFileType fileType: AVFileType, for output: CaptureVideoDataOutput
+  ) -> [AVVideoCodecType] {
+    return availableVideoCodecTypes
+  }
+
+  // Like AVFoundation, recommends the first available codec.
+  override func recommendedVideoSettingsForAssetWriter(
+    withFileType fileType: AVFileType, for output: CaptureVideoDataOutput
+  ) -> [String: Any]? {
+    return availableVideoCodecTypes.first.map { [AVVideoCodecKey: $0] }
+  }
+
+  override func recommendedVideoSettings(
+    forVideoCodecType videoCodecType: AVVideoCodecType,
+    fileType: AVFileType,
+    for output: CaptureVideoDataOutput
+  ) -> [String: Any]? {
+    requestedVideoCodecType = videoCodecType
+    return hasCodecSpecificSettings ? [AVVideoCodecKey: videoCodecType] : nil
+  }
+
+  override func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
+    -> AssetWriterInput
+  {
+    videoOutputSettings = outputSettings
+    videoInputExpectation.fulfill()
+    return MockAssetWriterInput()
+  }
+
+  override func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
+    -> AssetWriterInput
+  {
+    return MockAssetWriterInput()
+  }
+
+  override func addInput(_ writerInput: AssetWriterInput, to writer: AssetWriter) {
+    // No-op.
+  }
+}
+
 final class CameraSettingsTests: XCTestCase {
+  private func startRecording(
+    videoCodec: PlatformVideoCodec?,
+    videoBitrate: Int64? = nil,
+    availableVideoCodecTypes: [AVVideoCodecType],
+    hasCodecSpecificSettings: Bool = true
+  ) -> VideoCodecMediaSettingsAVWrapper {
+    let wrapper = VideoCodecMediaSettingsAVWrapper(
+      test: self, availableVideoCodecTypes: availableVideoCodecTypes,
+      hasCodecSpecificSettings: hasCodecSpecificSettings)
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.mediaSettingsWrapper = wrapper
+    configuration.mediaSettings = PlatformMediaSettings(
+      resolutionPreset: testResolutionPreset,
+      framesPerSecond: nil,
+      videoBitrate: videoBitrate,
+      audioBitrate: nil,
+      enableAudio: false,
+      videoCodec: videoCodec
+    )
+    let camera = CameraTestUtils.createTestCamera(configuration)
+
+    camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
+
+    wait(for: [wrapper.videoInputExpectation], timeout: 1)
+    return wrapper
+  }
+
+  func testStartVideoRecording_usesRequestedVideoCodec_whenAvailable() {
+    let wrapper = startRecording(videoCodec: .h264, availableVideoCodecTypes: [.hevc, .h264])
+
+    XCTAssertEqual(wrapper.requestedVideoCodecType, .h264)
+    XCTAssertEqual(
+      wrapper.videoOutputSettings?[AVVideoCodecKey] as? AVVideoCodecType, AVVideoCodecType.h264)
+  }
+
+  func testStartVideoRecording_keepsRequestedVideoCodec_whenVideoBitrateSet() {
+    let wrapper = startRecording(
+      videoCodec: .h264, videoBitrate: testVideoBitrate, availableVideoCodecTypes: [.hevc, .h264])
+
+    XCTAssertEqual(
+      wrapper.videoOutputSettings?[AVVideoCodecKey] as? AVVideoCodecType, AVVideoCodecType.h264)
+    let compressionProperties =
+      wrapper.videoOutputSettings?[AVVideoCompressionPropertiesKey] as? [String: Any]
+    XCTAssertEqual(
+      compressionProperties?[AVVideoAverageBitRateKey] as? Int, Int(testVideoBitrate))
+  }
+
+  func testStartVideoRecording_usesRecommendedSettings_whenVideoCodecNotSet() {
+    let wrapper = startRecording(videoCodec: nil, availableVideoCodecTypes: [.hevc, .h264])
+
+    XCTAssertNil(wrapper.requestedVideoCodecType)
+    XCTAssertEqual(
+      wrapper.videoOutputSettings?[AVVideoCodecKey] as? AVVideoCodecType, AVVideoCodecType.hevc)
+  }
+
+  func testStartVideoRecording_usesRecommendedSettings_whenVideoCodecUnavailable() {
+    let wrapper = startRecording(videoCodec: .hevc, availableVideoCodecTypes: [.h264])
+
+    XCTAssertNil(wrapper.requestedVideoCodecType)
+    XCTAssertEqual(
+      wrapper.videoOutputSettings?[AVVideoCodecKey] as? AVVideoCodecType, AVVideoCodecType.h264)
+  }
+
+  func testStartVideoRecording_usesRecommendedSettings_whenVideoCodecHasNoSettings() {
+    let wrapper = startRecording(
+      videoCodec: .hevc, availableVideoCodecTypes: [.h264, .hevc], hasCodecSpecificSettings: false)
+
+    XCTAssertEqual(wrapper.requestedVideoCodecType, .hevc)
+    XCTAssertEqual(
+      wrapper.videoOutputSettings?[AVVideoCodecKey] as? AVVideoCodecType, AVVideoCodecType.h264)
+  }
+
   func testSettings_shouldPassConfigurationToCameraDeviceAndWriter() {
     let enableAudio: Bool = true
     let settings = PlatformMediaSettings(

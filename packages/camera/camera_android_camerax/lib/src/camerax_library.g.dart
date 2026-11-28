@@ -109,6 +109,7 @@ class PigeonOverrides {
     int? aspectRatio,
     int? targetVideoEncodingBitRate,
     QualitySelector? qualitySelector,
+    String? videoMimeType,
   })?
   recorder_new;
 
@@ -237,6 +238,9 @@ class PigeonOverrides {
   /// Overrides [CameraSelector.defaultFrontCamera].
   static CameraSelector? cameraSelector_defaultFrontCamera;
 
+  /// Overrides [DynamicRange.sdr].
+  static DynamicRange? dynamicRange_sdr;
+
   /// Overrides [ResolutionStrategy.highestAvailableStrategy].
   static ResolutionStrategy? resolutionStrategy_highestAvailableStrategy;
 
@@ -264,6 +268,9 @@ class PigeonOverrides {
   /// Overrides [ProcessCameraProvider.getInstance].
   static Future<ProcessCameraProvider> Function()? processCameraProvider_getInstance;
 
+  /// Overrides [Recorder.getVideoCapabilities].
+  static Future<VideoCapabilities?> Function(CameraInfo, String)? recorder_getVideoCapabilities;
+
   /// Overrides [ImageProxyUtils.getNv21Buffer].
   static Future<Uint8List> Function(int, int, List<PlaneProxy>)? imageProxyUtils_getNv21Buffer;
 
@@ -284,6 +291,8 @@ class PigeonOverrides {
     preview_new = null;
     videoCapture_withOutput = null;
     recorder_new = null;
+    recorder_getVideoCapabilities = null;
+    dynamicRange_sdr = null;
     videoRecordEventListener_new = null;
     imageCapture_new = null;
     resolutionStrategy_new = null;
@@ -445,6 +454,8 @@ class PigeonInstanceManager {
     VideoCapture.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoOutput.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Recorder.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoCapabilities.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    DynamicRange.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoRecordEventListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     PendingRecording.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Recording.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -3684,12 +3695,14 @@ class Recorder extends PigeonInternalProxyApiBaseClass implements VideoOutput {
     int? aspectRatio,
     int? targetVideoEncodingBitRate,
     QualitySelector? qualitySelector,
+    String? videoMimeType,
   }) {
     if (PigeonOverrides.recorder_new != null) {
       return PigeonOverrides.recorder_new!(
         aspectRatio: aspectRatio,
         targetVideoEncodingBitRate: targetVideoEncodingBitRate,
         qualitySelector: qualitySelector,
+        videoMimeType: videoMimeType,
       );
     }
     return Recorder.pigeon_new(
@@ -3698,6 +3711,7 @@ class Recorder extends PigeonInternalProxyApiBaseClass implements VideoOutput {
       aspectRatio: aspectRatio,
       targetVideoEncodingBitRate: targetVideoEncodingBitRate,
       qualitySelector: qualitySelector,
+      videoMimeType: videoMimeType,
     );
   }
 
@@ -3708,6 +3722,7 @@ class Recorder extends PigeonInternalProxyApiBaseClass implements VideoOutput {
     int? aspectRatio,
     int? targetVideoEncodingBitRate,
     QualitySelector? qualitySelector,
+    String? videoMimeType,
   }) {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecRecorder;
@@ -3724,6 +3739,7 @@ class Recorder extends PigeonInternalProxyApiBaseClass implements VideoOutput {
       aspectRatio,
       targetVideoEncodingBitRate,
       qualitySelector,
+      videoMimeType,
     ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
@@ -3784,6 +3800,43 @@ class Recorder extends PigeonInternalProxyApiBaseClass implements VideoOutput {
         });
       }
     }
+  }
+
+  /// Returns the `VideoCapabilities` of Recorder with respect to input camera
+  /// information and video MIME type, or null if no capabilities are found
+  /// for the given MIME type.
+  static Future<VideoCapabilities?> getVideoCapabilities(
+    CameraInfo cameraInfo,
+    String mimeType, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) async {
+    if (PigeonOverrides.recorder_getVideoCapabilities != null) {
+      return PigeonOverrides.recorder_getVideoCapabilities!(cameraInfo, mimeType);
+    }
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.Recorder.getVideoCapabilities';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      cameraInfo,
+      mimeType,
+    ]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as VideoCapabilities?;
   }
 
   /// Gets the aspect ratio of this Recorder.
@@ -3877,6 +3930,196 @@ class Recorder extends PigeonInternalProxyApiBaseClass implements VideoOutput {
   @override
   Recorder pigeon_copy() {
     return Recorder.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// The video capabilities of a camera and video encoder, such as the
+/// supported qualities for a dynamic range.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoCapabilities.
+class VideoCapabilities extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [VideoCapabilities] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  VideoCapabilities.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecVideoCapabilities =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    VideoCapabilities Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_android_camerax.VideoCapabilities.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  VideoCapabilities.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  /// Gets all supported qualities for the input dynamic range.
+  Future<List<VideoQuality>> getSupportedQualities(DynamicRange dynamicRange) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoCapabilities;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.VideoCapabilities.getSupportedQualities';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      this,
+      dynamicRange,
+    ]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<VideoQuality>();
+  }
+
+  @override
+  VideoCapabilities pigeon_copy() {
+    return VideoCapabilities.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// The dynamic range of an image, such as standard dynamic range (SDR).
+///
+/// See https://developer.android.com/reference/androidx/camera/core/DynamicRange.
+class DynamicRange extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [DynamicRange] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  DynamicRange.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+
+  /// A dynamic range representing 8-bit standard dynamic range (SDR).
+  static final DynamicRange _sdr = pigeonVar_sdr();
+
+  /// A dynamic range representing 8-bit standard dynamic range (SDR).
+  static DynamicRange get sdr => PigeonOverrides.dynamicRange_sdr ?? _sdr;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    DynamicRange Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_android_camerax.DynamicRange.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  DynamicRange.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  static DynamicRange pigeonVar_sdr() {
+    final DynamicRange pigeonVar_instance = DynamicRange.pigeon_detached();
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger pigeonVar_binaryMessenger =
+        ServicesBinding.instance.defaultBinaryMessenger;
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance.addDartCreatedInstance(
+      pigeonVar_instance,
+    );
+    () async {
+      const pigeonVar_channelName = 'dev.flutter.pigeon.camera_android_camerax.DynamicRange.sdr';
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+        pigeonVar_instanceIdentifier,
+      ]);
+      final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    }();
+    return pigeonVar_instance;
+  }
+
+  @override
+  DynamicRange pigeon_copy() {
+    return DynamicRange.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );

@@ -1,5 +1,6 @@
-## NEXT
+## 0.11.2
 
+* Adds support for choosing the video recording codec (H.264 or HEVC) via `MediaSettings.videoCodec`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.11.1

@@ -11,6 +11,13 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
+## Video Codec
+
+By default, recorded video uses Apple's recommended settings for the device,
+which use HEVC on many devices. To choose the codec, set `videoCodec` in the
+`MediaSettings` (or on `CameraController` when using `camera`). If the device
+can't record with the requested codec, Apple's recommended settings are used.
+
 ## Custom Video Recording Path
 
 You can optionally specify a `videoOutputPath` when calling `startVideoRecording()` to save the recorded video directly to a custom absolute file path on the device.

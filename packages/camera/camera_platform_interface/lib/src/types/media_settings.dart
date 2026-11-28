@@ -5,11 +5,12 @@
 // ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
 
 import 'resolution_preset.dart';
+import 'video_codec.dart';
 
 /// Recording media settings.
 ///
 /// Used in [CameraPlatform.createCameraWithSettings].
-/// Allows to tune recorded video parameters, such as resolution, frame rate, bitrate.
+/// Allows to tune recorded video parameters, such as resolution, frame rate, bitrate, codec.
 /// If [fps], [videoBitrate] or [audioBitrate] are passed, they must be greater than zero.
 class MediaSettings {
   /// Creates a [MediaSettings].
@@ -19,6 +20,7 @@ class MediaSettings {
     this.videoBitrate,
     this.audioBitrate,
     this.enableAudio = false,
+    this.videoCodec,
   }) : assert(fps == null || fps > 0, 'fps must be null or greater than zero'),
        assert(
          videoBitrate == null || videoBitrate > 0,
@@ -44,6 +46,13 @@ class MediaSettings {
   /// Controls audio presence in recorded video.
   final bool enableAudio;
 
+  /// The codec used to encode recorded video.
+  ///
+  /// When null, the platform's default codec is used. Platforms that cannot
+  /// select a codec, or that do not support the requested codec on the
+  /// current device, ignore this value and use their default codec.
+  final VideoCodec? videoCodec;
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) {
@@ -57,11 +66,13 @@ class MediaSettings {
         fps == other.fps &&
         videoBitrate == other.videoBitrate &&
         audioBitrate == other.audioBitrate &&
-        enableAudio == other.enableAudio;
+        enableAudio == other.enableAudio &&
+        videoCodec == other.videoCodec;
   }
 
   @override
-  int get hashCode => Object.hash(resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio);
+  int get hashCode =>
+      Object.hash(resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio, videoCodec);
 
   @override
   String toString() {
@@ -70,6 +81,7 @@ class MediaSettings {
         'fps: $fps, '
         'videoBitrate: $videoBitrate, '
         'audioBitrate: $audioBitrate, '
-        'enableAudio: $enableAudio}';
+        'enableAudio: $enableAudio, '
+        'videoCodec: $videoCodec}';
   }
 }

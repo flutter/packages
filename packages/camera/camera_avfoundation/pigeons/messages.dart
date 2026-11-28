@@ -59,6 +59,9 @@ enum PlatformImageFormatGroup { bgra8888, yuv420 }
 // Pigeon version of ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
+// Pigeon version of VideoCodec.
+enum PlatformVideoCodec { h264, hevc }
+
 enum PlatformVideoStabilizationMode { off, standard, cinematic, cinematicExtended }
 
 // Pigeon version of CameraDescription.
@@ -151,6 +154,7 @@ class PlatformMediaSettings {
     required this.videoBitrate,
     required this.audioBitrate,
     required this.enableAudio,
+    required this.videoCodec,
   });
 
   final PlatformResolutionPreset resolutionPreset;
@@ -158,6 +162,7 @@ class PlatformMediaSettings {
   final int? videoBitrate;
   final int? audioBitrate;
   final bool enableAudio;
+  final PlatformVideoCodec? videoCodec;
 }
 
 // Pigeon equivalent of CGPoint.

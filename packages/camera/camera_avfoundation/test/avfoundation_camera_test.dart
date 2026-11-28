@@ -79,6 +79,7 @@ void main() {
             videoBitrate: videoBitrate,
             audioBitrate: audioBitrate,
             enableAudio: true,
+            videoCodec: VideoCodec.h264,
           ),
         );
 
@@ -92,9 +93,48 @@ void main() {
         expect(settings?.videoBitrate, videoBitrate);
         expect(settings?.audioBitrate, audioBitrate);
         expect(settings?.enableAudio, true);
+        expect(settings?.videoCodec, PlatformVideoCodec.h264);
         expect(cameraId, 1);
       },
     );
+
+    test('Should send hevc video codec using createCameraWithSettings', () async {
+      final mockApi = MockCameraApi();
+      when(mockApi.create(any, any)).thenAnswer((_) async => 1);
+      final camera = AVFoundationCamera(api: mockApi);
+
+      await camera.createCameraWithSettings(
+        const CameraDescription(
+          name: 'Test',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 0,
+        ),
+        const MediaSettings(videoCodec: VideoCodec.hevc),
+      );
+
+      final VerificationResult verification = verify(mockApi.create(any, captureAny));
+      final settings = verification.captured[0] as PlatformMediaSettings?;
+      expect(settings?.videoCodec, PlatformVideoCodec.hevc);
+    });
+
+    test('Should leave video codec unset when not requested', () async {
+      final mockApi = MockCameraApi();
+      when(mockApi.create(any, any)).thenAnswer((_) async => 1);
+      final camera = AVFoundationCamera(api: mockApi);
+
+      await camera.createCameraWithSettings(
+        const CameraDescription(
+          name: 'Test',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 0,
+        ),
+        const MediaSettings(resolutionPreset: ResolutionPreset.low),
+      );
+
+      final VerificationResult verification = verify(mockApi.create(any, captureAny));
+      final settings = verification.captured[0] as PlatformMediaSettings?;
+      expect(settings?.videoCodec, isNull);
+    });
 
     test('Should throw CameraException when create throws a PlatformException', () {
       // Arrange

@@ -72,6 +72,9 @@ class PlatformPoint {
 /// Pigeon equivalent of [ResolutionPreset].
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
+/// Pigeon equivalent of [VideoCodec].
+enum PlatformVideoCodec { h264, hevc }
+
 /// Pigeon equivalent of [MediaSettings].
 class PlatformMediaSettings {
   PlatformMediaSettings({
@@ -80,12 +83,14 @@ class PlatformMediaSettings {
     this.fps,
     this.videoBitrate,
     this.audioBitrate,
+    this.videoCodec,
   });
   final PlatformResolutionPreset resolutionPreset;
   final int? fps;
   final int? videoBitrate;
   final int? audioBitrate;
   final bool enableAudio;
+  final PlatformVideoCodec? videoCodec;
 }
 
 /// Pigeon equivalent of [ImageFormatGroup].

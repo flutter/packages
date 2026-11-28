@@ -194,6 +194,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_NV21().
   static const int imageAnalysisOutputImageFormatNv21 = 3;
 
+  /// Constant representing the H.264 (AVC) video MIME type used for
+  /// configuring Recorder.
+  ///
+  /// See https://developer.android.com/reference/android/media/MediaFormat#MIMETYPE_VIDEO_AVC.
+  static const String videoMimeTypeH264 = 'video/avc';
+
+  /// Constant representing the H.265 (HEVC) video MIME type used for
+  /// configuring Recorder.
+  ///
+  /// See https://developer.android.com/reference/android/media/MediaFormat#MIMETYPE_VIDEO_HEVC.
+  static const String videoMimeTypeHevc = 'video/hevc';
+
   /// Error code indicating a [ZoomState] was requested, but one has not been
   /// set for the camera in use.
   static const String zoomStateNotSetErrorCode = 'zoomStateNotSet';
@@ -438,6 +450,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     recorder = Recorder(
       qualitySelector: presetQualitySelector,
       targetVideoEncodingBitRate: mediaSettings?.videoBitrate,
+      videoMimeType: await _getSupportedVideoMimeType(mediaSettings?.videoCodec, chosenCameraInfo),
     );
     videoCapture = VideoCapture.withOutput(videoOutput: recorder!, targetFpsRange: _targetFpsRange);
 
@@ -1721,6 +1734,54 @@ class AndroidCameraCameraX extends CameraPlatform {
     final fallbackStrategy = FallbackStrategy.lowerQualityOrHigherThan(quality: videoQuality);
 
     return QualitySelector.from(quality: videoQuality, fallbackStrategy: fallbackStrategy);
+  }
+
+  /// Returns the video MIME type for [videoCodec] if the camera described by
+  /// [cameraInfo] can record SDR video with it, or null to use the CameraX
+  /// default codec.
+  ///
+  /// CameraX fails to bind a `VideoCapture` whose `Recorder` requests a MIME
+  /// type the camera and encoder do not support, so unsupported codecs are
+  /// dropped here.
+  Future<String?> _getSupportedVideoMimeType(VideoCodec? videoCodec, CameraInfo? cameraInfo) async {
+    final String? videoMimeType = _getVideoMimeType(videoCodec);
+    if (videoMimeType == null || cameraInfo == null) {
+      return null;
+    }
+
+    final VideoCapabilities? videoCapabilities = await Recorder.getVideoCapabilities(
+      cameraInfo,
+      videoMimeType,
+    );
+    if (videoCapabilities == null) {
+      return null;
+    }
+
+    // VideoCapture records SDR video unless it is configured otherwise.
+    final List<VideoQuality> supportedQualities = await videoCapabilities.getSupportedQualities(
+      DynamicRange.sdr,
+    );
+    return supportedQualities.isEmpty ? null : videoMimeType;
+  }
+
+  /// Returns the video MIME type for [videoCodec], or null for a null
+  /// [videoCodec].
+  String? _getVideoMimeType(VideoCodec? videoCodec) {
+    if (videoCodec == null) {
+      return null;
+    }
+    switch (videoCodec) {
+      case VideoCodec.h264:
+        return videoMimeTypeH264;
+      case VideoCodec.hevc:
+        return videoMimeTypeHevc;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so fall back to the CameraX default codec. This is
+    // deliberately outside the switch rather than a `default` so that the
+    // linter will flag the switch as needing an update.
+    // ignore: dead_code
+    return null;
   }
 
   // Methods for configuring auto-focus and auto-exposure:

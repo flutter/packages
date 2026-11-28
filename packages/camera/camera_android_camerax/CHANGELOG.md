@@ -1,3 +1,8 @@
+## 0.7.7
+
+* Adds support for choosing the video recording codec (H.264 or HEVC) via `MediaSettings.videoCodec`.
+* Updates CameraX to 1.7.0.
+
 ## 0.7.6+2
 
 * Reduces `takePicture` latency by not setting the `ImageCapture` flash mode

@@ -243,6 +243,9 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// - [fps] controls rate at which frames should be captured by the camera in frames per second.
   /// - [videoBitrate] controls the video encoding bit rate for recording.
   /// - [audioBitrate] controls the audio encoding bit rate for recording.
+  /// - [videoCodec] controls the codec used to encode recorded video. This is
+  ///   best-effort: platforms or devices that cannot record with the requested
+  ///   codec ignore it and use their default codec.
 
   CameraController(
     CameraDescription description,
@@ -251,6 +254,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     int? fps,
     int? videoBitrate,
     int? audioBitrate,
+    VideoCodec? videoCodec,
     this.imageFormatGroup,
   }) : mediaSettings = MediaSettings(
          resolutionPreset: resolutionPreset,
@@ -258,6 +262,7 @@ class CameraController extends ValueNotifier<CameraValue> {
          fps: fps,
          videoBitrate: videoBitrate,
          audioBitrate: audioBitrate,
+         videoCodec: videoCodec,
        ),
        super(CameraValue.uninitialized(description));
 

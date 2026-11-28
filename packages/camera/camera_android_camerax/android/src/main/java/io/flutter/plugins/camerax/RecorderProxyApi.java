@@ -6,10 +6,12 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
+import androidx.camera.video.VideoCapabilities;
 import java.io.File;
 import java.util.Locale;
 
@@ -34,7 +36,8 @@ class RecorderProxyApi extends PigeonApiRecorder {
   public Recorder pigeon_defaultConstructor(
       @Nullable Long aspectRatio,
       @Nullable Long targetVideoEncodingBitRate,
-      @Nullable QualitySelector qualitySelector) {
+      @Nullable QualitySelector qualitySelector,
+      @Nullable String videoMimeType) {
     final Recorder.Builder builder = new Recorder.Builder();
     if (aspectRatio != null) {
       builder.setAspectRatio(aspectRatio.intValue());
@@ -45,7 +48,17 @@ class RecorderProxyApi extends PigeonApiRecorder {
     if (qualitySelector != null) {
       builder.setQualitySelector(qualitySelector);
     }
+    if (videoMimeType != null) {
+      builder.setVideoMimeType(videoMimeType);
+    }
     return builder.build();
+  }
+
+  @Nullable
+  @Override
+  public VideoCapabilities getVideoCapabilities(
+      @NonNull CameraInfo cameraInfo, @NonNull String mimeType) {
+    return Recorder.getVideoCapabilities(cameraInfo, mimeType);
   }
 
   @Override

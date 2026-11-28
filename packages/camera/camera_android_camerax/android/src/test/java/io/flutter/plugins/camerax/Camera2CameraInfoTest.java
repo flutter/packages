@@ -22,6 +22,8 @@ import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+// Camera2CameraInfo is deprecated in CameraX 1.7.0 in favor of Camera2Interop V2.
+@SuppressWarnings("deprecation")
 @RunWith(RobolectricTestRunner.class)
 public class Camera2CameraInfoTest {
   @Test

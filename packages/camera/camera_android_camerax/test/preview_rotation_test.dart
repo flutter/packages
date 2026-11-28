@@ -115,8 +115,12 @@ void main() {
           bool? zeroShutterLagEnabled,
         }) => MockImageCapture();
     PigeonOverrides.recorder_new =
-        ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>
-            MockRecorder();
+        ({
+          int? aspectRatio,
+          int? targetVideoEncodingBitRate,
+          QualitySelector? qualitySelector,
+          String? videoMimeType,
+        }) => MockRecorder();
     PigeonOverrides.videoCapture_withOutput =
         ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange}) {
           return MockVideoCapture();

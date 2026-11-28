@@ -5,18 +5,24 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.media.MediaFormat;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
+import androidx.camera.video.VideoCapabilities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -28,12 +34,53 @@ public class RecorderTest {
     final long aspectRatio = 5;
     final long targetVideoEncodingBitRate = 7;
     final QualitySelector qualitySelector = QualitySelector.from(Quality.HD);
+    final String videoMimeType = MediaFormat.MIMETYPE_VIDEO_HEVC;
     final Recorder recorder =
-        api.pigeon_defaultConstructor(aspectRatio, targetVideoEncodingBitRate, qualitySelector);
+        api.pigeon_defaultConstructor(
+            aspectRatio, targetVideoEncodingBitRate, qualitySelector, videoMimeType);
 
     assertEquals(recorder.getAspectRatio(), aspectRatio);
     assertEquals(recorder.getTargetVideoEncodingBitRate(), targetVideoEncodingBitRate);
     assertEquals(recorder.getQualitySelector(), qualitySelector);
+    assertEquals(recorder.getVideoMimeType(), videoMimeType);
+  }
+
+  @Test
+  public void pigeon_defaultConstructor_keepsDefaultVideoMimeTypeWhenNotSpecified() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final Recorder recorder = api.pigeon_defaultConstructor(null, null, null, null);
+
+    assertEquals(new Recorder.Builder().build().getVideoMimeType(), recorder.getVideoMimeType());
+  }
+
+  @Test
+  public void getVideoCapabilities_returnsExpectedVideoCapabilities() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final CameraInfo cameraInfo = mock(CameraInfo.class);
+    final VideoCapabilities value = mock(VideoCapabilities.class);
+    try (MockedStatic<Recorder> mockedRecorder = Mockito.mockStatic(Recorder.class)) {
+      mockedRecorder
+          .when(() -> Recorder.getVideoCapabilities(cameraInfo, MediaFormat.MIMETYPE_VIDEO_HEVC))
+          .thenReturn(value);
+
+      assertEquals(value, api.getVideoCapabilities(cameraInfo, MediaFormat.MIMETYPE_VIDEO_HEVC));
+    }
+  }
+
+  @Test
+  public void getVideoCapabilities_returnsNullWhenMimeTypeIsUnsupported() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final CameraInfo cameraInfo = mock(CameraInfo.class);
+    try (MockedStatic<Recorder> mockedRecorder = Mockito.mockStatic(Recorder.class)) {
+      mockedRecorder
+          .when(() -> Recorder.getVideoCapabilities(cameraInfo, MediaFormat.MIMETYPE_VIDEO_HEVC))
+          .thenReturn(null);
+
+      assertNull(api.getVideoCapabilities(cameraInfo, MediaFormat.MIMETYPE_VIDEO_HEVC));
+    }
   }
 
   @Test

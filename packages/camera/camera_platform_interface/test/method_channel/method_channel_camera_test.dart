@@ -56,10 +56,48 @@ void main() {
               'videoBitrate': 200000,
               'audioBitrate': 32000,
               'enableAudio': false,
+              'videoCodec': null,
             },
           ),
         ]);
         expect(cameraId, 1);
+      });
+
+      test('Should send the video codec when creating a camera', () async {
+        // Arrange
+        final cameraMockChannel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{
+            'create': <String, dynamic>{'cameraId': 1, 'imageFormatGroup': 'unknown'},
+          },
+        );
+        final camera = MethodChannelCamera();
+
+        // Act
+        await camera.createCameraWithSettings(
+          const CameraDescription(
+            name: 'Test',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0,
+          ),
+          const MediaSettings(videoCodec: VideoCodec.hevc),
+        );
+
+        // Assert
+        expect(cameraMockChannel.log, <Matcher>[
+          isMethodCall(
+            'create',
+            arguments: <String, Object?>{
+              'cameraName': 'Test',
+              'resolutionPreset': null,
+              'fps': null,
+              'videoBitrate': null,
+              'audioBitrate': null,
+              'enableAudio': false,
+              'videoCodec': 'hevc',
+            },
+          ),
+        ]);
       });
 
       test('Should throw CameraException when create throws a PlatformException', () {

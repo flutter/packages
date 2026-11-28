@@ -62,6 +62,13 @@ If you wish to record a video to a custom file path, you may specify `videoOutpu
 - **Best Practice:** Always use the [path_provider](https://pub.dev/packages/path_provider) package to fetch a safe, writable directory.
 - **Recommended Directory:** Use `getTemporaryDirectory()` or `getApplicationDocumentsDirectory()`.
 
+#### Video codec
+
+By default, CameraX chooses the video codec. To choose the codec, set
+`videoCodec` in the `MediaSettings` (or on `CameraController` when using
+`camera`). If the camera cannot record video with the requested codec,
+CameraX chooses the codec as usual.
+
 #### Setting description while recording
 To avoid cancelling any active recording when calling `setDescriptionWhileRecording`,
 you must start the recording with `startVideoCapturing` with `enablePersistentRecording` set to `true`.
