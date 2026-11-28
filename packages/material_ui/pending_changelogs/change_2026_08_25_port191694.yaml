@@ -1,0 +1,3 @@
+changelog: |
+  - Give date picker month-navigation and entry-mode-toggle icon buttons a real semantics label instead of relying on their tooltip, so screen readers announce them correctly.
+version: patch
