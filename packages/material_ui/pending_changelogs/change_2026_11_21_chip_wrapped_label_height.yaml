@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `Chip` clipping a label that wraps onto more lines once the avatar, delete icon and padding are accounted for.
+version: patch

@@ -213,6 +213,34 @@ Finder findTooltipContainer(String tooltipText) {
 }
 
 void main() {
+  testWidgets('Chip fits a label that wraps after accounting for padding and icons', (
+    WidgetTester tester,
+  ) async {
+    const label = Text('abc def', style: TextStyle(fontSize: 16), softWrap: true, maxLines: 3);
+
+    for (final hasIcons in <bool>[false, true]) {
+      await tester.pumpWidget(
+        wrapForChip(
+          child: Center(
+            child: SizedBox(
+              width: hasIcons ? 134 : 108,
+              child: Chip(
+                avatar: hasIcons ? const Icon(Icons.add) : null,
+                onDeleted: hasIcons ? doNothing : null,
+                label: label,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final RenderParagraph paragraph = tester.renderObject(find.text('abc def'));
+      expect(paragraph.size.height, paragraph.getMaxIntrinsicHeight(paragraph.size.width));
+      expect(paragraph.size.height, greaterThan(32));
+    }
+  });
+
   testWidgets('M3 Chip defaults', (WidgetTester tester) async {
     late TextTheme textTheme;
     final lightTheme = ThemeData();
