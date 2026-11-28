@@ -1,0 +1,3 @@
+changelog: |
+  - Add regression coverage for `TextFormField.onFieldSubmitted` not firing with `TextInputAction.next` after focus was requested for a detached `FocusNode` (fixed in the framework's focus traversal).
+version: patch
