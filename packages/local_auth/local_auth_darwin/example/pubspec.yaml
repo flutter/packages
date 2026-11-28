@@ -17,6 +17,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   local_auth_platform_interface: ^1.1.0
+  material_ui: ^1.0.0
 
 dev_dependencies:
   flutter_test:

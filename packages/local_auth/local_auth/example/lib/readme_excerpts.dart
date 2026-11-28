@@ -7,7 +7,6 @@
 
 // ignore_for_file: public_member_api_docs, avoid_print
 
-import 'package:flutter/material.dart';
 // #docregion ErrorHandling
 // #docregion CanCheck
 import 'package:local_auth/local_auth.dart';
@@ -19,6 +18,7 @@ import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 
 // #enddocregion CustomMessages
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   runApp(const MyApp());
