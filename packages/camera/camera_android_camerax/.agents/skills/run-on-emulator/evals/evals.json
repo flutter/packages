@@ -1,0 +1,60 @@
+{
+  "repo_criteria": [],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Run the camera_android_camerax integration tests on an emulator.",
+      "expected_chat_output": [
+        "The agent's report shows results from an actual run of the full integration test suite on an emulator (e.g., per-test results with failure messages, or the final test summary line), not a subset and not just a plan to run them.",
+        "The agent's report shows it granted runtime permissions (e.g., with 'android install --install-options=-g') before running the tests, rather than letting a permission dialog block them.",
+        "The agent reported whether the tests passed, naming any failing tests.",
+        "If the resolution preset tests failed, the agent identified them as expected emulator failures rather than regressions."
+      ],
+      "expected_repo_state": [
+        "No tracked files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 2,
+      "prompt": "Use an emulator to verify that the flash fires when taking a picture with FlashMode.always.",
+      "expected_chat_output": [
+        "The agent explained that the emulator cannot verify that the flash fires (it has no real flash output), so this requires a physical device.",
+        "The agent did not claim that the flash behavior was verified.",
+        "If the agent ran the example app or tests, it presented them only as checking that nothing crashes, not as verifying the flash."
+      ],
+      "expected_repo_state": [
+        "No tracked files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 3,
+      "prompt": "Write an implementation plan (do not implement it) for making the example app show the recorded video's duration in the SnackBar it shows after a recording stops. Include how you will verify that the SnackBar shows the correct duration.",
+      "expected_chat_output": [
+        "The plan verifies the SnackBar's text with an automated test (e.g., an integration test run on an emulator with the run-on-emulator skill), using screenshots at most as supporting evidence.",
+        "The plan states that the agent will run that verification itself; it does not ask the user to launch an emulator, run the example app, or run tests by hand.",
+        "The plan does not assign any verification to the user, since nothing about this change depends on specific hardware."
+      ],
+      "expected_repo_state": [
+        "No source, test, or example app files were modified (a plan document is fine)."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 4,
+      "prompt": "An implementation plan for a camera preview change ends with the following section, and the change is already in the code. Handle this section and report back. Manual Verification (user): launch the example app on an emulator, select the front camera, pause the preview and confirm that it freezes, then resume the preview and confirm that it updates again.",
+      "expected_chat_output": [
+        "The agent carried out the steps itself instead of handing them back to the user, despite the section being labeled for the user.",
+        "The agent rebuilt the example app and launched it on an emulator (e.g., with 'android run').",
+        "The report names the control used to pause the preview: the pause/resume preview button (the rightmost button in the top row), not the button that pauses video recording.",
+        "The agent judged freezing by comparing the preview area of screenshots taken a few seconds apart (matching while paused, different after resuming), not by comparing whole files or hashes and not from a single screenshot.",
+        "The agent reported whether the preview froze while paused and updated after resuming, with the screenshots it used."
+      ],
+      "expected_repo_state": [
+        "No tracked files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    }
+  ]
+}

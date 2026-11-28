@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "android-cli": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "devtools/android-cli/SKILL.md",
+      "computedHash": "bbe53f7481bc5de0a5fa1152ca113bff161b3e6aec6a228820c2485e4d861873"
+    }
+  }
+}
