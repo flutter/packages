@@ -44,6 +44,33 @@ void main() {
     User(name: 'Charlie', email: 'charlie123@gmail.com'),
   ];
 
+  testWidgets('can render and select repeated options', (WidgetTester tester) async {
+    String? lastSelection;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Autocomplete<String>(
+            onSelected: (String selection) {
+              lastSelection = selection;
+            },
+            optionsBuilder: (TextEditingValue value) {
+              return const <String>['apple', 'apple', 'apricot'];
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(find.byType(TextFormField), 'a');
+    await tester.pumpAndSettle();
+    expect(find.text('apple'), findsNWidgets(2));
+
+    await tester.tap(find.text('apple').last);
+    await tester.pumpAndSettle();
+    expect(lastSelection, 'apple');
+    expect(find.byType(ListView), findsNothing);
+  });
+
   testWidgets('can filter and select a list of string options', (WidgetTester tester) async {
     late String lastSelection;
     await tester.pumpWidget(

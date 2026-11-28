@@ -275,6 +275,20 @@ class _AutocompleteOptionsList<T extends Object> extends StatefulWidget {
   State<_AutocompleteOptionsList<T>> createState() => _AutocompleteOptionsListState<T>();
 }
 
+class _AutocompleteOptionKey extends GlobalKey {
+  const _AutocompleteOptionKey(this.owner, this.index) : super.constructor();
+
+  final State<StatefulWidget> owner;
+  final int index;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _AutocompleteOptionKey && identical(other.owner, owner) && other.index == index;
+
+  @override
+  int get hashCode => Object.hash(identityHashCode(owner), index);
+}
+
 class _AutocompleteOptionsListState<T extends Object> extends State<_AutocompleteOptionsList<T>> {
   final ScrollController _scrollController = ScrollController();
 
@@ -287,8 +301,9 @@ class _AutocompleteOptionsListState<T extends Object> extends State<_Autocomplet
         if (!mounted) {
           return;
         }
-        final BuildContext? highlightedContext = GlobalObjectKey(
-          widget.options.elementAt(widget.highlightedIndex),
+        final BuildContext? highlightedContext = _AutocompleteOptionKey(
+          this,
+          widget.highlightedIndex,
         ).currentContext;
         if (highlightedContext == null) {
           _scrollController.jumpTo(
@@ -323,7 +338,7 @@ class _AutocompleteOptionsListState<T extends Object> extends State<_Autocomplet
           button: true,
           selected: highlight,
           child: InkWell(
-            key: GlobalObjectKey(option),
+            key: _AutocompleteOptionKey(this, index),
             onTap: () {
               widget.onSelected(option);
             },

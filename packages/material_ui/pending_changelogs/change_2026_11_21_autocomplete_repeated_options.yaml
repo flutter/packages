@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes a `Duplicate GlobalKey` crash when the options of an `Autocomplete` contain repeated values.
+version: patch
