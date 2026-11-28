@@ -95,4 +95,34 @@ void main() {
     expect(decoded, isNotNull);
     expect(decoded, equals(list1));
   });
+
+  test('RouteMatchList with an unnormalized location is decoded normalized', () {
+    final RouteConfiguration configuration = createRouteConfiguration(
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+        ),
+        GoRoute(
+          path: '/a',
+          builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+        ),
+      ],
+      redirectLimit: 0,
+      navigatorKey: GlobalKey<NavigatorState>(),
+      topRedirect: (_, _) => null,
+    );
+    final codec = RouteMatchListCodec(configuration);
+    final Map<Object?, Object?> encoded = codec.encode(configuration.findMatch(Uri.parse('/')));
+
+    encoded['location'] = '';
+    RouteMatchList decoded = codec.decode(encoded);
+    expect(decoded.uri.path, '/');
+    expect(decoded.matches.single.matchedLocation, '/');
+
+    encoded['location'] = 'a';
+    decoded = codec.decode(encoded);
+    expect(decoded.uri.path, '/a');
+    expect(decoded.matches.single.matchedLocation, '/a');
+  });
 }

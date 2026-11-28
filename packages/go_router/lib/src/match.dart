@@ -1136,7 +1136,10 @@ class _RouteMatchListDecoder extends Converter<Map<Object?, Object?>, RouteMatch
     } else {
       extra = configuration.extraCodec?.decode(encodedExtra[RouteMatchListCodec._encodedKey]);
     }
-    RouteMatchList matchList = configuration.findMatch(Uri.parse(rootLocation), extra: extra);
+    RouteMatchList matchList = configuration.findMatch(
+      RouteConfiguration.normalizeUri(Uri.parse(rootLocation)),
+      extra: extra,
+    );
 
     final imperativeMatches = input[RouteMatchListCodec._imperativeMatchesKey] as List<Object?>?;
     if (imperativeMatches != null) {
