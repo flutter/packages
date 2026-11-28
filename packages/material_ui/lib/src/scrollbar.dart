@@ -230,6 +230,7 @@ class _MaterialScrollbarState extends RawScrollbarState<_MaterialScrollbar> {
   late AnimationController _hoverAnimationController;
   bool _dragIsActive = false;
   bool _hoverIsActive = false;
+  PointerHoverEvent? _lastHoverEvent;
   late ColorScheme _colorScheme;
   late ScrollbarThemeData _scrollbarTheme;
   // On Android, scrollbars should match native appearance.
@@ -347,6 +348,7 @@ class _MaterialScrollbarState extends RawScrollbarState<_MaterialScrollbar> {
     _hoverAnimationController.addListener(() {
       updateScrollbarPainter();
     });
+    scrollbarPainter.fadeoutOpacityAnimation.addStatusListener(_handleFadeStatusChanged);
   }
 
   @override
@@ -407,8 +409,25 @@ class _MaterialScrollbarState extends RawScrollbarState<_MaterialScrollbar> {
   @override
   void handleHover(PointerHoverEvent event) {
     super.handleHover(event);
-    // Check if the position of the pointer falls over the painted scrollbar
-    if (isPointerOverScrollbar(event.position, event.kind, forHover: true)) {
+    _lastHoverEvent = event;
+    _updateHover(event);
+  }
+
+  void _handleFadeStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.completed && _lastHoverEvent != null) {
+      // A stationary pointer must be rechecked once the scrollbar is visible.
+      _updateHover(_lastHoverEvent!);
+    }
+  }
+
+  void _updateHover(PointerHoverEvent event) {
+    // Check if the position of the pointer falls over the painted scrollbar.
+    // The enlarged `forHover` proximity area is deliberately not used here. It
+    // only serves to bring a faded out scrollbar back into view, and it extends
+    // beyond the area that accepts a press. Painting the thumb as hovered there
+    // would advertise an interaction that cannot be started.
+    if (isPointerOverThumb(event.position, event.kind) ||
+        isPointerOverTrack(event.position, event.kind)) {
       // Pointer is hovering over the scrollbar
       setState(() {
         _hoverIsActive = true;
@@ -426,6 +445,7 @@ class _MaterialScrollbarState extends RawScrollbarState<_MaterialScrollbar> {
   @override
   void handleHoverExit(PointerExitEvent event) {
     super.handleHoverExit(event);
+    _lastHoverEvent = null;
     setState(() {
       _hoverIsActive = false;
     });
@@ -434,6 +454,7 @@ class _MaterialScrollbarState extends RawScrollbarState<_MaterialScrollbar> {
 
   @override
   void dispose() {
+    scrollbarPainter.fadeoutOpacityAnimation.removeStatusListener(_handleFadeStatusChanged);
     _hoverAnimationController.dispose();
     super.dispose();
   }
